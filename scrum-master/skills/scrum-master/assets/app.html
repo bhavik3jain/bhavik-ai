@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scrum Master</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0e11;
+      --surface: #13151a;
+      --surface2: #1a1d24;
+      --surface3: #21252f;
+      --border: #2a2e3a;
+      --border-bright: #3d4357;
+      --text: #e8eaf0;
+      --text-muted: #6b7280;
+      --text-dim: #9ca3af;
+      --accent: #f0c35a;
+      --accent-dim: rgba(240,195,90,0.10);
+      --accent-border: rgba(240,195,90,0.28);
+      --green: #4ade80;
+      --green-dim: rgba(74,222,128,0.09);
+      --green-border: rgba(74,222,128,0.22);
+      --blue: #60a5fa;
+      --blue-dim: rgba(96,165,250,0.09);
+      --blue-border: rgba(96,165,250,0.22);
+      --orange: #fb923c;
+      --orange-dim: rgba(251,146,60,0.09);
+      --orange-border: rgba(251,146,60,0.22);
+      --red: #f87171;
+      --radius: 10px;
+      --radius-sm: 6px;
+      --col-width: 340px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Header ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,14,17,0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 58px;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 28px; height: 28px;
+      background: var(--accent);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 13px;
+      color: #0d0e11;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 15px;
+      color: var(--text);
+    }
+
+    .logo-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px; color: var(--text-muted);
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+
+    /* ── Day selector strip ── */
+    .day-strip {
+      position: sticky;
+      top: 58px;
+      z-index: 90;
+      background: rgba(13,14,17,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 28px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      flex-shrink: 0;
+    }
+
+    .day-strip::-webkit-scrollbar { height: 3px; }
+    .day-strip::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+    .day-chip {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+      min-width: 72px;
+    }
+
+    .day-chip:hover {
+      border-color: var(--border-bright);
+      background: var(--surface2);
+    }
+
+    .day-chip.active {
+      border-color: var(--accent-border);
+      background: var(--accent-dim);
+    }
+
+    .day-chip.is-today .chip-name { color: var(--accent); }
+
+    .chip-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600; font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .day-chip.active .chip-name { color: var(--accent); }
+
+    .chip-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px; color: var(--text-muted);
+    }
+
+    .chip-dots {
+      display: flex; gap: 3px; margin-top: 3px;
+    }
+
+    .chip-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+    }
+
+    .dot-todo { background: var(--text-muted); }
+    .dot-inprogress { background: var(--orange); }
+    .dot-done { background: var(--green); }
+
+    .strip-nav {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      transition: all 0.15s;
+    }
+
+    .strip-nav:hover { border-color: var(--border-bright); color: var(--text); }
+
+    /* ── Main layout ── */
+    .main {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 28px 28px 60px;
+      min-height: 0;
+    }
+
+    /* ── Day heading ── */
+    .day-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .day-heading-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 28px;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .day-heading-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px; color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .today-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px; padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--accent);
+      color: #0d0e11;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-left: 4px;
+    }
+
+    .past-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; color: var(--text-muted);
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Kanban board ── */
+    .kanban {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      flex: 1;
+    }
+
+    /* ── Kanban column ── */
+    .kanban-col {
+      flex: 1;
+      min-width: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      min-height: 500px;
+      transition: border-color 0.15s;
+    }
+
+    .kanban-col.drag-over {
+      border-color: var(--accent-border);
+      box-shadow: 0 0 0 1px var(--accent-border), inset 0 0 20px rgba(240,195,90,0.03);
+    }
+
+    .kanban-col.col-todo { border-top: 2px solid var(--border-bright); }
+    .kanban-col.col-inprogress { border-top: 2px solid var(--orange); }
+    .kanban-col.col-done { border-top: 2px solid var(--green); }
+
+    .col-header {
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .col-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .col-icon {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .col-todo .col-icon { background: var(--text-muted); }
+    .col-inprogress .col-icon { background: var(--orange); }
+    .col-done .col-icon { background: var(--green); }
+
+    .col-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .col-count {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .col-todo .col-count { background: var(--surface3); color: var(--text-muted); }
+    .col-inprogress .col-count { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange-border); }
+    .col-done .col-count { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+
+    /* ── Drop zone ── */
+    .col-items {
+      flex: 1;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-height: 80px;
+    }
+
+    .drop-placeholder {
+      border: 1.5px dashed var(--border-bright);
+      border-radius: var(--radius-sm);
+      height: 56px;
+      background: var(--accent-dim);
+      border-color: var(--accent-border);
+      display: none;
+      animation: pulseIn 0.2s ease;
+    }
+
+    @keyframes pulseIn {
+      from { opacity: 0; transform: scaleY(0.8); }
+      to   { opacity: 1; transform: scaleY(1); }
+    }
+
+    .col-empty {
+      padding: 20px 12px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-style: italic;
+      opacity: 0.6;
+    }
+
+    /* ── Item card ── */
+    .item-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 11px 13px;
+      cursor: grab;
+      transition: border-color 0.12s, box-shadow 0.12s, opacity 0.12s;
+      position: relative;
+      animation: cardIn 0.18s ease;
+      user-select: none;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .item-card:hover {
+      border-color: var(--border-bright);
+      background: var(--surface3);
+    }
+
+    .item-card.dragging {
+      opacity: 0.35;
+      cursor: grabbing;
+    }
+
+    .item-card.ghost {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Status left-border accent */
+    .col-inprogress .item-card { border-left: 2px solid var(--orange); }
+    .col-done .item-card {
+      border-left: 2px solid var(--green);
+      opacity: 0.65;
+    }
+    .col-done .item-card:hover { opacity: 0.85; }
+
+    .item-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+    }
+
+    .item-drag-handle {
+      color: var(--border-bright);
+      font-size: 11px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      cursor: grab;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .item-title {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .col-done .item-title {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 3px;
+      opacity: 0;
+      transition: opacity 0.12s;
+      flex-shrink: 0;
+    }
+
+    .item-card:hover .item-actions { opacity: 1; }
+
+    .icon-btn {
+      width: 22px; height: 22px;
+      border-radius: 4px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      transition: all 0.1s;
+    }
+
+    .icon-btn:hover { background: var(--surface3); border-color: var(--border); color: var(--text); }
+    .icon-btn.delete:hover { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.2); color: var(--red); }
+
+    .item-notes {
+      margin-top: 7px;
+      padding-top: 7px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+      line-height: 1.5;
+      font-weight: 300;
+    }
+
+    .item-meta {
+      margin-top: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .meta-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      letter-spacing: 0.03em;
+    }
+
+    .tag-done { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+    .tag-inprogress { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange-border); }
+    .tag-rolled { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue-border); }
+
+    /* ── Add item footer ── */
+    .col-footer {
+      padding: 10px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .add-trigger {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: 1px dashed var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      transition: all 0.15s;
+      text-align: left;
+    }
+
+    .add-trigger:hover { border-color: var(--border-bright); color: var(--text-dim); background: var(--surface2); }
+
+    .add-form { display: none; flex-direction: column; gap: 7px; }
+    .add-form.active { display: flex; animation: cardIn 0.15s ease; }
+
+    .form-input {
+      width: 100%;
+      background: var(--surface3);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+      resize: none;
+    }
+
+    .form-input:focus { border-color: var(--accent); }
+    .form-input::placeholder { color: var(--text-muted); }
+
+    .form-textarea { min-height: 58px; line-height: 1.5; }
+
+    .form-actions {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.13s;
+    }
+
+    .btn-primary { background: var(--accent); color: #0d0e11; border-color: var(--accent); }
+    .btn-primary:hover { filter: brightness(1.08); }
+    .btn-ghost { background: transparent; color: var(--text-muted); border-color: var(--border); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border-bright); background: var(--surface2); }
+
+    /* ── Edit inline ── */
+    .item-edit-form {
+      display: none; flex-direction: column; gap: 6px;
+      margin-top: 8px;
+    }
+    .item-edit-form.active { display: flex; }
+
+    /* ── Move modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: none; align-items: center; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; animation: fadeIn 0.15s ease; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius);
+      padding: 24px; width: 360px;
+      max-width: calc(100vw - 32px);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+      animation: modalIn 0.18s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(8px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .modal-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; font-style: italic; }
+    .modal-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; text-transform: uppercase; }
+
+    .date-picker-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 7px; margin-bottom: 14px;
+    }
+
+    .date-option {
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      cursor: pointer; transition: all 0.13s;
+    }
+    .date-option:hover { border-color: var(--border-bright); background: var(--surface3); }
+    .date-option.selected { border-color: var(--accent); background: var(--accent-dim); }
+    .date-option-day { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 12.5px; color: var(--text); }
+    .date-option.selected .date-option-day { color: var(--accent); }
+    .date-option-date { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+    .modal-custom-date { margin-bottom: 16px; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+    /* ── Toast ── */
+    .toast-container {
+      position: fixed; bottom: 22px; right: 22px;
+      z-index: 300; display: flex; flex-direction: column; gap: 7px;
+    }
+
+    .toast {
+      background: var(--surface2);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-sm);
+      padding: 9px 15px; font-size: 12.5px;
+      color: var(--text);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      animation: toastIn 0.18s ease, toastOut 0.2s ease 2.8s forwards;
+      max-width: 260px;
+    }
+
+    @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">SM</div>
+    <div>
+      <div class="logo-text">Scrum Master</div>
+      <div class="logo-sub">Personal Sprint Board</div>
+    </div>
+  </div>
+</header>
+
+<!-- Day selector strip -->
+<div class="day-strip" id="dayStrip">
+  <button class="strip-nav" onclick="Strips.shift(-7)" title="Back 1 week">‹‹</button>
+  <button class="strip-nav" onclick="Strips.shift(-1)" title="Previous day">‹</button>
+  <button class="strip-nav" onclick="Strips.goToday()" title="Today" style="font-size:10px;font-family:'DM Mono',monospace;width:auto;padding:0 10px;border-radius:20px;letter-spacing:0.04em;">TODAY</button>
+  <!-- chips injected here -->
+  <button class="strip-nav" onclick="Strips.shift(1)" title="Next day">›</button>
+  <button class="strip-nav" onclick="Strips.shift(7)" title="Forward 1 week">››</button>
+</div>
+
+<div class="main" id="main">
+  <!-- kanban injected here -->
+</div>
+
+<!-- Move modal -->
+<div class="modal-overlay" id="moveModal">
+  <div class="modal">
+    <div class="modal-title">Move to another day</div>
+    <div class="modal-sub" id="moveItemLabel"></div>
+    <div class="date-picker-grid" id="moveDateGrid"></div>
+    <div class="modal-custom-date">
+      <div class="modal-label">Or pick a date</div>
+      <input type="date" class="form-input" id="moveCustomDate" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="UI.closeMoveModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="UI.confirmMove()">Move item</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ── Data layer ──────────────────────────────────────────────────────────────
+
+const API = {
+  base: 'http://localhost:{{PORT}}',
+  async load() {
+    try { return await (await fetch(`${this.base}/data`)).json(); }
+    catch(e) { console.error(e); return { items: [] }; }
+  },
+  async save(data) {
+    try {
+      await fetch(`${this.base}/data`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    } catch(e) { console.error(e); }
+  }
+};
+
+// ── State ───────────────────────────────────────────────────────────────────
+
+/*
+  item: {
+    id, title, notes,
+    date,          // ISO date string — which day this item belongs to
+    status,        // 'todo' | 'inprogress' | 'done'
+    doneAt,        // ISO timestamp or null
+    originalDate,  // date when first created
+    rolledFrom,    // original date if auto-rolled, else null
+  }
+*/
+
+const State = {
+  items: [],
+  activeDate: null,   // currently viewed date string
+  stripStart: null,   // first date shown in strip
+
+  STRIP_DAYS: 14,
+
+  fmt(d) { return d.toISOString().split('T')[0]; },
+  parse(s) { const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); },
+  today() { return this.fmt(new Date()); },
+
+  async init() {
+    const data = await API.load();
+    this.items = (data.items || []).map(it => ({
+      ...it,
+      status: it.status || (it.done ? 'done' : 'todo'), // migrate old schema
+    }));
+    this.rollover();
+    const today = new Date();
+    this.activeDate = this.today();
+    // Strip: show 3 days before today through remaining
+    const start = new Date(today);
+    start.setDate(start.getDate() - 3);
+    this.stripStart = start;
+  },
+
+  rollover() {
+    const today = this.today();
+    let changed = false;
+    this.items.forEach(it => {
+      if (it.status !== 'done' && it.date < today) {
+        it.rolledFrom = it.rolledFrom || it.date;
+        it.date = today;
+        changed = true;
+      }
+    });
+    if (changed) this.persist();
+  },
+
+  persist() { API.save({ items: this.items }); },
+
+  itemsForDate(dateStr) { return this.items.filter(it => it.date === dateStr); },
+
+  add(dateStr, title, notes) {
+    const it = {
+      id: `item_${Date.now()}_${Math.random().toString(36).slice(2,6)}`,
+      title, notes: notes || '',
+      date: dateStr,
+      status: 'todo',
+      doneAt: null,
+      originalDate: dateStr,
+      rolledFrom: null,
+    };
+    this.items.push(it);
+    this.persist();
+    return it;
+  },
+
+  setStatus(id, status) {
+    const it = this.items.find(i => i.id === id);
+    if (!it) return;
+    it.status = status;
+    it.doneAt = status === 'done' ? new Date().toISOString() : null;
+    this.persist();
+  },
+
+  move(id, newDate) {
+    const it = this.items.find(i => i.id === id);
+    if (!it) return;
+    it.date = newDate;
+    it.rolledFrom = null;
+    this.persist();
+  },
+
+  delete(id) {
+    this.items = this.items.filter(i => i.id !== id);
+    this.persist();
+  },
+
+  update(id, title, notes) {
+    const it = this.items.find(i => i.id === id);
+    if (!it) return;
+    it.title = title; it.notes = notes;
+    this.persist();
+  },
+
+  stripDates() {
+    const dates = [];
+    for (let i = 0; i < this.STRIP_DAYS; i++) {
+      const d = new Date(this.stripStart);
+      d.setDate(d.getDate() + i);
+      dates.push(this.fmt(d));
+    }
+    return dates;
+  }
+};
+
+// ── Strip controller ─────────────────────────────────────────────────────────
+
+const Strips = {
+  shift(days) {
+    State.stripStart = new Date(State.stripStart);
+    State.stripStart.setDate(State.stripStart.getDate() + days);
+    this.render();
+  },
+  goToday() {
+    State.activeDate = State.today();
+    const today = new Date();
+    const start = new Date(today);
+    start.setDate(start.getDate() - 3);
+    State.stripStart = start;
+    this.render();
+    UI.renderBoard();
+  },
+  render() {
+    const strip = document.getElementById('dayStrip');
+    // Remove old chips (keep nav buttons: first 3 and last 2)
+    strip.querySelectorAll('.day-chip').forEach(el => el.remove());
+    const navBtns = strip.querySelectorAll('.strip-nav');
+    const insertBefore = navBtns[navBtns.length - 2]; // before last two navs
+
+    const today = State.today();
+    State.stripDates().forEach(dateStr => {
+      const d = State.parse(dateStr);
+      const items = State.itemsForDate(dateStr);
+      const hasTodo = items.some(i => i.status === 'todo');
+      const hasInprogress = items.some(i => i.status === 'inprogress');
+      const hasDone = items.some(i => i.status === 'done');
+
+      const chip = document.createElement('button');
+      chip.className = `day-chip${dateStr === State.activeDate ? ' active' : ''}${dateStr === today ? ' is-today' : ''}`;
+      chip.dataset.date = dateStr;
+
+      const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+      const dateLabel = d.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+
+      const dots = [
+        hasTodo ? '<span class="chip-dot dot-todo"></span>' : '',
+        hasInprogress ? '<span class="chip-dot dot-inprogress"></span>' : '',
+        hasDone ? '<span class="chip-dot dot-done"></span>' : '',
+      ].join('');
+
+      chip.innerHTML = `
+        <span class="chip-name">${dayName}</span>
+        <span class="chip-date">${dateLabel}</span>
+        ${dots ? `<div class="chip-dots">${dots}</div>` : ''}
+      `;
+
+      chip.addEventListener('click', () => {
+        State.activeDate = dateStr;
+        Strips.render();
+        UI.renderBoard();
+      });
+
+      strip.insertBefore(chip, insertBefore);
+    });
+  }
+};
+
+// ── Drag & Drop ──────────────────────────────────────────────────────────────
+
+const DnD = {
+  draggingId: null,
+  sourceCol: null,
+  placeholder: null,
+  overCol: null,
+
+  init() {
+    document.addEventListener('dragover', e => {
+      e.preventDefault();
+      const col = e.target.closest('.kanban-col');
+      if (!col) return;
+      const colId = col.dataset.col;
+      if (colId === this.overCol) return;
+      // Clear old
+      if (this.overCol) {
+        document.querySelector(`[data-col="${this.overCol}"]`)?.classList.remove('drag-over');
+        this.placeholder?.remove();
+      }
+      this.overCol = colId;
+      col.classList.add('drag-over');
+      // Insert placeholder
+      const ph = document.createElement('div');
+      ph.className = 'drop-placeholder';
+      ph.style.display = 'block';
+      const items = col.querySelector('.col-items');
+      items.appendChild(ph);
+      this.placeholder = ph;
+    });
+
+    document.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!this.draggingId || !this.overCol) return;
+      const newStatus = this.overCol;
+      if (newStatus !== this.sourceCol) {
+        State.setStatus(this.draggingId, newStatus);
+        UI.renderBoard();
+        Strips.render();
+        UI.toast(`Moved to ${colLabel(newStatus)}`);
+      }
+      this.cleanup();
+    });
+
+    document.addEventListener('dragend', () => this.cleanup());
+  },
+
+  cleanup() {
+    if (this.overCol) {
+      document.querySelector(`[data-col="${this.overCol}"]`)?.classList.remove('drag-over');
+    }
+    this.placeholder?.remove();
+    this.draggingId = null;
+    this.sourceCol = null;
+    this.overCol = null;
+    this.placeholder = null;
+    // Remove dragging class from any card
+    document.querySelectorAll('.item-card.dragging').forEach(el => el.classList.remove('dragging'));
+  }
+};
+
+function colLabel(status) {
+  return { todo: 'To Do', inprogress: 'In Progress', done: 'Completed' }[status] || status;
+}
+
+// ── UI ───────────────────────────────────────────────────────────────────────
+
+const UI = {
+  moveTarget: null,
+
+  renderBoard() {
+    const main = document.getElementById('main');
+    const dateStr = State.activeDate;
+    const today = State.today();
+    const isPast = dateStr < today;
+    const isToday = dateStr === today;
+    const d = State.parse(dateStr);
+
+    const dayName = d.toLocaleDateString('en-US', { weekday: 'long' });
+    const dateFull = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+    let headingExtra = '';
+    if (isToday) headingExtra = '<span class="today-badge">Today</span>';
+    else if (isPast) headingExtra = '<span class="past-note">Past day — read only</span>';
+
+    const items = State.itemsForDate(dateStr);
+
+    // Columns to show
+    const cols = isPast
+      ? [{ id: 'done', label: 'Completed', items: items.filter(i => i.status === 'done') }]
+      : [
+          { id: 'todo',       label: 'To Do',       items: items.filter(i => i.status === 'todo') },
+          { id: 'inprogress', label: 'In Progress',  items: items.filter(i => i.status === 'inprogress') },
+          { id: 'done',       label: 'Completed',    items: items.filter(i => i.status === 'done') },
+        ];
+
+    main.innerHTML = `
+      <div class="day-heading">
+        <span class="day-heading-name">${dayName}</span>
+        <span class="day-heading-date">${dateFull}</span>
+        ${headingExtra}
+      </div>
+      <div class="kanban" id="kanban"></div>
+    `;
+
+    const kanban = document.getElementById('kanban');
+    cols.forEach(col => {
+      kanban.appendChild(this.buildCol(col, isPast));
+    });
+  },
+
+  buildCol({ id, label, items }, isPast) {
+    const col = document.createElement('div');
+    col.className = `kanban-col col-${id}`;
+    col.dataset.col = id;
+
+    col.innerHTML = `
+      <div class="col-header">
+        <div class="col-title-wrap">
+          <span class="col-icon"></span>
+          <span class="col-title">${label}</span>
+        </div>
+        <span class="col-count">${items.length}</span>
+      </div>
+      <div class="col-items" id="col-items-${id}"></div>
+      ${id === 'todo' && !isPast ? `
+        <div class="col-footer">
+          <button class="add-trigger" id="addTrigger-${id}" onclick="UI.showAdd('${id}')">
+            <span style="font-size:14px;line-height:1">+</span> Add item
+          </button>
+          <div class="add-form" id="addForm-${id}">
+            <input class="form-input" type="text" placeholder="Task title…" id="addTitle-${id}"
+              onkeydown="if(event.key==='Enter')UI.submitAdd('${id}')" />
+            <textarea class="form-input form-textarea" placeholder="Notes (optional)…" id="addNotes-${id}"></textarea>
+            <div class="form-actions">
+              <button class="btn btn-ghost" onclick="UI.hideAdd('${id}')">Cancel</button>
+              <button class="btn btn-primary" onclick="UI.submitAdd('${id}')">Add</button>
+            </div>
+          </div>
+        </div>
+      ` : ''}
+    `;
+
+    const itemsEl = col.querySelector(`#col-items-${id}`);
+
+    if (items.length === 0) {
+      itemsEl.innerHTML = `<div class="col-empty">${isPast && id==='done' ? 'Nothing completed' : 'Empty'}</div>`;
+    } else {
+      items.forEach(item => itemsEl.appendChild(this.buildCard(item, isPast)));
+    }
+
+    return col;
+  },
+
+  buildCard(item, isPast) {
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    card.id = `card-${item.id}`;
+
+    if (!isPast) {
+      card.draggable = true;
+      card.addEventListener('dragstart', e => {
+        DnD.draggingId = item.id;
+        DnD.sourceCol = item.status;
+        card.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+    }
+
+    let metaHtml = '';
+    if (item.status === 'done' && item.doneAt) {
+      const t = new Date(item.doneAt);
+      metaHtml += `<span class="meta-tag tag-done">✓ ${t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}</span>`;
+    }
+    if (item.status === 'inprogress') {
+      metaHtml += `<span class="meta-tag tag-inprogress">● in progress</span>`;
+    }
+    if (item.rolledFrom) {
+      const from = State.parse(item.rolledFrom);
+      metaHtml += `<span class="meta-tag tag-rolled">rolled · ${from.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>`;
+    }
+
+    const actions = isPast ? '' : `
+      <div class="item-actions">
+        <button class="icon-btn" onclick="UI.showEdit('${item.id}')" title="Edit">✎</button>
+        <button class="icon-btn" onclick="UI.openMove('${item.id}')" title="Move to day">⇄</button>
+        <button class="icon-btn delete" onclick="UI.deleteItem('${item.id}')" title="Delete">✕</button>
+      </div>
+    `;
+
+    card.innerHTML = `
+      <div class="item-top">
+        ${!isPast ? '<span class="item-drag-handle" title="Drag to move">⠿</span>' : ''}
+        <span class="item-title">${esc(item.title)}</span>
+        ${actions}
+      </div>
+      ${item.notes ? `<div class="item-notes">${esc(item.notes)}</div>` : ''}
+      ${metaHtml ? `<div class="item-meta">${metaHtml}</div>` : ''}
+      <div class="item-edit-form" id="editForm-${item.id}">
+        <input class="form-input" type="text" value="${escAttr(item.title)}" id="editTitle-${item.id}" />
+        <textarea class="form-input form-textarea" id="editNotes-${item.id}">${esc(item.notes||'')}</textarea>
+        <div class="form-actions">
+          <button class="btn btn-ghost" onclick="UI.hideEdit('${item.id}')">Cancel</button>
+          <button class="btn btn-primary" onclick="UI.submitEdit('${item.id}')">Save</button>
+        </div>
+      </div>
+    `;
+
+    return card;
+  },
+
+  // ── Add ──
+
+  showAdd(colId) {
+    document.getElementById(`addTrigger-${colId}`).style.display = 'none';
+    const form = document.getElementById(`addForm-${colId}`);
+    form.classList.add('active');
+    document.getElementById(`addTitle-${colId}`).focus();
+  },
+
+  hideAdd(colId) {
+    document.getElementById(`addTrigger-${colId}`).style.display = '';
+    document.getElementById(`addForm-${colId}`).classList.remove('active');
+    document.getElementById(`addTitle-${colId}`).value = '';
+    document.getElementById(`addNotes-${colId}`).value = '';
+  },
+
+  submitAdd(colId) {
+    const title = document.getElementById(`addTitle-${colId}`).value.trim();
+    if (!title) return;
+    const notes = document.getElementById(`addNotes-${colId}`).value.trim();
+    State.add(State.activeDate, title, notes);
+    this.renderBoard();
+    Strips.render();
+    this.toast('Item added');
+  },
+
+  // ── Edit ──
+
+  showEdit(id) {
+    document.getElementById(`editForm-${id}`).classList.add('active');
+    document.getElementById(`editTitle-${id}`).focus();
+  },
+
+  hideEdit(id) {
+    document.getElementById(`editForm-${id}`).classList.remove('active');
+  },
+
+  submitEdit(id) {
+    const title = document.getElementById(`editTitle-${id}`).value.trim();
+    if (!title) return;
+    const notes = document.getElementById(`editNotes-${id}`).value.trim();
+    State.update(id, title, notes);
+    this.renderBoard();
+    this.toast('Item updated');
+  },
+
+  // ── Delete ──
+
+  deleteItem(id) {
+    State.delete(id);
+    this.renderBoard();
+    Strips.render();
+    this.toast('Item removed');
+  },
+
+  // ── Move modal ──
+
+  openMove(id) {
+    const item = State.items.find(i => i.id === id);
+    if (!item) return;
+    this.moveTarget = { itemId: id, selectedDate: null };
+    document.getElementById('moveItemLabel').textContent = `"${item.title}"`;
+
+    const grid = document.getElementById('moveDateGrid');
+    grid.innerHTML = '';
+    const today = new Date();
+
+    for (let i = 0; i < 6; i++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() + i);
+      const ds = State.fmt(d);
+      if (ds === item.date) continue;
+      const opt = document.createElement('div');
+      opt.className = 'date-option';
+      opt.dataset.date = ds;
+      opt.innerHTML = `
+        <div class="date-option-day">${i===0?'Today':i===1?'Tomorrow':d.toLocaleDateString('en-US',{weekday:'short'})}</div>
+        <div class="date-option-date">${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+      `;
+      opt.addEventListener('click', () => {
+        grid.querySelectorAll('.date-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        this.moveTarget.selectedDate = ds;
+        document.getElementById('moveCustomDate').value = '';
+      });
+      grid.appendChild(opt);
+    }
+
+    document.getElementById('moveCustomDate').value = '';
+    document.getElementById('moveCustomDate').oninput = function() {
+      if (this.value) {
+        grid.querySelectorAll('.date-option').forEach(o => o.classList.remove('selected'));
+        UI.moveTarget.selectedDate = this.value;
+      }
+    };
+
+    document.getElementById('moveModal').classList.add('active');
+  },
+
+  closeMoveModal() {
+    document.getElementById('moveModal').classList.remove('active');
+    this.moveTarget = null;
+  },
+
+  confirmMove() {
+    if (!this.moveTarget?.selectedDate) { this.toast('Pick a date first'); return; }
+    const { itemId, selectedDate } = this.moveTarget;
+    State.move(itemId, selectedDate);
+    this.closeMoveModal();
+    this.renderBoard();
+    Strips.render();
+    this.toast('Item moved');
+  },
+
+  // ── Toast ──
+
+  toast(msg) {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    document.getElementById('toastContainer').appendChild(el);
+    setTimeout(() => el.remove(), 3200);
+  }
+};
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+function escAttr(s) { return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+// Modal overlay click-outside
+document.getElementById('moveModal').addEventListener('click', function(e) {
+  if (e.target === this) UI.closeMoveModal();
+});
+
+// ── Boot ─────────────────────────────────────────────────────────────────────
+
+(async () => {
+  await State.init();
+  DnD.init();
+  Strips.render();
+  UI.renderBoard();
+})();
+</script>
+</body>
+</html>

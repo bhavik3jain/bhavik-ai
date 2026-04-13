@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/.claude/skills/trading-assistant/skills/market-pulse)",
+      "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/.claude/skills/trading-assistant/skills/options-scanner)",
+      "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/.claude/skills/trading-assistant/skills/stock-ideas)",
+      "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/.claude/skills/trading-assistant/skills/trade-setup)",
+      "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/.claude/skills/trading-assistant/evals)",
+      "Bash(sort echo:*)",
+      "WebSearch",
+      "WebFetch(domain:seekingalpha.com)",
+      "WebFetch(domain:www.cnbc.com)",
+      "WebFetch(domain:www.thetechedvocate.org)",
+      "WebFetch(domain:finance.yahoo.com)",
+      "WebFetch(domain:stockanalysis.com)",
+      "WebFetch(domain:www.etftrends.com)",
+      "WebFetch(domain:www.fool.com)",
+      "WebFetch(domain:marketchameleon.com)",
+      "WebFetch(domain:articles.stockcharts.com)",
+      "WebFetch(domain:www.ranchcap.com)",
+      "WebFetch(domain:www.thecanadianvanguard.com)",
+      "WebFetch(domain:idx.mlspin.com)",
+      "Bash(python3:*)",
+      "Bash(pip install:*)",
+      "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/scrum-master/skills/scrum-master/assets)",
+      "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/scrum-master/skills/scrum-master/scripts)",
+      "Bash(curl -s -o /dev/null -w \"HTTP status: %{http_code}\" http://localhost:4242/)",
+      "Bash(curl -s http://localhost:4242/data)",
+      "Bash(curl -s -X POST -H \"Content-Type: application/json\" -d '{\"items\":[{\"id\":\"test_1\",\"title\":\"Test item\",\"notes\":\"\",\"date\":\"2026-04-13\",\"done\":false,\"doneAt\":null,\"originalDate\":\"2026-04-13\",\"rolledFrom\":null}]}' http://localhost:4242/data)",
+      "Bash(curl -s -X POST -H \"Content-Type: application/json\" -d '{\"items\":[]}' http://localhost:4242/data)",
+      "Bash(open http://localhost:4242)"
+    ]
+  }
+}

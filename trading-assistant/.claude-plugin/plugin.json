@@ -1,0 +1,8 @@
+{
+  "name": "trading-assistant",
+  "version": "1.0.0",
+  "description": "Personal US equity and options trading assistant with daily market pulse, options scanning, stock ideas, and deep-dive trade setups",
+  "author": {
+    "name": "bhavik-ai"
+  }
+}

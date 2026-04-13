@@ -1,0 +1,18 @@
+{
+  "name": "bhavik-ai",
+  "owner": {
+    "name": "Bhavik Jain"
+  },
+  "plugins": [
+    {
+      "name": "trading-assistant",
+      "source": "./trading-assistant",
+      "description": "Personal US equity and options trading assistant — daily market pulse, options scanning, stock picks, and deep-dive trade setups. No API keys required."
+    },
+    {
+      "name": "scrum-master",
+      "source": "./scrum-master",
+      "description": "Personal scrum master and sprint board — a live local web app for managing daily tasks with rolling day view, completion tracking, and auto-rollover of incomplete items."
+    }
+  ]
+}

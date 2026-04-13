@@ -1,0 +1,40 @@
+{
+  "skill_name": "trading-assistant",
+  "evals": [
+    {
+      "id": 1,
+      "skill": "market-pulse",
+      "prompt": "What's the market doing today? Give me a full rundown before I start trading.",
+      "expected_output": "A complete market pulse report with: current index prices and % changes for SPY/QQQ/IWM/DIA, VIX reading with interpretation, sector performance (leaders and laggards), key news catalysts, Fed/macro watch, overall market bias, and actionable themes for today's trading session.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "skill": "options-scanner",
+      "prompt": "Give me your best options plays for this week. I'm open to anything — calls, puts, spreads, earnings plays. What's got the best setup right now?",
+      "expected_output": "3-5 specific options trade ideas each with: ticker, exact strike and expiration, entry price in dollars, max profit/loss, breakeven level, 2-3 sentence thesis, and exit plan. Should include context about current VIX and whether it favors buying or selling options.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "skill": "stock-ideas",
+      "prompt": "I have about $10k to deploy. Give me your best stock ideas right now — mix of short term trades and some longer term holds.",
+      "expected_output": "3-4 short-term trade ideas and 3-4 long-term position ideas, each with: current price, entry zone, price target, stop loss, time horizon, thesis, and key catalyst or risk. Should end with a watchlist and position sizing guidance.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "skill": "trade-setup",
+      "prompt": "Set up a trade on NVDA for me. I'm bullish but want to know both the stock play and the options play. What's the best setup right now?",
+      "expected_output": "Complete NVDA trade setup report including: technical snapshot table, key support/resistance levels, fundamental picture, catalyst map, news/sentiment, full stock trade plan (entry/targets/stop), full options trade plan (specific contract with strike/expiration/premium), risk assessment with bull/bear/base cases, and bottom line recommendation.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "skill": "market-pulse + stock-ideas",
+      "prompt": "Quick morning briefing — what's the market looking like and what are 2-3 names I should be watching today?",
+      "expected_output": "A condensed market overview (indices, VIX, key themes) followed by 2-3 specific stock ideas tied to today's market themes, each with entry and target levels.",
+      "files": []
+    }
+  ]
+}
