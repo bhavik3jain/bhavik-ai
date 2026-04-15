@@ -30,7 +30,14 @@
       "Bash(curl -s -X POST -H \"Content-Type: application/json\" -d '{\"items\":[]}' http://localhost:4242/data)",
       "Bash(open http://localhost:4242)",
       "Bash(wc:*)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(python -m scripts.aggregate_benchmark /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/scrum-master-workspace/iteration-1 --skill-name scrum-master)",
+      "Bash(nohup python3:*)",
+      "Read(//tmp/**)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/)",
+      "Bash(curl:*)",
+      "Bash(open:*)"
     ]
   }
 }

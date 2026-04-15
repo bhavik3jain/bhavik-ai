@@ -1,0 +1,84 @@
+{
+  "skill_name": "scrum-master",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "launch-board",
+      "prompt": "Open my scrum board for today",
+      "expected_output": "The skill should check if port 4242 is in use, start the Python server in the background if not, verify it responds with HTTP 200, and open the board in the browser. The user should be told the board is live at http://localhost:4242 and how to stop it.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "checks-port-before-starting",
+          "description": "Agent checks whether a server is already running on port 4242 before starting a new one"
+        },
+        {
+          "name": "starts-server-in-background",
+          "description": "Agent starts the server using nohup or background execution so it persists after the command exits"
+        },
+        {
+          "name": "verifies-server-is-up",
+          "description": "Agent verifies the server started successfully (e.g. curl http://localhost:4242) before opening the browser"
+        },
+        {
+          "name": "opens-browser",
+          "description": "Agent opens http://localhost:4242 in the browser"
+        },
+        {
+          "name": "tells-user-board-is-live",
+          "description": "Agent communicates to the user that the board is ready and accessible at the URL"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "eval_name": "stop-server",
+      "prompt": "End scrum for today",
+      "expected_output": "The skill should kill the process on port 4242 and confirm to the user that the server has been stopped and data is saved.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "kills-port-4242-process",
+          "description": "Agent runs a command to kill the process listening on port 4242 (e.g. kill $(lsof -ti :4242))"
+        },
+        {
+          "name": "confirms-server-stopped",
+          "description": "Agent confirms to the user that the scrum server has been stopped"
+        },
+        {
+          "name": "mentions-data-is-saved",
+          "description": "Agent reassures the user that their data is persisted (mentions data.json or that data is saved)"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "eval_name": "reprioritize-tasks",
+      "prompt": "I have a client call at 3pm today — can you reprioritize my todo list so the prep work for that is at the top, and quick wins are at the bottom?",
+      "expected_output": "The skill should read ~/.scrum-master/data.json, identify today's todo items, reorder them putting client-call prep at the top and quick-win tasks at the bottom, write the updated JSON back, and explain the new order with reasoning for each item's position. It should NOT touch in-progress or completed items.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "reads-data-file",
+          "description": "Agent reads ~/.scrum-master/data.json to get the current task list"
+        },
+        {
+          "name": "only-reorders-todo-items",
+          "description": "Agent only reorders items with status 'todo' for today's date; does not modify in-progress or completed items"
+        },
+        {
+          "name": "writes-back-updated-json",
+          "description": "Agent writes the reordered items back to ~/.scrum-master/data.json"
+        },
+        {
+          "name": "explains-new-order-with-reasoning",
+          "description": "Agent communicates the new prioritized order to the user with a brief reason for each item's position"
+        },
+        {
+          "name": "tells-user-to-refresh",
+          "description": "Agent tells the user to refresh the browser to see the updated order"
+        }
+      ]
+    }
+  ]
+}
