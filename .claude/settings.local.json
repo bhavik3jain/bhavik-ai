@@ -28,7 +28,9 @@
       "Bash(curl -s http://localhost:4242/data)",
       "Bash(curl -s -X POST -H \"Content-Type: application/json\" -d '{\"items\":[{\"id\":\"test_1\",\"title\":\"Test item\",\"notes\":\"\",\"date\":\"2026-04-13\",\"done\":false,\"doneAt\":null,\"originalDate\":\"2026-04-13\",\"rolledFrom\":null}]}' http://localhost:4242/data)",
       "Bash(curl -s -X POST -H \"Content-Type: application/json\" -d '{\"items\":[]}' http://localhost:4242/data)",
-      "Bash(open http://localhost:4242)"
+      "Bash(open http://localhost:4242)",
+      "Bash(wc:*)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }

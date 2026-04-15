@@ -3,8 +3,8 @@ name: scrum-master
 description: >
   Personal scrum master and sprint board — a live local web app that manages your to-do items day by day.
   Use this skill whenever the user wants to open their sprint board, manage their tasks, view their daily schedule, track what they've completed, or act as a personal scrum master / task manager.
-  Triggers on: "open scrum board", "show my tasks", "daily standup", "what's on my plate", "manage my sprint", "task board", "to-do board", "plan my day", "what did I complete", "scrum master", "sprint board", "daily tasks", "end scrum", "close the board", "stop the board", "kill scrum", "shut down scrum".
-  Always use this skill when the user wants to view, manage, or stop their personal task board — even casual phrases like "end", "close it", "stop scrum", or "kill the board". This skill handles ALL task and sprint management — don't try to answer inline, launch or stop the board using the instructions below.
+  Triggers on: "open scrum board", "show my tasks", "daily standup", "what's on my plate", "manage my sprint", "task board", "to-do board", "plan my day", "what did I complete", "scrum master", "sprint board", "daily tasks", "end scrum", "close the board", "stop the board", "kill scrum", "shut down scrum", "reprioritize", "reorder my tasks", "prioritize my board", "reorganize tasks".
+  Always use this skill when the user wants to view, manage, stop, or reprioritize their personal task board — even casual phrases like "end", "close it", "stop scrum", "reorder", or "reprioritize". This skill handles ALL task and sprint management — don't try to answer inline, use the instructions below.
 ---
 
 # Scrum Master — Personal Sprint Board
@@ -105,6 +105,55 @@ The JSON at `~/.scrum-master/data.json`:
   ]
 }
 ```
+
+## Reprioritizing the To Do list
+
+If the user asks to reprioritize, reorder, or reorganize their tasks — they will tell you the criteria (e.g. "the client meeting is this afternoon, push that to the top" or "focus on quick wins first").
+
+### Step 1: Read the current data
+
+```bash
+cat ~/.scrum-master/data.json
+```
+
+### Step 2: Identify today's To Do items
+
+Filter items where `status === "todo"` and `date === today's date`. These are the only items you will reorder. Do not touch In Progress or Completed items, and do not touch items on other days.
+
+### Step 3: Reorder based on the user's criteria
+
+Apply the user's stated reasoning to sort the To Do items. Think carefully — act like a scrum master who understands both the user's priorities and the nature of each task. The order in the JSON array is the display order in the board (index 0 = top).
+
+### Step 4: Write back the updated data
+
+Reconstruct the full `items` array with the To Do items for today in their new order, all other items unchanged. Write it back:
+
+```bash
+cat > ~/.scrum-master/data.json << 'EOF'
+{ ...updated JSON... }
+EOF
+```
+
+### Step 5: Confirm with reasoning
+
+Tell the user the new order with a brief explanation for each item's position. Format it like:
+
+```
+Reprioritized your To Do for today:
+
+1. [Title] — reason
+2. [Title] — reason
+3. [Title] — reason
+
+Refresh the board to see the updated order.
+```
+
+The user will need to refresh their browser tab (`Cmd+R`) to see the changes since the board reads from the server on load.
+
+### Important notes
+- Never reorder In Progress or Completed items
+- Never change any field other than the position in the array
+- If the server isn't running (board is closed), you can still read/write the JSON directly — the file always exists at `~/.scrum-master/data.json`
 
 ## Stopping the server
 

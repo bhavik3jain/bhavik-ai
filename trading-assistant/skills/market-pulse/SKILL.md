@@ -5,80 +5,231 @@ description: Daily US market overview and macro snapshot. Use this skill when th
 
 # Market Pulse
 
-Deliver a fast, actionable daily market snapshot. The goal is to give the user everything they need to understand the current market environment in 2-3 minutes of reading.
+Deliver a fast, actionable daily market snapshot. All data must be live — no estimates or stale figures.
 
-## Step 1: Fetch Live Data
+This skill supports two modes:
+- **Standard** (default): Single-pass market overview
+- **`--deep-analysis`**: Three parallel sub-agents each assess the market independently; their findings are synthesized into a consensus bias with confidence scoring
 
-Search and fetch the following before writing anything:
+---
 
-**Indices** (search for current prices/% change):
-- SPY / S&P 500
-- QQQ / Nasdaq 100
-- IWM / Russell 2000
-- DIA / Dow Jones
+## `--deep-analysis` Mode
 
-**Market Internals**:
-- VIX (fear index) — is it above/below 20? Above 25 is elevated fear
-- Put/Call ratio
-- 10-year Treasury yield (^TNX)
+When the user includes `--deep-analysis`, run three parallel sub-agents instead of the standard flow.
 
-**Sectors** — search for today's top/bottom performing S&P sectors:
-- XLK (Tech), XLF (Financials), XLE (Energy), XLV (Healthcare)
-- XLI (Industrials), XLC (Comms), XLY (Consumer Disc), XLP (Consumer Staples)
+### Overview
 
-**Key News** — web search for:
-- "stock market news today [current date]"
-- Any Fed speakers or FOMC events this week
-- Major earnings reports today/this week
+Each agent looks at the market through a different lens. The synthesis step combines their assessments into a consensus bias score, highlighting where all three agree (high conviction) vs. where they diverge (mixed signals).
 
-## Step 2: Write the Market Pulse Report
+```
+User: /market-pulse --deep-analysis
+           │
+           ├── Agent 1: Price & Internals (yfinance — indices, breadth, momentum)
+           ├── Agent 2: Sentiment & Flow (Unusual Whales — put/call, dark pool, options flow)
+           └── Agent 3: Macro & Volatility (CBOE / VIX / rates / sector rotation)
+           │
+           ▼
+     Consensus Bias Scoring
+     ┌──────────────────────────────────────┐
+     │ Agent 1 bias: Bullish / Bearish / Neutral │
+     │ Agent 2 bias: Bullish / Bearish / Neutral │
+     │ Agent 3 bias: Bullish / Bearish / Neutral │
+     └──────────────────────────────────────┘
+           │
+     3/3 Bullish  → 🟢 Strong Bullish — high conviction risk-on
+     2/3 Bullish  → 🟡 Lean Bullish — confirm before sizing up
+     Split        → ⚪ Mixed — choppy, reduce size, wait for clarity
+     2/3 Bearish  → 🟡 Lean Bearish — defensive posture
+     3/3 Bearish  → 🔴 Strong Bearish — high conviction risk-off
+```
 
-Use this exact structure:
+### Agent 1: Price & Internals (yfinance)
+
+This agent assesses raw market price action and breadth.
+
+**Data to fetch:**
+```
+https://query1.finance.yahoo.com/v8/finance/chart/^GSPC?interval=1d&range=5d
+https://query1.finance.yahoo.com/v8/finance/chart/^NDX?interval=1d&range=5d
+https://query1.finance.yahoo.com/v8/finance/chart/^RUT?interval=1d&range=5d
+https://query1.finance.yahoo.com/v8/finance/chart/^DJI?interval=1d&range=5d
+https://query1.finance.yahoo.com/v8/finance/chart/^TNX?interval=1d&range=5d
+```
+
+Also fetch all 11 sector ETFs (XLK, XLF, XLE, XLV, XLI, XLC, XLY, XLP, XLB, XLRE, XLU).
+
+**Bullish signals:** SPY above 50-day MA, Nasdaq leading (growth risk-on), Russell 2000 outperforming (small cap participation = broad rally), >7 of 11 sectors positive, 10Y yield stable or falling.
+
+**Bearish signals:** SPY below 50-day MA, Russell 2000 underperforming, <4 of 11 sectors positive, 10Y yield rising sharply (>5 bps/day), Nasdaq lagging defensives.
+
+**Output:** Bullish / Bearish / Neutral with specific data points from yfinance.
+
+---
+
+### Agent 2: Sentiment & Flow (Unusual Whales / CBOE)
+
+This agent assesses where smart money and retail sentiment are positioned.
+
+**Data to fetch:**
+```
+https://query1.finance.yahoo.com/v8/finance/chart/^VIX9D?interval=1d&range=5d
+https://query1.finance.yahoo.com/v8/finance/chart/^VIX3M?interval=1d&range=5d
+```
+
+Also search:
+- `"CBOE equity put call ratio today" [current date]`
+- `"options flow today market direction" [current date]`
+- `"dark pool sentiment today" [current date]`
+- `"market breadth advancing declining" [current date]`
+
+**Bullish signals:** Put/call ratio > 1.1 (contrarian — fear = buy), VIX9D falling vs VIX3M (near-term fear declining), net call flow positive across major indices, dark pool predominantly buy-side, advancing stocks > declining by 2:1+.
+
+**Bearish signals:** Put/call ratio < 0.7 (complacency = sell signal), VIX9D spiking above VIX (near-term fear), heavy put sweeps on SPY/QQQ, dark pool sell-side dominant, declining stocks > advancing.
+
+**Output:** Bullish / Bearish / Neutral with specific put/call ratio, VIX term structure data, and flow observations.
+
+---
+
+### Agent 3: Macro & Volatility (CBOE / VIX / Rates / Geopolitics)
+
+This agent assesses the macro environment and whether it supports risk-taking.
+
+**Data to fetch:**
+```
+https://query1.finance.yahoo.com/v8/finance/chart/^VIX?interval=1d&range=5d
+https://query1.finance.yahoo.com/v8/finance/chart/^TNX?interval=1d&range=5d
+```
+
+Also search:
+- `"Fed speakers today" OR "FOMC" [current date]`
+- `"CPI inflation data" OR "jobs report" [current date]`
+- `"geopolitical risk" "market impact" [current date]`
+- `"earnings season outlook" [current date]`
+
+**Bullish signals:** VIX < 20 and falling, no major macro binary events this week, earnings season showing positive beats, geopolitical risks de-escalating, Fed language dovish or neutral.
+
+**Bearish signals:** VIX > 25 or rising, major macro event this week (CPI, FOMC, jobs), earnings misses accumulating, geopolitical escalation, Fed hawkish surprise.
+
+**Output:** Bullish / Bearish / Neutral with specific macro data points and upcoming risk events.
+
+---
+
+### Consensus Synthesis & Output
+
+After all three agents complete:
+
+**Consensus Bias Table:**
+| Agent | Lens | Bias | Key Signal |
+|-------|------|------|-----------|
+| Agent 1 — Price/Internals | yfinance | [Bullish/Bearish/Neutral] | [Top data point] |
+| Agent 2 — Sentiment/Flow | Unusual Whales/CBOE | [Bullish/Bearish/Neutral] | [Top data point] |
+| Agent 3 — Macro/Volatility | VIX/Rates | [Bullish/Bearish/Neutral] | [Top data point] |
+| **Consensus** | | **[Bias]** | **[Score badge]** |
+
+**Score → Badge mapping:**
+- 3/3 Bullish → 🟢 Strong Bullish
+- 2/3 Bullish → 🟡 Lean Bullish
+- 1/3 Bullish, 1/3 Bearish, 1/3 Neutral → ⚪ Mixed
+- 2/3 Bearish → 🟡 Lean Bearish
+- 3/3 Bearish → 🔴 Strong Bearish
+
+**Where agents diverge:** Explicitly call out any split between agents and what it means — e.g., "Price action is bullish (Agent 1) but sentiment is bearish (Agent 2), suggesting a potential distribution phase — reduce size and wait for confirmation."
+
+**Actionable implications by badge:**
+- 🟢 Strong Bullish → Full-size momentum longs, buy breakouts, sell puts
+- 🟡 Lean Bullish → 50–75% size, favor quality setups, use defined risk (spreads)
+- ⚪ Mixed → 25–50% size max, iron condors/range plays, wait for clearer signal
+- 🟡 Lean Bearish → Reduce longs, add hedges, buy dips selectively only on extreme oversold
+- 🔴 Strong Bearish → Short/put bias, raise cash, sell calls on bounces
+
+---
+
+## Standard Mode (Default — No `--deep-analysis` Flag)
+
+### Step 1: Fetch Live Data (Run ALL in Parallel)
+
+#### A. yfinance — Live Index Quotes
+
+```
+https://query1.finance.yahoo.com/v8/finance/chart/^GSPC?interval=1d&range=5d
+https://query1.finance.yahoo.com/v8/finance/chart/^NDX?interval=1d&range=5d
+https://query1.finance.yahoo.com/v8/finance/chart/^RUT?interval=1d&range=5d
+https://query1.finance.yahoo.com/v8/finance/chart/^DJI?interval=1d&range=5d
+https://query1.finance.yahoo.com/v8/finance/chart/^VIX?interval=1d&range=5d
+https://query1.finance.yahoo.com/v8/finance/chart/^TNX?interval=1d&range=5d
+```
+
+Fetch all 11 sector ETFs: XLK, XLF, XLE, XLV, XLI, XLC, XLY, XLP, XLB, XLRE, XLU.
+
+**Extract:** `regularMarketPrice`, `regularMarketChangePercent`, intraday range, VIX level and direction.
+
+#### B. Unusual Whales / CBOE — Sentiment Data
+
+Search: `"put call ratio today" [current date]`, `"market breadth today" [current date]`, `"CBOE equity put call ratio" current`
+
+Fetch VIX term structure:
+```
+https://query1.finance.yahoo.com/v8/finance/chart/^VIX9D?interval=1d&range=5d
+https://query1.finance.yahoo.com/v8/finance/chart/^VIX3M?interval=1d&range=5d
+```
+
+#### C. News & Catalysts
+
+Search: `"stock market news today" [current date]`, `"Fed speakers today" [current date]`, `"earnings today" [current date]`, `"economic data today" [current date]`
+
+### Step 2: Write the Market Pulse Report
 
 ---
 
 ## Market Pulse — [Date]
 
-### Indices
+### Indices (Live via yfinance)
 | Index | Price | Change | % Change |
 |-------|-------|--------|----------|
-| S&P 500 (SPY) | ... | ... | ...% |
-| Nasdaq (QQQ) | ... | ... | ...% |
-| Russell 2000 (IWM) | ... | ... | ...% |
-| Dow (DIA) | ... | ... | ...% |
+| S&P 500 (^GSPC) | $[X,XXX] | [+/-X.XX] | [+/-X.XX]% |
+| Nasdaq 100 (^NDX) | $[XX,XXX] | [+/-X.XX] | [+/-X.XX]% |
+| Russell 2000 (^RUT) | $[X,XXX] | [+/-X.XX] | [+/-X.XX]% |
+| Dow Jones (^DJI) | $[XX,XXX] | [+/-X.XX] | [+/-X.XX]% |
 
-### Market Internals
-- **VIX**: [value] — [Low/Moderate/Elevated/Extreme] fear ([interpretation])
-- **10Y Treasury**: [yield]% — [Rising/Falling/Stable] ([impact on growth stocks])
-- **Market Trend**: [Bullish/Bearish/Neutral/Choppy] based on internals
+### Market Internals (Live)
+- **VIX**: [XX.X] ([+/-X]% today) — [Low / Normal / Elevated / High Fear / Extreme]
+- **VIX9D vs VIX**: [XX.X] vs [XX.X] — [near-term fear higher/lower than 30-day avg]
+- **10Y Treasury**: [X.XX]% ([+/-X bps]) — [Rising = growth headwind / Falling = tailwind]
+- **Put/Call Ratio**: [X.XX] — [fearful / neutral / complacent]
+- **Market Trend**: [Bullish / Bearish / Neutral / Choppy]
 
-### Sector Snapshot
-**Leading** (buy side): [top 2-3 sectors with % gains]
-**Lagging** (avoid/short side): [bottom 2-3 sectors with % losses]
+### Sector Snapshot (Live via yfinance)
+**Leading:** [Sector (ETF) +X.X%], [Sector (ETF) +X.X%], [Sector (ETF) +X.X%]
+**Lagging:** [Sector (ETF) -X.X%], [Sector (ETF) -X.X%], [Sector (ETF) -X.X%]
 
 ### Key Catalysts Today
-- [Bullet 1: Most important news item with market impact]
-- [Bullet 2: Second most important]
-- [Bullet 3: Earnings/economic data]
+- [Most important news item and market impact]
+- [Second most important — earnings, economic data, geopolitical]
+- [Any Fed speakers or macro data]
 
 ### Fed & Macro Watch
-- [Fed speakers today, FOMC dates, rate expectations]
-- [Any macro data: CPI, jobs, GDP releases this week]
+- [Fed speakers today / this week + rate expectations]
+- [Macro data releases this week: CPI, jobs, GDP, PMI]
 
 ### Market Bias
-**Overall**: [Bullish / Bearish / Neutral] — [1-2 sentence thesis explaining why]
-
-**Best setups today**: [Long / Short / Mixed] — [which sectors/themes are working]
+**Overall**: [Bullish / Bearish / Neutral] — [1–2 sentence thesis]
+**Best setups today**: [Long / Short / Mixed] — [Which sectors/themes are working]
 
 ---
 
-## Step 3: Flag Actionable Themes
-
-After the report, add a "Today's Themes" section — 2-3 bullet points on what's driving price action and what that means for trade ideas:
+### Step 3: Flag Actionable Themes
 
 **Today's Themes:**
-- [Theme 1]: e.g., "Tech selling off on rate fears → consider puts on QQQ or defensive rotation into XLP"
-- [Theme 2]: e.g., "Energy ripping on oil supply cut → momentum longs in XOM, CVX, OXY"
-- [Theme 3]: e.g., "VIX spike → elevated premiums make selling options attractive"
+- [Theme 1 with specific trade direction implication]
+- [Theme 2 with specific trade direction implication]
+- [Theme 3 with specific trade direction implication]
 
-These themes should directly set up ideas for `/options-scanner` or `/stock-ideas` if the user wants to go deeper.
+These set up ideas for `/options-scanner` or `/stock-ideas`.
+
+---
+
+## Data Quality Rules (Both Modes)
+
+- **All index/sector prices from live yfinance fetches** — not search results or prior knowledge
+- **Flag market hours**: Note if data is pre-market, intraday, or after-hours
+- **If a yfinance fetch fails**: Note it explicitly and fall back to web search with source attribution
