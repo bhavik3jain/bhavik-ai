@@ -1,6 +1,6 @@
 {
   "name": "scrum-master",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Personal scrum master and sprint board — a live local web app for managing daily tasks with rolling day view, completion tracking, and auto-rollover of incomplete items",
   "author": {
     "name": "bhavik-ai"
