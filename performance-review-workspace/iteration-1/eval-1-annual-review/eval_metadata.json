@@ -1,0 +1,16 @@
+{
+  "eval_id": 1,
+  "eval_name": "annual-review-full",
+  "prompt": "Generate my performance review for the last 12 months. I'm an engineer and I want to see a full breakdown of what I shipped across all my repos and orgs.",
+  "assertions": [
+    "Skill checks gh auth status before proceeding",
+    "Skill runs generate_report.py to gather GitHub data",
+    "Output markdown file named performance-review-YYYY.md exists",
+    "Markdown contains an Executive Summary section",
+    "Markdown contains a Major Projects section grouped by repo/theme",
+    "Markdown contains a Technical Contributions section",
+    "Markdown contains Self-Assessment Prompts with open-ended questions",
+    "HTML file named performance-review-YYYY.html exists and is non-empty",
+    "HTML has a hero header with user name and period"
+  ]
+}

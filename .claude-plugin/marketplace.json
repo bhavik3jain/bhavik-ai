@@ -13,6 +13,11 @@
       "name": "scrum-master",
       "source": "./scrum-master",
       "description": "Personal scrum master and sprint board — a live local web app for managing daily tasks with rolling day view, completion tracking, and auto-rollover of incomplete items."
+    },
+    {
+      "name": "performance-review",
+      "source": "./performance-review",
+      "description": "Generate a comprehensive, narrative-driven performance review from your GitHub contributions — PRs, commits, and code reviews analyzed across all repos and orgs, synthesized into a polished markdown + HTML report."
     }
   ]
 }

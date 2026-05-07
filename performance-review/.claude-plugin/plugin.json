@@ -1,0 +1,8 @@
+{
+  "name": "performance-review",
+  "version": "1.0.0",
+  "description": "Generate a comprehensive, narrative-driven performance review from your GitHub contributions — PRs, commits, and code reviews analyzed across all repos and orgs, synthesized into a polished markdown + HTML report.",
+  "author": {
+    "name": "Bhavik Jain"
+  }
+}

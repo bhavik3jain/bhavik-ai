@@ -1,0 +1,20 @@
+{
+  "repo": "bhavikjain/bhavik-ai",
+  "theme": "Built and shipped a growing suite of AI-powered personal productivity and engineering workflow tools, including a skill architecture refactor that made all tools 4-5x faster to run.",
+  "highlights": [
+    "Built a Claude-powered PR description generator that reads git diffs and drafts structured PR descriptions in configurable tone and format, saving ~15 minutes per PR",
+    "Shipped a performance review skill that mines GitHub contributions via the gh CLI, dispatches per-repo subagents in parallel, and synthesizes a narrative-driven review with business-impact framing",
+    "Built a meal planner skill with pantry-aware recipe generation that outputs a weekly meal plan with grocery list and optional Notion integration",
+    "Built a scrum board summarizer that pulls from Linear, groups by assignee/status, and generates standup-ready output in 10 seconds instead of 5 minutes of manual prep",
+    "Shipped a trading assistant options scanner combining Polygon and Yahoo Finance APIs with technical filters (RSI, IV rank, volume) to produce structured trade setups",
+    "Refactored the skill runner to support parallel subagent dispatch, making multi-agent skills like performance-review 4-5x faster",
+    "Built an eval harness for systematic skill quality measurement with configurable rubric dimensions; integrated with CI to catch regressions before merge",
+    "Shipped a market pulse skill that aggregates pre-market data, sector performance, VIX, and Fed calendar into a 60-second daily briefing",
+    "Added response caching for repeated Claude invocations and --format flag for markdown/JSON output across multiple skills"
+  ],
+  "category": "tooling",
+  "scale": "moderate",
+  "impact_statement": "bhavik-ai is a living toolbox of AI-augmented workflows that compound productivity across engineering, personal finance, and daily routines. The eval harness and parallel skill architecture in particular represent foundational infrastructure improvements that make the entire system more reliable and faster to iterate on.",
+  "technologies": ["Python", "Claude API", "Click", "Anthropic SDK", "Polygon API", "Yahoo Finance API", "Linear API", "Notion API", "asyncio"],
+  "collaboration_notes": "Reviewed 3 PRs including blocking a bounce-scanner implementation for incorrect volatility calculation logic."
+}

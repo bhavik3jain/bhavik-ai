@@ -1,0 +1,20 @@
+{
+  "repo": "dataflow-labs/data-catalog",
+  "theme": "Built the data catalog from a lightweight internal tool into a production metadata platform with lineage tracking, discovery, quality scoring, and dataset lifecycle management.",
+  "highlights": [
+    "Built a lineage graph API that consumes Kafka pipeline events and constructs a DAG of dataset dependencies, exposing it via REST and GraphQL — analysts can now trace any dataset to its source in a single query",
+    "Added full-text search for 4,200 datasets using Elasticsearch with a custom analyzer for technical naming conventions and faceted filtering by owner, tag, and freshness",
+    "Implemented automated dataset quality scoring with configurable checks (null rate, uniqueness, schema conformance, freshness), identifying 47 datasets with quality scores below 70 that were actively powering production dashboards",
+    "Built an impact analysis endpoint that traverses the lineage graph to show all downstream consumers (pipelines, dashboards, ML models) of a dataset change — prevented 3 breaking schema changes from reaching production in the first month",
+    "Migrated the metadata store from JSON files to PostgreSQL with SQLAlchemy and Alembic, using zero-downtime dual-write migration — p99 API latency dropped from 800ms to 45ms",
+    "Added ownership and stewardship tracking backed by SSO directory with weekly freshness digests; 80% of the catalog had assigned ownership within 2 weeks of shipping",
+    "Built a dataset deprecation workflow that automatically notifies all lineage-graph consumers via Slack with migration guidance and tracks acknowledgement per consumer",
+    "Added Redis-backed rate limiting and response caching — cache hit rate reached 78% within 24 hours, reducing database load by 60% after an API spike incident",
+    "Reviewed 7 PRs including blocking the RBAC implementation for access control issues and flagging auth concerns in the OAuth2 migration"
+  ],
+  "category": "feature",
+  "scale": "major",
+  "impact_statement": "The data catalog went from a static index of dataset names to a living metadata platform that gives every engineer, analyst, and ML practitioner visibility into where data comes from, who owns it, whether it's healthy, and what breaks if it changes. The lineage graph and impact analysis features directly prevent breaking changes from reaching production dashboards and models.",
+  "technologies": ["Python", "PostgreSQL", "SQLAlchemy", "Alembic", "Elasticsearch", "Kafka", "GraphQL", "Redis", "pg_trgm", "FastAPI"],
+  "collaboration_notes": "Reviewed 7 PRs including the dbt model integration and Airflow DAG lineage connector contributed by the analytics engineering team. The impact analysis feature was designed in response to requests from the ML platform team who had suffered two production incidents from unexpected schema changes."
+}

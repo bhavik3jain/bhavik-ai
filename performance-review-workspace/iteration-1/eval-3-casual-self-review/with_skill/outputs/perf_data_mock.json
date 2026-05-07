@@ -1,0 +1,423 @@
+{
+  "user": {
+    "login": "bhavikjain",
+    "name": "Bhavik Jain",
+    "email": "bhavik3jain@icloud.com",
+    "avatar_url": "https://github.com/bhavikjain.png",
+    "html_url": "https://github.com/bhavikjain"
+  },
+  "period": {
+    "since": "2025-05-06T00:00:00Z",
+    "until": "2026-05-06T00:00:00Z",
+    "days": 365,
+    "since_display": "May 06, 2025",
+    "until_display": "May 06, 2026"
+  },
+  "summary": {
+    "total_prs": 41,
+    "total_commits": 187,
+    "total_repos": 3,
+    "total_reviews_given": 28,
+    "orgs": ["dataflow-labs", "bhavikjain"]
+  },
+  "repos": [
+    {
+      "name": "dataflow-labs/pipeline-core",
+      "description": "Core data pipeline orchestration framework used by all internal services",
+      "primary_language": "Python",
+      "pr_count": 19,
+      "commit_count": 89,
+      "prs": [
+        {
+          "title": "Migrate orchestrator from Celery to Temporal for durable execution",
+          "number": 214,
+          "merged_at": "2025-06-18T14:22:00Z",
+          "additions": 3420,
+          "deletions": 1870,
+          "changed_files": 47,
+          "body": "Celery has been causing silent task failures in the ETL layer — workers die mid-execution and there is no retry or state recovery. This PR migrates the orchestration layer to Temporal, giving us durable workflows with built-in retry semantics, activity timeouts, and full execution history. All 12 existing pipeline DAGs have been ported. Includes integration tests that simulate worker crashes and validate that workflows resume correctly.",
+          "labels": ["infrastructure", "breaking-change"],
+          "url": "https://github.com/dataflow-labs/pipeline-core/pull/214"
+        },
+        {
+          "title": "Add plugin system for custom pipeline stages",
+          "number": 228,
+          "merged_at": "2025-07-09T10:05:00Z",
+          "additions": 1240,
+          "deletions": 180,
+          "changed_files": 22,
+          "body": "Teams outside the data platform have been forking pipeline-core to add custom stages, which makes upgrades painful. This PR introduces a formal plugin interface — a StagePlugin ABC with lifecycle hooks (validate, execute, teardown). Plugins are discovered via entry_points so they can live in separate packages. Ships with 3 built-in plugins migrated from ad-hoc integrations.",
+          "labels": ["feature", "api-change"],
+          "url": "https://github.com/dataflow-labs/pipeline-core/pull/228"
+        },
+        {
+          "title": "Rewrite schema validation layer using Pydantic v2",
+          "number": 239,
+          "merged_at": "2025-08-15T16:40:00Z",
+          "additions": 980,
+          "deletions": 1340,
+          "changed_files": 31,
+          "body": "Schema validation was using hand-rolled jsonschema checks that were slow (~40ms per record) and hard to maintain. Migrated to Pydantic v2 models with model_validator chaining. Validation speed improved ~6x in benchmarks (40ms → 6ms per record). Also caught 3 previously silent schema mismatches that were being swallowed.",
+          "labels": ["refactor", "performance"],
+          "url": "https://github.com/dataflow-labs/pipeline-core/pull/239"
+        },
+        {
+          "title": "Add distributed tracing with OpenTelemetry across pipeline stages",
+          "number": 251,
+          "merged_at": "2025-09-03T09:20:00Z",
+          "additions": 820,
+          "deletions": 95,
+          "changed_files": 18,
+          "body": "Previously impossible to trace why a specific record took >10s end-to-end. This adds OTEL span instrumentation at each stage boundary, emitting traces to our Jaeger instance. Now every pipeline run produces a full trace with stage latencies, record counts, and error context. First production trace identified a bottleneck in the S3 read step that was adding 3s to every run.",
+          "labels": ["observability"],
+          "url": "https://github.com/dataflow-labs/pipeline-core/pull/251"
+        },
+        {
+          "title": "Fix race condition in concurrent stage executor causing data duplication",
+          "number": 262,
+          "merged_at": "2025-09-28T11:30:00Z",
+          "additions": 210,
+          "deletions": 45,
+          "changed_files": 7,
+          "body": "Production incident: concurrent fan-out stages were writing duplicate output when two workers acquired locks at the same millisecond. Fixed by adding a compare-and-swap check on the stage output key before write. Added property-based tests using Hypothesis to cover concurrent execution paths.",
+          "labels": ["bug", "incident"],
+          "url": "https://github.com/dataflow-labs/pipeline-core/pull/262"
+        },
+        {
+          "title": "Implement checkpointing for long-running pipeline runs",
+          "number": 278,
+          "merged_at": "2025-10-20T13:00:00Z",
+          "additions": 1560,
+          "deletions": 120,
+          "changed_files": 24,
+          "body": "Pipelines processing >50GB datasets have no recovery mechanism if they fail at hour 3. This adds a checkpointing system that snapshots progress after each stage and resumes from the last checkpoint on retry. Checkpoints are stored in S3 with a configurable TTL. Tested on our 80GB daily ingest job — failure recovery went from reprocessing from scratch to resuming in under 2 minutes.",
+          "labels": ["feature", "reliability"],
+          "url": "https://github.com/dataflow-labs/pipeline-core/pull/278"
+        },
+        {
+          "title": "Build pipeline-cli: developer tool for local pipeline testing",
+          "number": 291,
+          "merged_at": "2025-11-14T15:45:00Z",
+          "additions": 1880,
+          "deletions": 0,
+          "changed_files": 29,
+          "body": "Developers had no way to run pipelines locally without spinning up the full stack. Built pipeline-cli, a Click-based tool that can run any registered pipeline against local or sample data, with live progress output and diff-mode to show what records changed vs expected. Adoption by 8 engineers in first week.",
+          "labels": ["tooling", "developer-experience"],
+          "url": "https://github.com/dataflow-labs/pipeline-core/pull/291"
+        },
+        {
+          "title": "Add SLA tracking and alerting for pipeline latency",
+          "number": 305,
+          "merged_at": "2025-12-08T12:10:00Z",
+          "additions": 730,
+          "deletions": 85,
+          "changed_files": 14,
+          "body": "No automated alerting when pipelines breach SLA windows. Added configurable SLA definitions per pipeline (e.g., daily ingest must complete by 6am) with Slack and PagerDuty integration. Fires alerts at 80% and 100% of SLA window. Caught 2 latency regressions in the first week of deployment.",
+          "labels": ["feature", "observability"],
+          "url": "https://github.com/dataflow-labs/pipeline-core/pull/305"
+        },
+        {
+          "title": "Add async execution mode for I/O-bound pipeline stages",
+          "number": 318,
+          "merged_at": "2026-01-22T10:30:00Z",
+          "additions": 1100,
+          "deletions": 340,
+          "changed_files": 19,
+          "body": "HTTP-fetching stages were blocking the event loop due to requests library usage. Refactored the I/O-bound stage interface to support asyncio with httpx. Stages that primarily fetch external data now run concurrently, reducing overall pipeline duration by 35% for our API-aggregation jobs.",
+          "labels": ["performance", "refactor"],
+          "url": "https://github.com/dataflow-labs/pipeline-core/pull/318"
+        },
+        {
+          "title": "Add dead letter queue for failed records with replay support",
+          "number": 329,
+          "merged_at": "2026-02-11T14:00:00Z",
+          "additions": 890,
+          "deletions": 60,
+          "changed_files": 16,
+          "body": "Failed records were silently dropped with only a log line. Implemented a DLQ backed by SQS — failed records are routed there with full context (stage, error, input payload). Added a replay command that re-ingests DLQ records after the underlying issue is fixed. Used to recover 14,000 records lost in a downstream API outage.",
+          "labels": ["reliability", "feature"],
+          "url": "https://github.com/dataflow-labs/pipeline-core/pull/329"
+        },
+        {
+          "title": "Migrate test suite from unittest to pytest with fixtures and parametrize",
+          "number": 341,
+          "merged_at": "2026-03-05T11:20:00Z",
+          "additions": 2100,
+          "deletions": 1950,
+          "changed_files": 58,
+          "body": "The test suite had grown to 340 tests but coverage was only 54% and tests were brittle due to global state. Migrated to pytest with shared fixtures for pipeline context, mock stages, and test data generation. Added 80 new parametrized tests covering edge cases. Coverage went from 54% to 78%.",
+          "labels": ["testing", "quality"],
+          "url": "https://github.com/dataflow-labs/pipeline-core/pull/341"
+        },
+        {
+          "title": "Add pipeline versioning and schema evolution support",
+          "number": 354,
+          "merged_at": "2026-03-29T09:45:00Z",
+          "additions": 1320,
+          "deletions": 290,
+          "changed_files": 27,
+          "body": "Breaking pipeline schema changes required full stop-the-world migrations. Added a versioning layer that lets pipeline definitions declare schema migrations between versions. New records use the current schema; historical records are lazily migrated on read. Eliminates the need for coordinated deploys when evolving pipeline schemas.",
+          "labels": ["feature", "api-change"],
+          "url": "https://github.com/dataflow-labs/pipeline-core/pull/354"
+        },
+        {
+          "title": "Implement cost attribution tracking per pipeline and team",
+          "number": 367,
+          "merged_at": "2026-04-17T16:00:00Z",
+          "additions": 640,
+          "deletions": 40,
+          "changed_files": 11,
+          "body": "Cloud costs for data processing were opaque — no way to attribute S3, compute, or API costs to specific pipelines or teams. Added a tagging layer that wraps all AWS resource usage with pipeline and team labels, aggregating into a daily cost report. First report revealed that one misconfigured pipeline was consuming 23% of monthly compute budget.",
+          "labels": ["observability", "cost"],
+          "url": "https://github.com/dataflow-labs/pipeline-core/pull/367"
+        }
+      ],
+      "commits": [
+        {"sha": "a1b2c3d4", "message": "chore: update Temporal SDK to 1.8.0 and fix workflow history pruning", "date": "2025-06-25T10:00:00Z", "additions": 45, "deletions": 23},
+        {"sha": "e5f6a7b8", "message": "feat: add retry backoff configuration per activity type", "date": "2025-07-01T14:30:00Z", "additions": 120, "deletions": 18},
+        {"sha": "c9d0e1f2", "message": "fix: handle None return from plugin teardown hook", "date": "2025-07-15T09:45:00Z", "additions": 12, "deletions": 8},
+        {"sha": "a3b4c5d6", "message": "perf: cache Pydantic model registry on first access", "date": "2025-08-20T16:00:00Z", "additions": 34, "deletions": 6},
+        {"sha": "e7f8a9b0", "message": "docs: add architecture decision record for Temporal migration", "date": "2025-06-30T11:00:00Z", "additions": 280, "deletions": 0},
+        {"sha": "c1d2e3f4", "message": "test: add hypothesis tests for concurrent stage writes", "date": "2025-09-29T14:00:00Z", "additions": 180, "deletions": 0},
+        {"sha": "a5b6c7d8", "message": "fix: checkpoint TTL not applied when S3 credentials rotate", "date": "2025-11-02T10:30:00Z", "additions": 28, "deletions": 14},
+        {"sha": "e9f0a1b2", "message": "feat: add --dry-run flag to pipeline-cli", "date": "2025-11-20T15:00:00Z", "additions": 95, "deletions": 10},
+        {"sha": "c3d4e5f6", "message": "fix: SLA alert fires twice when PagerDuty and Slack both configured", "date": "2025-12-15T09:00:00Z", "additions": 22, "deletions": 18},
+        {"sha": "a7b8c9d0", "message": "perf: use httpx connection pooling to reduce latency in async stages", "date": "2026-01-28T13:00:00Z", "additions": 48, "deletions": 30}
+      ],
+      "reviews_given": [
+        {"repo": "dataflow-labs/pipeline-core", "pr_title": "Add Kafka source connector", "state": "APPROVED", "submitted_at": "2025-07-20T10:00:00Z"},
+        {"repo": "dataflow-labs/pipeline-core", "pr_title": "Refactor stage dependency resolution", "state": "CHANGES_REQUESTED", "submitted_at": "2025-08-05T14:00:00Z"},
+        {"repo": "dataflow-labs/pipeline-core", "pr_title": "Add GCS sink plugin", "state": "APPROVED", "submitted_at": "2025-09-10T11:00:00Z"},
+        {"repo": "dataflow-labs/pipeline-core", "pr_title": "Fix memory leak in long-running DAGs", "state": "APPROVED", "submitted_at": "2025-10-05T09:00:00Z"},
+        {"repo": "dataflow-labs/pipeline-core", "pr_title": "Add metric emission for stage throughput", "state": "APPROVED", "submitted_at": "2025-11-18T15:00:00Z"},
+        {"repo": "dataflow-labs/pipeline-core", "pr_title": "Upgrade to Python 3.12", "state": "CHANGES_REQUESTED", "submitted_at": "2026-01-10T10:00:00Z"},
+        {"repo": "dataflow-labs/pipeline-core", "pr_title": "Add pipeline cost estimation before run", "state": "APPROVED", "submitted_at": "2026-02-20T14:00:00Z"},
+        {"repo": "dataflow-labs/pipeline-core", "pr_title": "Improve CLI error messages", "state": "APPROVED", "submitted_at": "2026-03-12T11:00:00Z"}
+      ]
+    },
+    {
+      "name": "dataflow-labs/data-catalog",
+      "description": "Internal data catalog and lineage tracking service for the analytics platform",
+      "primary_language": "Python",
+      "pr_count": 14,
+      "commit_count": 68,
+      "prs": [
+        {
+          "title": "Build lineage graph API from pipeline execution events",
+          "number": 88,
+          "merged_at": "2025-07-22T13:00:00Z",
+          "additions": 2100,
+          "deletions": 340,
+          "changed_files": 38,
+          "body": "Data analysts had no way to understand where a dataset came from or which pipelines produced it. Built a lineage graph API that consumes pipeline execution events from Kafka, constructs a directed acyclic graph of dataset dependencies, and exposes it via REST and GraphQL endpoints. Analysts can now trace any dataset back to its source in one query.",
+          "labels": ["feature"],
+          "url": "https://github.com/dataflow-labs/data-catalog/pull/88"
+        },
+        {
+          "title": "Add full-text search for dataset discovery using Elasticsearch",
+          "number": 97,
+          "merged_at": "2025-08-28T11:00:00Z",
+          "additions": 1380,
+          "deletions": 210,
+          "changed_files": 24,
+          "body": "Finding datasets required knowing exact names. Integrated Elasticsearch with a custom analyzer for technical naming conventions (snake_case, camelCase, dotted paths). Indexed 4,200 existing datasets with descriptions, tags, and schema fields. Added a /search endpoint with faceted filtering by owner, tag, and freshness.",
+          "labels": ["feature", "search"],
+          "url": "https://github.com/dataflow-labs/data-catalog/pull/97"
+        },
+        {
+          "title": "Implement dataset quality scoring with automated checks",
+          "number": 108,
+          "merged_at": "2025-10-14T15:00:00Z",
+          "additions": 1740,
+          "deletions": 180,
+          "changed_files": 32,
+          "body": "Data quality was assessed manually and inconsistently. Built a quality scoring system that runs configurable checks (null rate, uniqueness, schema conformance, freshness) against every dataset on a schedule and produces a score from 0-100. Integrated score into the catalog UI and lineage graph. Identified 47 datasets with quality scores below 70 that were being used in production dashboards.",
+          "labels": ["feature", "data-quality"],
+          "url": "https://github.com/dataflow-labs/data-catalog/pull/108"
+        },
+        {
+          "title": "Add ownership and stewardship tracking to datasets",
+          "number": 119,
+          "merged_at": "2025-11-05T10:30:00Z",
+          "additions": 870,
+          "deletions": 120,
+          "changed_files": 16,
+          "body": "No clear ownership model for datasets — when something broke, unclear who to contact. Added owner, steward, and consumer fields backed by our SSO directory. Sends weekly freshness digest to owners and monthly staleness reports. 80% of the catalog has ownership assigned within 2 weeks of shipping.",
+          "labels": ["feature"],
+          "url": "https://github.com/dataflow-labs/data-catalog/pull/119"
+        },
+        {
+          "title": "Build impact analysis: show downstream consumers of a dataset change",
+          "number": 131,
+          "merged_at": "2025-12-18T14:00:00Z",
+          "additions": 1120,
+          "deletions": 90,
+          "changed_files": 19,
+          "body": "Before changing a dataset schema, engineers had no way to know which downstream jobs would break. Built an impact analysis endpoint that traverses the lineage graph and returns all downstream consumers (pipelines, dashboards, ML models) of a given dataset. Used to prevent 3 breaking schema changes from reaching production in first month.",
+          "labels": ["feature"],
+          "url": "https://github.com/dataflow-labs/data-catalog/pull/131"
+        },
+        {
+          "title": "Migrate catalog metadata store from JSON files to PostgreSQL",
+          "number": 143,
+          "merged_at": "2026-01-08T09:30:00Z",
+          "additions": 2340,
+          "deletions": 1890,
+          "changed_files": 44,
+          "body": "The JSON file store was reaching its limits at 4,200 datasets — search was O(n) and writes required file locks causing occasional corruption. Migrated to PostgreSQL with SQLAlchemy, Alembic migrations, and full-text search via pg_trgm. Zero-downtime migration: ran dual-write for one week, then cut over. p99 API latency dropped from 800ms to 45ms.",
+          "labels": ["infrastructure", "migration"],
+          "url": "https://github.com/dataflow-labs/data-catalog/pull/143"
+        },
+        {
+          "title": "Add dataset deprecation workflow with consumer notification",
+          "number": 156,
+          "merged_at": "2026-02-25T13:00:00Z",
+          "additions": 680,
+          "deletions": 45,
+          "changed_files": 12,
+          "body": "Deprecating datasets required manual emails and Slack messages with no tracking. Built a deprecation workflow: owners mark a dataset as deprecated with a sunset date and replacement. All consumers in the lineage graph are automatically notified via Slack with migration guidance. Tracks acknowledgement per consumer.",
+          "labels": ["feature"],
+          "url": "https://github.com/dataflow-labs/data-catalog/pull/156"
+        },
+        {
+          "title": "Add catalog API rate limiting and caching layer",
+          "number": 168,
+          "merged_at": "2026-04-02T11:00:00Z",
+          "additions": 560,
+          "deletions": 80,
+          "changed_files": 10,
+          "body": "A misbehaving script caused a catalog API spike to 2,000 req/s, degrading the service for all users. Added Redis-backed rate limiting per API key and a response cache for read-heavy lineage queries. Cache hit rate reached 78% within 24 hours, reducing database load by 60%.",
+          "labels": ["reliability", "performance"],
+          "url": "https://github.com/dataflow-labs/data-catalog/pull/168"
+        }
+      ],
+      "commits": [
+        {"sha": "b1c2d3e4", "message": "feat: add pagination to lineage graph traversal", "date": "2025-07-30T10:00:00Z", "additions": 85, "deletions": 20},
+        {"sha": "f5a6b7c8", "message": "fix: lineage graph cycles causing infinite traversal", "date": "2025-08-10T14:00:00Z", "additions": 45, "deletions": 12},
+        {"sha": "d9e0f1a2", "message": "feat: expose dataset schema diff in lineage view", "date": "2025-09-05T11:00:00Z", "additions": 130, "deletions": 25},
+        {"sha": "b3c4d5e6", "message": "perf: index Elasticsearch documents in bulk on startup", "date": "2025-09-15T15:00:00Z", "additions": 95, "deletions": 40},
+        {"sha": "f7a8b9c0", "message": "fix: quality score cache stale after dataset update", "date": "2025-10-20T09:30:00Z", "additions": 28, "deletions": 15},
+        {"sha": "d1e2f3a4", "message": "chore: add Alembic migration for ownership fields", "date": "2025-11-10T14:00:00Z", "additions": 60, "deletions": 0},
+        {"sha": "b5c6d7e8", "message": "feat: add deprecation reason field with free-text search", "date": "2026-03-01T10:00:00Z", "additions": 45, "deletions": 10}
+      ],
+      "reviews_given": [
+        {"repo": "dataflow-labs/data-catalog", "pr_title": "Add dbt model integration", "state": "APPROVED", "submitted_at": "2025-08-15T10:00:00Z"},
+        {"repo": "dataflow-labs/data-catalog", "pr_title": "Add Airflow DAG lineage connector", "state": "CHANGES_REQUESTED", "submitted_at": "2025-09-20T14:00:00Z"},
+        {"repo": "dataflow-labs/data-catalog", "pr_title": "Implement catalog UI search filters", "state": "APPROVED", "submitted_at": "2025-10-28T11:00:00Z"},
+        {"repo": "dataflow-labs/data-catalog", "pr_title": "Add dataset tag bulk editor", "state": "APPROVED", "submitted_at": "2025-12-02T09:00:00Z"},
+        {"repo": "dataflow-labs/data-catalog", "pr_title": "Add RBAC for catalog read/write", "state": "CHANGES_REQUESTED", "submitted_at": "2026-01-15T15:00:00Z"},
+        {"repo": "dataflow-labs/data-catalog", "pr_title": "Migrate catalog auth to OAuth2", "state": "APPROVED", "submitted_at": "2026-02-10T10:00:00Z"},
+        {"repo": "dataflow-labs/data-catalog", "pr_title": "Add cost tagging to catalog resources", "state": "APPROVED", "submitted_at": "2026-04-08T14:00:00Z"}
+      ]
+    },
+    {
+      "name": "bhavikjain/bhavik-ai",
+      "description": "Personal AI-powered tooling and automation scripts for engineering workflows",
+      "primary_language": "Python",
+      "pr_count": 8,
+      "commit_count": 30,
+      "prs": [
+        {
+          "title": "Build Claude-powered PR description generator",
+          "number": 12,
+          "merged_at": "2025-08-05T10:00:00Z",
+          "additions": 680,
+          "deletions": 0,
+          "changed_files": 8,
+          "body": "Tired of writing PR descriptions. Built a CLI that reads the git diff, asks Claude to draft a description using a structured prompt template, and opens a draft PR with it. Configurable tone (casual / formal) and audience (team / stakeholders). Saves ~15 minutes per PR.",
+          "labels": ["feature"],
+          "url": "https://github.com/bhavikjain/bhavik-ai/pull/12"
+        },
+        {
+          "title": "Add performance review skill using GitHub contributions",
+          "number": 19,
+          "merged_at": "2025-10-02T14:00:00Z",
+          "additions": 1240,
+          "deletions": 0,
+          "changed_files": 15,
+          "body": "Built a skill that reads GitHub contribution data via the gh CLI, analyzes PRs and commits per repo using Claude subagents, and synthesizes a narrative-driven performance review document with business-impact framing. Outputs polished markdown and HTML.",
+          "labels": ["feature", "ai"],
+          "url": "https://github.com/bhavikjain/bhavik-ai/pull/19"
+        },
+        {
+          "title": "Add meal planner skill with pantry-aware recipe generation",
+          "number": 24,
+          "merged_at": "2025-11-18T11:30:00Z",
+          "additions": 920,
+          "deletions": 0,
+          "changed_files": 12,
+          "body": "Uses Claude to generate weekly meal plans constrained by what's in the pantry. Reads a YAML pantry file, generates 7 days of meals with nutritional targets, and outputs a grocery list for missing ingredients. Optional Notion integration to push the plan to a database.",
+          "labels": ["feature"],
+          "url": "https://github.com/bhavikjain/bhavik-ai/pull/24"
+        },
+        {
+          "title": "Build scrum board summarizer for daily standups",
+          "number": 31,
+          "merged_at": "2026-01-14T09:00:00Z",
+          "additions": 580,
+          "deletions": 0,
+          "changed_files": 7,
+          "body": "Pulls tickets from Linear, groups by assignee and status, and generates a standup-ready summary. Flags blockers and PRs waiting for review. Reduces standup prep from 5 minutes to 10 seconds.",
+          "labels": ["tooling"],
+          "url": "https://github.com/bhavikjain/bhavik-ai/pull/31"
+        },
+        {
+          "title": "Add trading assistant with options scanner skill",
+          "number": 38,
+          "merged_at": "2026-02-28T15:00:00Z",
+          "additions": 1480,
+          "deletions": 0,
+          "changed_files": 18,
+          "body": "Built an options scanner that combines market data from multiple APIs (Polygon, Yahoo Finance), applies technical filters (RSI, IV rank, volume), and ranks trade ideas by expected value. Outputs structured trade setups with entry, target, stop, and IV context.",
+          "labels": ["feature"],
+          "url": "https://github.com/bhavikjain/bhavik-ai/pull/38"
+        },
+        {
+          "title": "Refactor skill architecture to support parallel subagent execution",
+          "number": 43,
+          "merged_at": "2026-03-20T13:00:00Z",
+          "additions": 890,
+          "deletions": 420,
+          "changed_files": 24,
+          "body": "Skills were executing serially, which was slow for tasks with multiple independent steps. Refactored the skill runner to support parallel subagent dispatch with result collection. Skills that spawn multiple agents (like performance-review with per-repo analysis) now run 4-5x faster.",
+          "labels": ["refactor", "performance"],
+          "url": "https://github.com/bhavikjain/bhavik-ai/pull/43"
+        },
+        {
+          "title": "Add eval harness for skill quality measurement",
+          "number": 49,
+          "merged_at": "2026-04-10T10:30:00Z",
+          "additions": 1120,
+          "deletions": 90,
+          "changed_files": 16,
+          "body": "No systematic way to measure whether skill changes improved or regressed output quality. Built an eval harness that runs a skill against a set of test cases and scores outputs on configurable rubric dimensions (accuracy, specificity, tone). Integrated with CI to catch regressions before merge.",
+          "labels": ["tooling", "quality"],
+          "url": "https://github.com/bhavikjain/bhavik-ai/pull/49"
+        },
+        {
+          "title": "Add market pulse skill for pre-market daily briefing",
+          "number": 55,
+          "merged_at": "2026-05-01T09:00:00Z",
+          "additions": 740,
+          "deletions": 0,
+          "changed_files": 10,
+          "body": "Aggregates pre-market futures, sector ETF performance, VIX, and Fed calendar events into a structured daily briefing. Summarizes overnight macro news and flags earnings catalysts. Designed to read in 60 seconds before market open.",
+          "labels": ["feature"],
+          "url": "https://github.com/bhavikjain/bhavik-ai/pull/55"
+        }
+      ],
+      "commits": [
+        {"sha": "c1d2e3f4", "message": "fix: PR generator fails on repos with no prior PRs", "date": "2025-08-12T10:00:00Z", "additions": 18, "deletions": 8},
+        {"sha": "a5b6c7d8", "message": "feat: add --format flag for markdown and JSON output", "date": "2025-09-01T14:00:00Z", "additions": 65, "deletions": 20},
+        {"sha": "e9f0a1b2", "message": "feat: cache Claude responses for repeated skill invocations", "date": "2025-11-25T11:00:00Z", "additions": 120, "deletions": 30},
+        {"sha": "c3d4e5f6", "message": "fix: subagent timeouts not propagated to parent skill", "date": "2026-03-25T09:00:00Z", "additions": 35, "deletions": 12},
+        {"sha": "a7b8c9d0", "message": "chore: add eval fixtures for bounce-scanner skill", "date": "2026-04-15T14:00:00Z", "additions": 280, "deletions": 0}
+      ],
+      "reviews_given": [
+        {"repo": "bhavikjain/bhavik-ai", "pr_title": "Add Google Calendar integration to meal planner", "state": "APPROVED", "submitted_at": "2025-12-10T10:00:00Z"},
+        {"repo": "bhavikjain/bhavik-ai", "pr_title": "Add bounce scanner skill for trading assistant", "state": "CHANGES_REQUESTED", "submitted_at": "2026-03-08T14:00:00Z"},
+        {"repo": "bhavikjain/bhavik-ai", "pr_title": "Add frontend UI for skill browser", "state": "APPROVED", "submitted_at": "2026-04-20T11:00:00Z"}
+      ]
+    }
+  ]
+}

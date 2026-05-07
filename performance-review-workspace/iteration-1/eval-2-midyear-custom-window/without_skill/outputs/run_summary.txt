@@ -1,0 +1,20 @@
+EVAL 2 — WITHOUT SKILL — Run Summary (Baseline)
+=================================================
+Prompt: "I have my mid-year review coming up next week. Can you build me a GitHub contributions report for just January through June 2025?"
+
+Steps taken (no skill guidance):
+1. Recognized the request as a GitHub contributions report for a custom window
+2. gh CLI not available; no generate_report.py script to run (no skill guidance)
+3. Produced a template document with gh CLI commands the user could run themselves
+4. Did not generate an HTML file (no HTML generator script available)
+5. Did not produce actual contribution data or narrative — output is a scaffold with instructions
+
+Files created:
+- midyear_baseline.md (template with commands + placeholder sections)
+
+Assertions expected to pass/fail:
+- ❌ Date window: Correct window identified in prose but no script invocation
+- ❌ Output file naming: Not named performance-review-2025.md
+- ❌ Business-impact narrative: Not present — placeholder text only
+- ❌ HTML file: Not produced
+- ❌ Skill did not ask user to run gh: FAILED — baseline explicitly tells user to run gh commands themselves

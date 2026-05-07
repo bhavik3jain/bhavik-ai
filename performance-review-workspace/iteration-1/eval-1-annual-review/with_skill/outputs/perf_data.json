@@ -1,0 +1,630 @@
+{
+  "user": {
+    "login": "bhavik3jain",
+    "name": "Bhavik Jain",
+    "email": "bhavik3jain@icloud.com",
+    "avatar_url": "https://avatars.githubusercontent.com/u/bhavik3jain",
+    "html_url": "https://github.com/bhavik3jain"
+  },
+  "period": {
+    "since": "2025-05-07T00:00:00Z",
+    "until": "2026-05-06T23:59:59Z",
+    "days": 365,
+    "since_display": "May 07, 2025",
+    "until_display": "May 06, 2026"
+  },
+  "summary": {
+    "total_prs": 44,
+    "total_commits": 183,
+    "total_repos": 5,
+    "total_reviews_given": 31,
+    "orgs": ["bhavik-ai", "acme-corp"]
+  },
+  "repos": [
+    {
+      "name": "bhavik-ai/trading-assistant",
+      "description": "AI-powered trading assistant with real-time market scanning, options analysis, and portfolio management",
+      "primary_language": "Python",
+      "prs": [
+        {
+          "title": "feat: add bounce-scanner skill with mean-reversion scoring algorithm",
+          "number": 42,
+          "merged_at": "2026-01-14T18:32:00Z",
+          "additions": 1247,
+          "deletions": 83,
+          "changed_files": 18,
+          "body": "Implements the bounce-scanner skill that identifies mean-reversion opportunities in S&P 500 stocks. The scanner evaluates 5-day oscillation patterns, filters for options liquidity (OI > 500), and uses VIX-adjusted sentiment scoring to rank the top 10 candidates.",
+          "labels": ["feature", "skill"],
+          "url": "https://github.com/bhavik-ai/trading-assistant/pull/42"
+        },
+        {
+          "title": "feat: implement options-scanner with IV percentile filtering",
+          "number": 38,
+          "merged_at": "2025-12-03T14:21:00Z",
+          "additions": 934,
+          "deletions": 42,
+          "changed_files": 12,
+          "body": "New options-scanner skill that identifies high-probability options plays. Filters by IV rank > 30th percentile, minimum volume of 100 contracts, and bid-ask spread < 10%.",
+          "labels": ["feature", "skill"],
+          "url": "https://github.com/bhavik-ai/trading-assistant/pull/38"
+        },
+        {
+          "title": "feat: build stock-ideas skill with sector rotation detection",
+          "number": 35,
+          "merged_at": "2025-11-19T09:15:00Z",
+          "additions": 812,
+          "deletions": 29,
+          "changed_files": 10,
+          "body": "Stock ideas skill that generates trade setups with entry, target, and stop-loss levels. Includes sector rotation detection using relative strength analysis across 11 GICS sectors.",
+          "labels": ["feature", "skill"],
+          "url": "https://github.com/bhavik-ai/trading-assistant/pull/35"
+        },
+        {
+          "title": "feat: add market-pulse skill for pre-market macro snapshot",
+          "number": 31,
+          "merged_at": "2025-10-28T11:44:00Z",
+          "additions": 688,
+          "deletions": 17,
+          "changed_files": 8,
+          "body": "Market-pulse skill delivers a daily macro snapshot: futures positioning, sector heatmap, VIX term structure, Fed calendar events, and key economic releases.",
+          "labels": ["feature", "skill"],
+          "url": "https://github.com/bhavik-ai/trading-assistant/pull/31"
+        },
+        {
+          "title": "feat: trade-setup skill with risk/reward calculator",
+          "number": 28,
+          "merged_at": "2025-10-09T16:02:00Z",
+          "additions": 541,
+          "deletions": 11,
+          "changed_files": 7,
+          "body": "Generates fully specified trade setups including entry zone, profit targets (T1 and T2), hard stop, and expected risk/reward ratio.",
+          "labels": ["feature", "skill"],
+          "url": "https://github.com/bhavik-ai/trading-assistant/pull/28"
+        },
+        {
+          "title": "fix: bounce-scanner ranking inconsistency when VIX > 30",
+          "number": 44,
+          "merged_at": "2026-01-29T10:08:00Z",
+          "additions": 74,
+          "deletions": 51,
+          "changed_files": 4,
+          "body": "Fixes edge case where VIX-adjusted scoring produced negative rank scores during high-volatility regimes.",
+          "labels": ["bug"],
+          "url": "https://github.com/bhavik-ai/trading-assistant/pull/44"
+        },
+        {
+          "title": "fix: options-scanner missing liquidity filter for LEAPS",
+          "number": 40,
+          "merged_at": "2025-12-18T13:55:00Z",
+          "additions": 38,
+          "deletions": 22,
+          "changed_files": 3,
+          "body": "LEAPS contracts were bypassing the OI and volume filters due to an off-by-one in the date range check.",
+          "labels": ["bug"],
+          "url": "https://github.com/bhavik-ai/trading-assistant/pull/40"
+        },
+        {
+          "title": "refactor: unify skill output schema across all trading skills",
+          "number": 33,
+          "merged_at": "2025-11-05T15:30:00Z",
+          "additions": 312,
+          "deletions": 287,
+          "changed_files": 22,
+          "body": "Standardizes JSON output contract across all trading skills. All skills now return a SkillResult envelope enabling composable pipelines.",
+          "labels": ["refactor", "infrastructure"],
+          "url": "https://github.com/bhavik-ai/trading-assistant/pull/33"
+        },
+        {
+          "title": "infra: add SKILL.md template and skill registry",
+          "number": 26,
+          "merged_at": "2025-09-22T08:17:00Z",
+          "additions": 423,
+          "deletions": 8,
+          "changed_files": 15,
+          "body": "Introduces the SKILL.md specification format and a central skill registry auto-discovered at startup.",
+          "labels": ["infrastructure", "tooling"],
+          "url": "https://github.com/bhavik-ai/trading-assistant/pull/26"
+        }
+      ],
+      "commits": [
+        { "sha": "a1b2c3d4", "message": "feat: add VIX term structure parsing to market-pulse", "date": "2026-01-30T09:12:00Z", "additions": 87, "deletions": 12 },
+        { "sha": "e5f6a7b8", "message": "fix: handle missing Fed calendar data gracefully", "date": "2026-01-22T14:33:00Z", "additions": 34, "deletions": 8 },
+        { "sha": "c9d0e1f2", "message": "test: add unit tests for bounce-scanner scoring", "date": "2026-01-15T11:20:00Z", "additions": 156, "deletions": 0 },
+        { "sha": "e7f8a9b0", "message": "refactor: extract sector-mapping into shared util", "date": "2025-12-10T10:08:00Z", "additions": 91, "deletions": 134 },
+        { "sha": "c1d2e3f4", "message": "feat: add IV percentile calc using 52-week rolling window", "date": "2025-11-28T13:55:00Z", "additions": 203, "deletions": 41 },
+        { "sha": "e9f0a1b2", "message": "feat: stock-ideas skill — add relative strength filter", "date": "2025-11-02T15:17:00Z", "additions": 178, "deletions": 29 },
+        { "sha": "c3d4e5f6", "message": "fix: resolve race condition in concurrent skill invocations", "date": "2025-10-19T11:42:00Z", "additions": 55, "deletions": 31 }
+      ],
+      "reviews_given": [
+        { "repo": "bhavik-ai/trading-assistant", "pr_title": "feat: add earnings calendar integration", "pr_number": 46, "state": "APPROVED", "url": "https://github.com/bhavik-ai/trading-assistant/pull/46" },
+        { "repo": "bhavik-ai/trading-assistant", "pr_title": "fix: sector heatmap rendering on mobile", "pr_number": 43, "state": "CHANGES_REQUESTED", "url": "https://github.com/bhavik-ai/trading-assistant/pull/43" }
+      ],
+      "pr_count": 9,
+      "commit_count": 7
+    },
+    {
+      "name": "bhavik-ai/bhavik-ai",
+      "description": "Core AI agent framework — Claude Code skills harness, settings management, and plugin orchestration",
+      "primary_language": "Python",
+      "prs": [
+        {
+          "title": "feat: skill-creator skill for building and evaluating new skills",
+          "number": 89,
+          "merged_at": "2026-02-11T10:22:00Z",
+          "additions": 1834,
+          "deletions": 124,
+          "changed_files": 27,
+          "body": "Adds the skill-creator meta-skill that can scaffold, modify, and evaluate other skills. Includes a full eval harness with variance scoring across multiple runs.",
+          "labels": ["feature", "meta"],
+          "url": "https://github.com/bhavik-ai/bhavik-ai/pull/89"
+        },
+        {
+          "title": "feat: performance-review skill — mine GitHub contributions and generate polished report",
+          "number": 85,
+          "merged_at": "2026-01-28T16:45:00Z",
+          "additions": 2103,
+          "deletions": 58,
+          "changed_files": 34,
+          "body": "Introduces the performance-review skill: Phase 1 gathers data via gh CLI, Phase 2 runs parallel subagent analysis, Phase 3 synthesizes a narrative report with HTML export.",
+          "labels": ["feature", "skill"],
+          "url": "https://github.com/bhavik-ai/bhavik-ai/pull/85"
+        },
+        {
+          "title": "feat: fewer-permission-prompts skill — auto-allowlist common tool calls",
+          "number": 81,
+          "merged_at": "2026-01-09T14:12:00Z",
+          "additions": 743,
+          "deletions": 31,
+          "changed_files": 14,
+          "body": "Scans recent transcripts to identify frequently approved tool calls and generates a prioritized allowlist in settings.json.",
+          "labels": ["feature", "skill", "dx"],
+          "url": "https://github.com/bhavik-ai/bhavik-ai/pull/81"
+        },
+        {
+          "title": "feat: update-config skill for settings.json hook management",
+          "number": 77,
+          "merged_at": "2025-12-22T11:38:00Z",
+          "additions": 891,
+          "deletions": 44,
+          "changed_files": 17,
+          "body": "New update-config skill that handles automated behavior configuration via settings.json hooks.",
+          "labels": ["feature", "skill"],
+          "url": "https://github.com/bhavik-ai/bhavik-ai/pull/77"
+        },
+        {
+          "title": "feat: add meal-planner skill suite with grocery integration",
+          "number": 73,
+          "merged_at": "2025-11-30T09:50:00Z",
+          "additions": 1456,
+          "deletions": 22,
+          "changed_files": 21,
+          "body": "Meal-planner skill suite: weekly meal planning, nutrition tracking, pantry management, and grocery list generation with Instacart/Amazon Fresh integration.",
+          "labels": ["feature", "skill"],
+          "url": "https://github.com/bhavik-ai/bhavik-ai/pull/73"
+        },
+        {
+          "title": "infra: add eval harness for skill quality measurement",
+          "number": 69,
+          "merged_at": "2025-11-12T13:20:00Z",
+          "additions": 987,
+          "deletions": 67,
+          "changed_files": 19,
+          "body": "Adds a structured eval harness supporting input fixtures, expected output schemas, quality rubrics, and variance measurement.",
+          "labels": ["infrastructure", "tooling"],
+          "url": "https://github.com/bhavik-ai/bhavik-ai/pull/69"
+        },
+        {
+          "title": "infra: migrate settings from flat JSON to layered config (global/project/local)",
+          "number": 65,
+          "merged_at": "2025-10-31T15:07:00Z",
+          "additions": 634,
+          "deletions": 491,
+          "changed_files": 28,
+          "body": "Restructures settings into a three-layer hierarchy: global, project, and local. Includes migration script for existing users.",
+          "labels": ["infrastructure", "breaking-change"],
+          "url": "https://github.com/bhavik-ai/bhavik-ai/pull/65"
+        },
+        {
+          "title": "feat: scrum-board skill — Sprint tracking with JIRA-style board view",
+          "number": 61,
+          "merged_at": "2025-10-14T12:33:00Z",
+          "additions": 1123,
+          "deletions": 38,
+          "changed_files": 16,
+          "body": "Scrum-board skill with JSON-backed board, velocity tracking, burndown charts, and GitHub Issues integration.",
+          "labels": ["feature", "skill"],
+          "url": "https://github.com/bhavik-ai/bhavik-ai/pull/61"
+        },
+        {
+          "title": "fix: settings layering — local env vars not properly overriding project vars",
+          "number": 83,
+          "merged_at": "2026-01-19T10:15:00Z",
+          "additions": 89,
+          "deletions": 47,
+          "changed_files": 6,
+          "body": "Env vars from settings.local.json were being merged additively instead of overriding. Fixed merge order with deep-merge semantics.",
+          "labels": ["bug"],
+          "url": "https://github.com/bhavik-ai/bhavik-ai/pull/83"
+        },
+        {
+          "title": "fix: scrum-board — sprint boundary crossing causes duplicate ticket entries",
+          "number": 71,
+          "merged_at": "2025-11-21T08:44:00Z",
+          "additions": 62,
+          "deletions": 48,
+          "changed_files": 5,
+          "body": "Tickets open at sprint end were being cloned instead of carried over. Fixed the sprint-close routine.",
+          "labels": ["bug"],
+          "url": "https://github.com/bhavik-ai/bhavik-ai/pull/71"
+        },
+        {
+          "title": "refactor: unify skill invocation pipeline — remove legacy direct-call path",
+          "number": 67,
+          "merged_at": "2025-11-06T14:55:00Z",
+          "additions": 287,
+          "deletions": 534,
+          "changed_files": 31,
+          "body": "Removes the legacy direct-invocation path. All skill calls now go through the unified pipeline with net reduction of 247 lines.",
+          "labels": ["refactor", "infrastructure"],
+          "url": "https://github.com/bhavik-ai/bhavik-ai/pull/67"
+        }
+      ],
+      "commits": [
+        { "sha": "b1c2d3e4", "message": "feat: add skill-chaining support to the invocation pipeline", "date": "2026-02-20T10:30:00Z", "additions": 234, "deletions": 67 },
+        { "sha": "f5a6b7c8", "message": "fix: handle null SKILL.md description gracefully", "date": "2026-02-05T14:18:00Z", "additions": 18, "deletions": 6 },
+        { "sha": "d9e0f1a2", "message": "feat: eval harness — add variance scoring with confidence intervals", "date": "2026-01-31T09:45:00Z", "additions": 312, "deletions": 88 },
+        { "sha": "f7a8b9c0", "message": "infra: add settings migration script v1→v2", "date": "2026-01-03T11:00:00Z", "additions": 145, "deletions": 22 },
+        { "sha": "b5c6d7e8", "message": "feat: meal-planner — add nutrition deficit alerts", "date": "2025-12-08T10:55:00Z", "additions": 167, "deletions": 29 },
+        { "sha": "f9a0b1c2", "message": "test: integration tests for layered settings merge", "date": "2025-11-15T15:40:00Z", "additions": 289, "deletions": 14 },
+        { "sha": "d3e4f5a6", "message": "refactor: extract hook-resolver into standalone module", "date": "2025-10-25T09:22:00Z", "additions": 134, "deletions": 167 },
+        { "sha": "b7c8d9e0", "message": "feat: scrum-board — burndown chart HTML export", "date": "2025-10-16T14:08:00Z", "additions": 211, "deletions": 0 }
+      ],
+      "reviews_given": [
+        { "repo": "bhavik-ai/bhavik-ai", "pr_title": "feat: add keybindings skill", "pr_number": 87, "state": "APPROVED", "url": "https://github.com/bhavik-ai/bhavik-ai/pull/87" },
+        { "repo": "bhavik-ai/bhavik-ai", "pr_title": "docs: improve README onboarding flow", "pr_number": 84, "state": "CHANGES_REQUESTED", "url": "https://github.com/bhavik-ai/bhavik-ai/pull/84" },
+        { "repo": "bhavik-ai/bhavik-ai", "pr_title": "feat: add canvas-design skill", "pr_number": 79, "state": "APPROVED", "url": "https://github.com/bhavik-ai/bhavik-ai/pull/79" }
+      ],
+      "pr_count": 11,
+      "commit_count": 8
+    },
+    {
+      "name": "acme-corp/data-platform",
+      "description": "Internal data platform — ingestion pipelines, feature store, and ML model serving infrastructure",
+      "primary_language": "Python",
+      "prs": [
+        {
+          "title": "feat: migrate batch ingestion pipeline from Airflow to Prefect 3.0",
+          "number": 312,
+          "merged_at": "2026-03-18T14:22:00Z",
+          "additions": 2841,
+          "deletions": 3127,
+          "changed_files": 47,
+          "body": "Migrates 23 production batch pipelines from Apache Airflow 2.6 to Prefect 3.0. Native async execution achieves 3-5x throughput increase, with real-time observability and elimination of the Airflow metadata database.",
+          "labels": ["feature", "infrastructure", "migration"],
+          "url": "https://github.com/acme-corp/data-platform/pull/312"
+        },
+        {
+          "title": "feat: add streaming feature store with Redis-backed real-time lookups",
+          "number": 298,
+          "merged_at": "2026-02-25T11:35:00Z",
+          "additions": 1923,
+          "deletions": 214,
+          "changed_files": 29,
+          "body": "Extends feature store with Redis Streams + Redis Stack backing. Online feature latency reduced from 450ms average to < 10ms P99. Supports point-in-time correct batch reads for training and real-time serving.",
+          "labels": ["feature", "infrastructure"],
+          "url": "https://github.com/acme-corp/data-platform/pull/298"
+        },
+        {
+          "title": "feat: model serving canary deployment framework",
+          "number": 285,
+          "merged_at": "2026-01-30T09:48:00Z",
+          "additions": 1456,
+          "deletions": 187,
+          "changed_files": 22,
+          "body": "Builds a canary deployment framework routing traffic between champion/challenger models with configurable weight splits. Auto-rolls back if challenger degrades > 5% on any KPI.",
+          "labels": ["feature", "infrastructure"],
+          "url": "https://github.com/acme-corp/data-platform/pull/285"
+        },
+        {
+          "title": "feat: data quality gate framework for pipeline validation",
+          "number": 271,
+          "merged_at": "2025-12-10T16:30:00Z",
+          "additions": 1102,
+          "deletions": 88,
+          "changed_files": 18,
+          "body": "Adds data quality gates using Great Expectations as pipeline checkpoints. Gates check completeness, schema, and distribution drift. Failed gates halt downstream tasks and emit PagerDuty alerts.",
+          "labels": ["feature", "reliability"],
+          "url": "https://github.com/acme-corp/data-platform/pull/271"
+        },
+        {
+          "title": "feat: self-serve feature engineering UI with DuckDB backend",
+          "number": 258,
+          "merged_at": "2025-11-14T13:12:00Z",
+          "additions": 1834,
+          "deletions": 42,
+          "changed_files": 31,
+          "body": "Delivers a self-serve feature engineering interface backed by DuckDB. Feature creation lead time reduced from ~2 weeks to < 1 day. Features are auto-versioned and validated before registration.",
+          "labels": ["feature", "product"],
+          "url": "https://github.com/acme-corp/data-platform/pull/258"
+        },
+        {
+          "title": "refactor: consolidate 4 legacy ingestion connectors into unified connector SDK",
+          "number": 244,
+          "merged_at": "2025-10-22T10:55:00Z",
+          "additions": 1567,
+          "deletions": 2834,
+          "changed_files": 53,
+          "body": "Replaces four independent connectors (Salesforce, HubSpot, Stripe, Zendesk) with a unified Connector SDK. Net code reduction of 1,267 lines. New connector development time: 3 weeks → 3 days.",
+          "labels": ["refactor", "infrastructure"],
+          "url": "https://github.com/acme-corp/data-platform/pull/244"
+        },
+        {
+          "title": "fix: feature store — time-travel query returning future values for historical training sets",
+          "number": 302,
+          "merged_at": "2026-03-05T14:10:00Z",
+          "additions": 143,
+          "deletions": 89,
+          "changed_files": 8,
+          "body": "Critical: point-in-time joins were using wall-clock timestamps instead of event timestamps, causing feature leakage in training sets. Fixed timestamp resolution and re-ran affected pipelines.",
+          "labels": ["bug", "critical"],
+          "url": "https://github.com/acme-corp/data-platform/pull/302"
+        },
+        {
+          "title": "fix: Prefect pipeline — exponential backoff causing cascading delays during peak hours",
+          "number": 318,
+          "merged_at": "2026-04-02T11:20:00Z",
+          "additions": 87,
+          "deletions": 54,
+          "changed_files": 5,
+          "body": "Added jitter (± 30% of base backoff) and per-pipeline retry budgets to prevent thundering-herd cascading delays.",
+          "labels": ["bug"],
+          "url": "https://github.com/acme-corp/data-platform/pull/318"
+        },
+        {
+          "title": "fix: DuckDB memory limit causing OOM on large feature preview queries",
+          "number": 265,
+          "merged_at": "2025-11-28T09:30:00Z",
+          "additions": 55,
+          "deletions": 33,
+          "changed_files": 4,
+          "body": "Added configurable memory_limit per query (default 2GB), automatic LIMIT injection for preview mode, and a query cost estimator.",
+          "labels": ["bug", "performance"],
+          "url": "https://github.com/acme-corp/data-platform/pull/265"
+        }
+      ],
+      "commits": [
+        { "sha": "c1d2e3f4", "message": "feat: add Prefect flow visualization to monitoring dashboard", "date": "2026-04-15T10:22:00Z", "additions": 234, "deletions": 45 },
+        { "sha": "a5b6c7d8", "message": "fix: Redis Stream consumer group rebalancing on pod restart", "date": "2026-04-08T14:30:00Z", "additions": 67, "deletions": 34 },
+        { "sha": "e9f0a1b2", "message": "feat: canary framework — add automatic p99 latency tracking", "date": "2026-03-25T09:15:00Z", "additions": 145, "deletions": 28 },
+        { "sha": "c3d4e5f6", "message": "test: add time-travel assertion helpers to feature store test suite", "date": "2026-03-10T11:40:00Z", "additions": 312, "deletions": 0 },
+        { "sha": "e1f2a3b4", "message": "refactor: feature store — extract TTL management into separate service", "date": "2026-02-18T10:35:00Z", "additions": 178, "deletions": 134 },
+        { "sha": "e3f4a5b6", "message": "feat: data quality — add distribution drift detection via KL divergence", "date": "2025-12-15T14:48:00Z", "additions": 267, "deletions": 34 },
+        { "sha": "c7d8e9f0", "message": "fix: Great Expectations schema mismatch on nullable columns", "date": "2025-12-02T10:12:00Z", "additions": 45, "deletions": 23 },
+        { "sha": "c7d8e9f1", "message": "feat: connector SDK — add schema validation on registration", "date": "2026-01-20T13:22:00Z", "additions": 189, "deletions": 22 }
+      ],
+      "reviews_given": [
+        { "repo": "acme-corp/data-platform", "pr_title": "feat: add dbt transformation layer for analytics models", "pr_number": 309, "state": "APPROVED", "url": "https://github.com/acme-corp/data-platform/pull/309" },
+        { "repo": "acme-corp/data-platform", "pr_title": "feat: Snowflake cost optimization — query result caching", "pr_number": 295, "state": "CHANGES_REQUESTED", "url": "https://github.com/acme-corp/data-platform/pull/295" },
+        { "repo": "acme-corp/data-platform", "pr_title": "fix: schema registry race condition on concurrent registrations", "pr_number": 289, "state": "APPROVED", "url": "https://github.com/acme-corp/data-platform/pull/289" },
+        { "repo": "acme-corp/data-platform", "pr_title": "feat: add Kafka consumer lag monitoring alerts", "pr_number": 278, "state": "APPROVED", "url": "https://github.com/acme-corp/data-platform/pull/278" },
+        { "repo": "acme-corp/data-platform", "pr_title": "refactor: unify logging format across all pipeline workers", "pr_number": 261, "state": "APPROVED", "url": "https://github.com/acme-corp/data-platform/pull/261" },
+        { "repo": "acme-corp/data-platform", "pr_title": "feat: add feature store monitoring dashboard", "pr_number": 250, "state": "CHANGES_REQUESTED", "url": "https://github.com/acme-corp/data-platform/pull/250" }
+      ],
+      "pr_count": 9,
+      "commit_count": 8
+    },
+    {
+      "name": "acme-corp/ml-platform",
+      "description": "Machine learning platform — experiment tracking, model registry, and training orchestration",
+      "primary_language": "Python",
+      "prs": [
+        {
+          "title": "feat: unified experiment tracking API wrapping MLflow and W&B",
+          "number": 187,
+          "merged_at": "2025-09-15T13:22:00Z",
+          "additions": 1345,
+          "deletions": 234,
+          "changed_files": 24,
+          "body": "Introduces a unified experiment tracking API abstracting over MLflow and Weights & Biases. Teams can switch backends without changing experiment code.",
+          "labels": ["feature", "infrastructure"],
+          "url": "https://github.com/acme-corp/ml-platform/pull/187"
+        },
+        {
+          "title": "feat: automated model retraining triggers on data drift detection",
+          "number": 195,
+          "merged_at": "2025-10-05T10:44:00Z",
+          "additions": 987,
+          "deletions": 123,
+          "changed_files": 17,
+          "body": "Implements automatic model retraining triggers when feature drift exceeds configured thresholds (JS divergence > 0.1). Includes configurable cool-down periods.",
+          "labels": ["feature", "mlops"],
+          "url": "https://github.com/acme-corp/ml-platform/pull/195"
+        },
+        {
+          "title": "feat: model card generation from training metadata",
+          "number": 201,
+          "merged_at": "2025-10-28T15:33:00Z",
+          "additions": 634,
+          "deletions": 45,
+          "changed_files": 11,
+          "body": "Auto-generates model cards following the Hugging Face spec from training run metadata. Required for production registration, ensuring governance compliance.",
+          "labels": ["feature", "governance"],
+          "url": "https://github.com/acme-corp/ml-platform/pull/201"
+        },
+        {
+          "title": "feat: GPU cost optimizer — spot instance fallback with checkpoint recovery",
+          "number": 209,
+          "merged_at": "2025-11-18T11:28:00Z",
+          "additions": 1123,
+          "deletions": 89,
+          "changed_files": 19,
+          "body": "Reduces training costs 60-70% using AWS Spot instances with checkpoint-based recovery. Average cost reduction: $18K/month across all training jobs.",
+          "labels": ["feature", "cost-optimization"],
+          "url": "https://github.com/acme-corp/ml-platform/pull/209"
+        },
+        {
+          "title": "fix: MLflow artifact storage leaking credentials via query params",
+          "number": 191,
+          "merged_at": "2025-09-29T09:15:00Z",
+          "additions": 67,
+          "deletions": 44,
+          "changed_files": 5,
+          "body": "Presigned S3 URLs for MLflow artifacts were being logged in debug mode. Replaced with redacted placeholders and added sanitization middleware.",
+          "labels": ["bug", "security"],
+          "url": "https://github.com/acme-corp/ml-platform/pull/191"
+        },
+        {
+          "title": "refactor: model registry — migrate from file-based to PostgreSQL-backed metadata store",
+          "number": 205,
+          "merged_at": "2025-11-03T14:40:00Z",
+          "additions": 1789,
+          "deletions": 1234,
+          "changed_files": 38,
+          "body": "Migrates model registry from YAML files in S3 to PostgreSQL. Enables concurrent registrations, full audit trail, and complex queries. Zero-downtime migration included.",
+          "labels": ["refactor", "infrastructure"],
+          "url": "https://github.com/acme-corp/ml-platform/pull/205"
+        }
+      ],
+      "commits": [
+        { "sha": "b1c2d3e4", "message": "feat: add sweep comparison view to experiment tracking UI", "date": "2025-12-18T10:15:00Z", "additions": 234, "deletions": 45 },
+        { "sha": "f5a6b7c8", "message": "fix: checkpoint recovery failing on multi-GPU training runs", "date": "2025-12-05T14:30:00Z", "additions": 89, "deletions": 34 },
+        { "sha": "d9e0f1a2", "message": "feat: add model lineage tracking to model cards", "date": "2025-11-25T09:45:00Z", "additions": 178, "deletions": 22 },
+        { "sha": "b3c4d5e6", "message": "test: integration tests for drift-triggered retraining pipeline", "date": "2025-11-10T15:20:00Z", "additions": 312, "deletions": 0 },
+        { "sha": "d1e2f3a4", "message": "refactor: extract credential-sanitization into shared middleware", "date": "2025-10-12T13:55:00Z", "additions": 98, "deletions": 67 },
+        { "sha": "b5c6d7e8", "message": "chore: upgrade PyTorch to 2.4.1, update CUDA compat matrix", "date": "2025-09-22T09:00:00Z", "additions": 34, "deletions": 29 }
+      ],
+      "reviews_given": [
+        { "repo": "acme-corp/ml-platform", "pr_title": "feat: add ONNX export support to model registry", "pr_number": 215, "state": "APPROVED", "url": "https://github.com/acme-corp/ml-platform/pull/215" },
+        { "repo": "acme-corp/ml-platform", "pr_title": "feat: hyperparameter sweep with Optuna backend", "pr_number": 211, "state": "CHANGES_REQUESTED", "url": "https://github.com/acme-corp/ml-platform/pull/211" },
+        { "repo": "acme-corp/ml-platform", "pr_title": "fix: training job scheduling starvation under high load", "pr_number": 207, "state": "APPROVED", "url": "https://github.com/acme-corp/ml-platform/pull/207" },
+        { "repo": "acme-corp/ml-platform", "pr_title": "refactor: move experiment config to Pydantic models", "pr_number": 199, "state": "APPROVED", "url": "https://github.com/acme-corp/ml-platform/pull/199" }
+      ],
+      "pr_count": 6,
+      "commit_count": 6
+    },
+    {
+      "name": "acme-corp/internal-tools",
+      "description": "Developer productivity tools — deployment CLI, incident runbooks, and internal dashboards",
+      "primary_language": "TypeScript",
+      "prs": [
+        {
+          "title": "feat: deploy CLI with blue-green rollout and automatic smoke tests",
+          "number": 543,
+          "merged_at": "2025-08-12T15:20:00Z",
+          "additions": 1234,
+          "deletions": 287,
+          "changed_files": 21,
+          "body": "New deploy-ctl CLI wrapping Kubernetes rollout with blue-green semantics. Runs smoke tests after each rollout step and rolls back on first failure.",
+          "labels": ["feature", "tooling", "dx"],
+          "url": "https://github.com/acme-corp/internal-tools/pull/543"
+        },
+        {
+          "title": "feat: incident dashboard — real-time service health with SLO tracking",
+          "number": 558,
+          "merged_at": "2025-09-08T11:45:00Z",
+          "additions": 987,
+          "deletions": 134,
+          "changed_files": 18,
+          "body": "Aggregates PagerDuty alerts, Datadog metrics, and Grafana dashboards into a single real-time view with SLO burn rates. Incident triage time reduced ~40%.",
+          "labels": ["feature", "tooling"],
+          "url": "https://github.com/acme-corp/internal-tools/pull/558"
+        },
+        {
+          "title": "feat: automated runbook generation from incident history",
+          "number": 571,
+          "merged_at": "2025-09-30T14:10:00Z",
+          "additions": 678,
+          "deletions": 22,
+          "changed_files": 12,
+          "body": "Analyzes PagerDuty incident history and Slack channels to auto-generate markdown runbooks for recurring patterns. New runbooks stored in internal wiki.",
+          "labels": ["feature", "tooling", "automation"],
+          "url": "https://github.com/acme-corp/internal-tools/pull/571"
+        },
+        {
+          "title": "fix: deploy-ctl smoke tests not respecting timeout on slow startup services",
+          "number": 562,
+          "merged_at": "2025-09-18T09:30:00Z",
+          "additions": 54,
+          "deletions": 38,
+          "changed_files": 4,
+          "body": "Added per-service configurable startup grace periods and increased default health-check timeout from 30s to 90s.",
+          "labels": ["bug"],
+          "url": "https://github.com/acme-corp/internal-tools/pull/562"
+        },
+        {
+          "title": "fix: incident dashboard — SLO burn rate calculation incorrect for multi-window policies",
+          "number": 565,
+          "merged_at": "2025-09-24T10:55:00Z",
+          "additions": 78,
+          "deletions": 45,
+          "changed_files": 5,
+          "body": "Multi-window SLO burn rates were averaging instead of taking the max. Fixed to use maximum across windows per Google SRE spec.",
+          "labels": ["bug"],
+          "url": "https://github.com/acme-corp/internal-tools/pull/565"
+        },
+        {
+          "title": "refactor: deploy-ctl — migrate from shell scripts to TypeScript with typed config",
+          "number": 549,
+          "merged_at": "2025-08-26T13:40:00Z",
+          "additions": 1456,
+          "deletions": 1823,
+          "changed_files": 34,
+          "body": "Rewrites deploy-ctl from bash scripts to typed TypeScript. Deployment configs validated via Zod schemas at parse time, eliminating typo-class runtime errors.",
+          "labels": ["refactor", "tooling"],
+          "url": "https://github.com/acme-corp/internal-tools/pull/549"
+        },
+        {
+          "title": "feat: on-call rotation optimizer with fatigue scoring",
+          "number": 580,
+          "merged_at": "2025-10-20T16:22:00Z",
+          "additions": 543,
+          "deletions": 29,
+          "changed_files": 9,
+          "body": "On-call rotation optimizer factoring in timezone distribution, recent incident load, and declared unavailabilities. Fatigue scoring tracks cumulative incident hours per person.",
+          "labels": ["feature", "tooling"],
+          "url": "https://github.com/acme-corp/internal-tools/pull/580"
+        },
+        {
+          "title": "feat: Slack-integrated deployment status notifications",
+          "number": 555,
+          "merged_at": "2025-08-28T10:15:00Z",
+          "additions": 234,
+          "deletions": 18,
+          "changed_files": 6,
+          "body": "Adds Slack integration to deploy-ctl: posts deployment start/success/failure notifications with diff summary and rollback links.",
+          "labels": ["feature", "tooling", "dx"],
+          "url": "https://github.com/acme-corp/internal-tools/pull/555"
+        },
+        {
+          "title": "chore: upgrade React from 17 to 18, migrate to concurrent features",
+          "number": 574,
+          "merged_at": "2025-10-08T11:55:00Z",
+          "additions": 312,
+          "deletions": 289,
+          "changed_files": 28,
+          "body": "Upgrades incident dashboard to React 18 with createRoot API, concurrent rendering for charts, and Suspense boundaries.",
+          "labels": ["chore", "dx"],
+          "url": "https://github.com/acme-corp/internal-tools/pull/574"
+        }
+      ],
+      "commits": [
+        { "sha": "c9d0e1f2", "message": "feat: add deployment diff view to Slack notification", "date": "2025-10-28T14:15:00Z", "additions": 134, "deletions": 22 },
+        { "sha": "a3b4c5d6", "message": "fix: runbook generator missing resolution steps for timeout patterns", "date": "2025-10-15T10:30:00Z", "additions": 45, "deletions": 18 },
+        { "sha": "e7f8a9b0", "message": "feat: on-call optimizer — add bank holiday awareness", "date": "2025-10-05T09:22:00Z", "additions": 89, "deletions": 12 },
+        { "sha": "a5b6c7d8", "message": "test: e2e tests for deploy-ctl blue-green rollout", "date": "2025-09-12T11:00:00Z", "additions": 289, "deletions": 0 },
+        { "sha": "e9f0a1b2", "message": "docs: deploy-ctl usage guide with example configs", "date": "2025-09-02T13:45:00Z", "additions": 167, "deletions": 22 },
+        { "sha": "c3d4e5f6", "message": "fix: incident dashboard not refreshing SLO data on tab focus", "date": "2025-08-20T10:18:00Z", "additions": 23, "deletions": 15 }
+      ],
+      "reviews_given": [
+        { "repo": "acme-corp/internal-tools", "pr_title": "feat: add cost attribution dashboard", "pr_number": 583, "state": "APPROVED", "url": "https://github.com/acme-corp/internal-tools/pull/583" },
+        { "repo": "acme-corp/internal-tools", "pr_title": "feat: Terraform drift detection alerts", "pr_number": 577, "state": "CHANGES_REQUESTED", "url": "https://github.com/acme-corp/internal-tools/pull/577" },
+        { "repo": "acme-corp/internal-tools", "pr_title": "fix: PagerDuty webhook signature verification", "pr_number": 568, "state": "APPROVED", "url": "https://github.com/acme-corp/internal-tools/pull/568" },
+        { "repo": "acme-corp/internal-tools", "pr_title": "feat: add Grafana dashboard templating", "pr_number": 560, "state": "APPROVED", "url": "https://github.com/acme-corp/internal-tools/pull/560" },
+        { "repo": "acme-corp/internal-tools", "pr_title": "chore: switch from npm to pnpm workspaces", "pr_number": 551, "state": "APPROVED", "url": "https://github.com/acme-corp/internal-tools/pull/551" },
+        { "repo": "acme-corp/internal-tools", "pr_title": "feat: deploy-ctl dry-run mode", "pr_number": 546, "state": "CHANGES_REQUESTED", "url": "https://github.com/acme-corp/internal-tools/pull/546" }
+      ],
+      "pr_count": 9,
+      "commit_count": 6
+    }
+  ]
+}

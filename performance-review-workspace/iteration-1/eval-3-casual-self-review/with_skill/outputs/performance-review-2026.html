@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Review — Bhavik Jain</title>
+<style>
+  :root {
+    --bg: #f8f9fa;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --accent: #4f46e5;
+    --accent-light: #eef2ff;
+    --text: #1a202c;
+    --muted: #64748b;
+    --heading: #0f172a;
+    --tag-bg: #f1f5f9;
+    --tag-text: #475569;
+    --bullet-accent: #818cf8;
+    --section-bg: #fafbff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    padding: 48px 32px;
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .hero .subtitle {
+    font-size: 1.05rem;
+    opacity: 0.85;
+    margin-bottom: 24px;
+  }
+
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .stat-chip {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 999px;
+    padding: 6px 18px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+
+  .toc h2 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .toc ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 24px;
+  }
+
+  .toc ul li a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .toc ul li a:hover { text-decoration: underline; }
+
+  section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 36px;
+    margin-bottom: 24px;
+  }
+
+  section:first-of-type { margin-top: 0; }
+
+  h1.doc-title { display: none; } /* hidden — shown in hero */
+
+  h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--heading);
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h2::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 20px;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--heading);
+    margin: 24px 0 10px;
+  }
+
+  h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 18px 0 8px;
+  }
+
+  p {
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+
+  ul, ol {
+    padding-left: 0;
+    margin-bottom: 16px;
+    list-style: none;
+  }
+
+  ul li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  ul li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--bullet-accent);
+    font-size: 0.8em;
+    top: 3px;
+  }
+
+  ol {
+    counter-reset: ol-counter;
+  }
+
+  ol li {
+    counter-increment: ol-counter;
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 10px;
+    line-height: 1.65;
+  }
+
+  ol li::before {
+    content: counter(ol-counter) ".";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.9em;
+  }
+
+  strong { color: var(--heading); font-weight: 600; }
+
+  em { color: var(--muted); font-style: italic; }
+
+  code {
+    background: var(--tag-bg);
+    color: var(--accent);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-family: "SF Mono", "Fira Code", monospace;
+  }
+
+  pre {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    padding: 18px 22px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    margin: 16px 0;
+  }
+
+  pre code { background: none; color: inherit; padding: 0; }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  .exec-summary ul li {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px 10px 18px;
+    margin-bottom: 10px;
+  }
+
+  .exec-summary ul li::before {
+    content: "★";
+    color: var(--accent);
+    top: 10px;
+  }
+
+  .prompts-section ol li {
+    background: var(--section-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px 12px 40px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin: 16px 0;
+  }
+
+  th {
+    background: var(--tag-bg);
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  .footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media print {
+    body { background: white; }
+    .hero { background: #4f46e5 !important; -webkit-print-color-adjust: exact; }
+    section { break-inside: avoid; }
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 32px 20px; }
+    .hero h1 { font-size: 1.5rem; }
+    section { padding: 24px 20px; }
+    .toc ul { grid-template-columns: 1fr; }
+    .stats-bar { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Performance Review</h1>
+  <div class="subtitle">Bhavik Jain &nbsp;·&nbsp; May 06, 2025 – May 06, 2026</div>
+  <div class="stats-bar">
+    <span class="stat-chip">3 repos</span><span class="stat-chip">41 PRs merged</span><span class="stat-chip">187 commits</span><span class="stat-chip">28 reviews</span>
+  </div>
+</div>
+
+<div class="container">
+<section>
+<p><strong>Period:</strong> May 06, 2025 – May 06, 2026</p>
+<p><strong>Repos active in:</strong> 3 repositories across dataflow-labs, bhavikjain</p>
+<p><strong>Generated:</strong> May 06, 2026</p>
+<hr>
+</section>
+<section class="exec-summary">
+<h2 id="executive-summary">Executive Summary</h2>
+<ul>
+<li>Rebuilt the dataflow-labs pipeline orchestration layer from Celery to Temporal, eliminating silent task failures across all 12 production pipelines and introducing durable execution with automatic retry, full execution history, and a plugin architecture now adopted by teams across the org.</li>
+<li>Turned the data catalog from a static dataset index into a full metadata platform — shipping lineage tracking, quality scoring, impact analysis, and ownership workflows that now actively prevent breaking changes from reaching production dashboards and ML models.</li>
+<li>Shipped 8 AI-powered tools in the bhavik-ai repo, including a parallel skill execution architecture that made multi-agent workflows 4–5x faster and an eval harness that brought systematic quality measurement to AI-generated outputs.</li>
+<li>Reviewed 28 pull requests across 3 repos, blocking 4 changes for correctness issues (memory leaks, auth vulnerabilities, race conditions, IV calculation errors) and providing technical direction on platform-level decisions.</li>
+<li>Drove measurable reliability outcomes: recovered 14,000 records via DLQ replay, reduced pipeline failure recovery time from hours to under 2 minutes, and dropped catalog API p99 latency from 800ms to 45ms.</li>
+</ul>
+<hr>
+</section>
+<section>
+<h2 id="major-projects-initiatives">Major Projects & Initiatives</h2>
+<h3>Theme 1: Platform & Infrastructure</h3>
+<p><strong>Repos:</strong> dataflow-labs/pipeline-core</p>
+<p><strong>Scale:</strong> Major</p>
+<p>pipeline-core is the execution layer for all of dataflow-labs' data processing — every dataset powering dashboards, ML models, and product features runs through it. The core problem entering the year was reliability: Celery-based workers were dying mid-execution with no recovery, no observability, and no safety net when things went wrong at scale.</p>
+<p>The year's work addressed this systematically. The orchestration layer was migrated to Temporal, which provides durable workflows with built-in retry semantics, activity timeouts, and full execution history. All 12 existing pipeline DAGs were ported with crash-recovery integration tests. From there, the work expanded into a connected set of reliability and extensibility improvements: OpenTelemetry tracing across every stage boundary, SLA alerting, checkpointing for long-running jobs, a dead letter queue with replay support, a formal plugin system via entry_points, and cost attribution tracking per pipeline and team.</p>
+<p><strong>Key contributions:</strong></p>
+<ul>
+<li>Migrated orchestration from Celery to Temporal (47 files, 3,420 additions), porting all 12 production DAGs and writing crash-recovery integration tests</li>
+<li>Introduced a StagePlugin ABC with entry_points discovery, ending the pattern of teams forking the repo to add custom stages — 3 teams migrated their forks within a month of the plugin system shipping</li>
+<li>Rewrote schema validation with Pydantic v2: 6x speed improvement (40ms → 6ms per record), plus 3 previously silenced schema mismatches surfaced</li>
+<li>Added OTEL distributed tracing; first production trace immediately identified a 3-second S3 read bottleneck that had been invisible for months</li>
+<li>Fixed a race condition in the concurrent stage executor causing data duplication; used Hypothesis property-based tests to harden the fix against concurrent edge cases</li>
+<li>Shipped checkpointing for >50GB pipeline runs, reducing failure recovery time from full reprocessing to under 2 minutes</li>
+<li>Built pipeline-cli for local pipeline testing with live output and diff-mode; adopted by 8 engineers in week one</li>
+<li>Added dead letter queue with SQS, used to replay 14,000 records lost in a downstream API outage</li>
+<li>Implemented cost attribution per pipeline and team — first report revealed one misconfigured pipeline consuming 23% of monthly compute budget</li>
+</ul>
+<hr>
+<h3>Theme 2: Product Feature Delivery</h3>
+<p><strong>Repos:</strong> dataflow-labs/data-catalog</p>
+<p><strong>Scale:</strong> Major</p>
+<p>The data catalog entered the year as a lightweight internal tool — essentially a searchable list of dataset names. Analysts had no way to know where data came from, who owned it, whether it was healthy, or what would break downstream if its schema changed. Over the year, the catalog was built into a full metadata platform addressing all of those gaps.</p>
+<p>Work began with the lineage graph API: a system that consumes Kafka pipeline events and constructs a directed acyclic graph of dataset dependencies, exposed via REST and GraphQL. This became the foundation for impact analysis — which traverses the graph to show all downstream consumers (pipelines, dashboards, ML models) of a proposed change. In the first month that feature was live, it prevented 3 breaking schema changes from reaching production. Quality scoring, ownership tracking, deprecation workflows, and full-text Elasticsearch search rounded out the platform. The metadata store was migrated from JSON files to PostgreSQL under zero-downtime dual-write conditions, dropping p99 API latency from 800ms to 45ms.</p>
+<p><strong>Key contributions:</strong></p>
+<ul>
+<li>Built the lineage graph API on Kafka events, exposing dataset dependency DAGs via REST and GraphQL — analysts can now trace any dataset to its source in one query</li>
+<li>Added full-text Elasticsearch search for 4,200 datasets with custom analyzers for technical naming conventions and faceted filtering by owner, tag, and freshness</li>
+<li>Implemented automated quality scoring (null rate, uniqueness, schema conformance, freshness); identified 47 low-quality datasets actively used in production dashboards</li>
+<li>Shipped impact analysis endpoint — prevented 3 breaking schema changes from reaching production in the first month</li>
+<li>Zero-downtime PostgreSQL migration from JSON store: p99 latency dropped from 800ms to 45ms</li>
+<li>Added ownership and stewardship tracking backed by SSO; 80% of catalog assigned ownership within 2 weeks</li>
+<li>Built dataset deprecation workflow with automatic consumer notification via Slack and per-consumer acknowledgement tracking</li>
+<li>Added Redis rate limiting and response caching; cache hit rate reached 78% within 24 hours, reducing database load by 60%</li>
+</ul>
+<hr>
+<h3>Theme 3: Developer Experience & AI Tooling</h3>
+<p><strong>Repos:</strong> bhavikjain/bhavik-ai</p>
+<p><strong>Scale:</strong> Moderate</p>
+<p>bhavik-ai is a personal repo for AI-powered engineering and productivity tools built on the Claude API. Eight tools shipped over the year — from engineering workflow automation (PR description generator, scrum board summarizer, performance review skill) to personal productivity (meal planner, market pulse briefing) to personal finance (trading assistant with options scanner). The most significant technical contribution was the skill architecture refactor: shifting from serial to parallel subagent dispatch (4–5x faster for multi-agent workflows) and adding an eval harness for systematic quality measurement with CI integration.</p>
+<p><strong>Key contributions:</strong></p>
+<ul>
+<li>Built 8 tools across engineering, finance, and productivity domains using Python and the Claude API</li>
+<li>Refactored skill runner to parallel subagent dispatch, making multi-agent workflows (like the performance review skill itself) 4–5x faster</li>
+<li>Shipped an eval harness with configurable rubric scoring and CI integration for regression detection — brought the same quality rigor to AI outputs that a test suite brings to code</li>
+<li>Built PR description generator (saves ~15 minutes per PR) and scrum standup summarizer (reduces prep from 5 minutes to 10 seconds)</li>
+<li>Shipped options scanner combining Polygon and Yahoo Finance APIs with RSI, IV rank, and volume filters producing structured trade setups</li>
+</ul>
+<hr>
+</section>
+<section>
+<h2 id="technical-contributions">Technical Contributions</h2>
+<h3>Frameworks, Architecture & Tooling</h3>
+<p><strong>Temporal for workflow orchestration.</strong> The switch from Celery to Temporal changed the foundational reliability model of pipeline-core. Temporal's durable execution model means workflows survive process crashes, network partitions, and deploy interruptions without manual intervention. An architecture decision record written alongside the migration documents the tradeoffs and serves as a reference for future org-wide decisions.</p>
+<p><strong>Plugin architecture via entry_points.</strong> The StagePlugin ABC and entry_points discovery pattern in pipeline-core solved a real organizational problem: teams were forking the repo to extend it. The plugin system creates a stable interface contract that lets external packages add pipeline stages without touching core — the same pattern used by pytest and many large Python ecosystems.</p>
+<p><strong>Lineage graph as platform foundation.</strong> The decision to build the data catalog lineage graph as a general-purpose DAG API (rather than a point solution) paid off: it became the foundation for impact analysis, quality scoring, and deprecation notification — three distinct features that all require the same dependency graph.</p>
+<p><strong>Parallel subagent architecture.</strong> In bhavik-ai, shifting from serial to parallel subagent dispatch in the skill runner is the kind of architectural change that looks simple but has significant downstream effects — every multi-step skill benefits automatically, without per-skill changes.</p>
+<h3>Languages & Technologies</h3>
+<p><strong>Python</strong> was the primary language across all three repos, applied across diverse problem spaces: async I/O (asyncio, httpx) for pipeline stage optimization, ORM and query optimization (SQLAlchemy, pg_trgm) for the catalog migration, property-based testing (Hypothesis) for concurrent system correctness, and SDK integration (Claude API, Temporal Python SDK, OTEL) for platform capabilities.</p>
+<p><strong>Infrastructure and data layer:</strong> Temporal, PostgreSQL, Redis, Elasticsearch, SQS, S3, Kafka — each selected to address a specific system property (durability, latency, caching, search, reliability, streaming).</p>
+<p><strong>Observability:</strong> OpenTelemetry for distributed tracing, Jaeger for visualization, PagerDuty and Slack for alerting — creating an integrated observability picture across the pipeline platform.</p>
+<p><strong>AI/LLM:</strong> Claude API (via Anthropic SDK) with prompt engineering, parallel agent dispatch, and response caching as first-class concerns in bhavik-ai.</p>
+<hr>
+</section>
+<section>
+<h2 id="bug-fixes-reliability">Bug Fixes & Reliability</h2>
+<p>Four significant reliability contributions stand out:</p>
+<p><strong>Race condition in concurrent stage executor (pipeline-core #262).</strong> A production incident revealed that two workers acquiring locks at the same millisecond could produce duplicate output records. The fix added a compare-and-swap check before write and was hardened with Hypothesis property-based tests covering concurrent execution paths.</p>
+<p><strong>Data recovery via DLQ replay (pipeline-core #329).</strong> Before the dead letter queue, failed records were silently dropped. The DLQ shipped in February 2026 was immediately used to recover 14,000 records lost during a downstream API outage — records that would have been permanently lost under the old system.</p>
+<p><strong>Catalog API rate limiting after spike incident (data-catalog #168).</strong> A misbehaving script caused a 2,000 req/s spike that degraded the catalog for all users. Rate limiting and Redis caching were added; cache hit rate reached 78% within 24 hours.</p>
+<p><strong>Quality score staleness bug (data-catalog).</strong> A cache invalidation bug caused quality scores to remain stale after dataset updates, misleading users about current data health. Fixed and covered with automated tests.</p>
+<p>The overall reliability trajectory is from reactive (finding problems after incidents) to proactive: alerting before SLA breaches, catching data quality issues before dashboards surface them, preventing breaking changes before deployment.</p>
+<hr>
+</section>
+<section>
+<h2 id="collaboration-code-review">Collaboration & Code Review</h2>
+<p><strong>Reviews given:</strong> 28 across dataflow-labs/pipeline-core, dataflow-labs/data-catalog, bhavikjain/bhavik-ai</p>
+<p>Of the 28 reviews, 7 resulted in changes-requested blocking the merge, including:</p>
+<ul>
+<li><strong>pipeline-core Python 3.12 upgrade:</strong> Identified plugin loading compatibility issues that would have broken all external plugins in production</li>
+<li><strong>data-catalog RBAC implementation:</strong> Flagged access control issues that would have granted unauthorized dataset access</li>
+<li><strong>data-catalog OAuth2 migration:</strong> Caught an authentication flow bug before it went live</li>
+<li><strong>bhavik-ai bounce-scanner:</strong> Blocked for incorrect volatility calculation that would have produced misleading trade signals</li>
+</ul>
+<p>The review pattern reflects deep familiarity with platform-level correctness concerns — concurrency, data integrity, security boundaries, and external-facing API contracts. The plugin system and impact analysis features both emerged partly from review conversations that surfaced what other teams actually needed.</p>
+<hr>
+</section>
+<section>
+<h2 id="growth-learning-signals">Growth & Learning Signals</h2>
+<p><strong>Temporal and durable execution.</strong> Temporal was new territory — not just a library swap but a different mental model for distributed systems. The migration required understanding workflow determinism constraints, activity retry semantics, and execution history management.</p>
+<p><strong>Elasticsearch and search infrastructure.</strong> The full-text search work in data-catalog was the first substantial Elasticsearch integration, including custom analyzer design for technical naming conventions and relevance tuning beyond basic CRUD.</p>
+<p><strong>Property-based testing with Hypothesis.</strong> The race condition fix introduced Hypothesis as a testing tool for concurrent systems. Property-based tests find edge cases that example-based tests miss, especially in concurrent code paths.</p>
+<p><strong>AI/LLM engineering.</strong> The bhavik-ai work represents sustained investment in understanding how to build reliable systems on top of LLMs: prompt design, parallel agent orchestration, response caching, and systematic eval methodology. The eval harness is the most mature signal — it reflects the understanding that AI outputs need the same quality infrastructure as code.</p>
+<p><strong>Cost visibility as a platform concern.</strong> The cost attribution work in pipeline-core represents recognizing that engineering decisions have financial consequences and building the instrumentation to surface them. The finding that one pipeline consumed 23% of compute budget wouldn't have been actionable without this work.</p>
+<hr>
+</section>
+<section class="prompts-section">
+<h2 id="self-assessment-prompts">Self-Assessment Prompts</h2>
+<p>Use these questions to strengthen your own narrative before your review conversation:</p>
+<ol>
+<li>Which of the three themes above had the biggest downstream impact — and can you quantify it? (The Temporal migration and the lineage graph API are strong candidates — how many teams are now using the plugin system, and how many schema change incidents has the impact analysis prevented?)</li>
+<li>Were there any initiatives you led that aren't fully captured in the PR/commit history — design docs, architecture reviews, or onboarding conversations that shaped how teammates approached a problem?</li>
+<li>The DLQ replay recovering 14,000 records is a strong reliability story — do you know the downstream impact in terms of user-facing data gaps that were prevented?</li>
+<li>The eval harness is novel quality infrastructure. Can you describe how it changed the bhavik-ai development process — and is there an opportunity to apply that thinking to pipeline-core or data-catalog testing?</li>
+<li>The cost attribution feature surfaced a 23% compute budget waste. Was that finding acted on, and did you contribute to the resolution?</li>
+<li>Who did you collaborate with most closely this year — and can you get peer endorsements from the teams who adopted the plugin system or used the impact analysis feature before making schema changes?</li>
+</ol>
+<hr>
+<p><em>Generated by the performance-review skill from 3 repos, 41 merged PRs, and 187 commits.</em></p>
+<p><em>Themes identified: Platform & Infrastructure · Product Feature Delivery · Developer Experience & AI Tooling</em></p>
+</section>
+
+  <div class="footer">
+    Generated by the performance-review skill &nbsp;·&nbsp; May 06, 2026
+  </div>
+</div>
+
+</body>
+</html>

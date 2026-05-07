@@ -37,7 +37,19 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/)",
       "Bash(curl:*)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "WebFetch(domain:query1.finance.yahoo.com)",
+      "Read(//Users/bhavikjain/.claude/**)",
+      "Bash(python -m scripts.package_skill /Users/bhavikjain/.claude/skills/meal-planner)",
+      "Bash(cp /Users/bhavikjain/.claude/skills/meal-planner/SKILL.md /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/meal-planner/skills/meal-planner/SKILL.md)",
+      "Bash(rm -rf /Users/bhavikjain/.claude/skills/)",
+      "Bash(python *)",
+      "WebFetch(domain:query2.finance.yahoo.com)",
+      "WebFetch(domain:www.barchart.com)",
+      "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/performance-review/.claude-plugin)",
+      "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/performance-review/skills/performance-review)",
+      "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/performance-review/evals)",
+      "Bash(gh auth *)"
     ]
   }
 }

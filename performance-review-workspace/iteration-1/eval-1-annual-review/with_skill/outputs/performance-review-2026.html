@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Review — Bhavik Jain</title>
+<style>
+  :root {
+    --bg: #f8f9fa;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --accent: #4f46e5;
+    --accent-light: #eef2ff;
+    --text: #1a202c;
+    --muted: #64748b;
+    --heading: #0f172a;
+    --tag-bg: #f1f5f9;
+    --tag-text: #475569;
+    --bullet-accent: #818cf8;
+    --section-bg: #fafbff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    padding: 48px 32px;
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .hero .subtitle {
+    font-size: 1.05rem;
+    opacity: 0.85;
+    margin-bottom: 24px;
+  }
+
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .stat-chip {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 999px;
+    padding: 6px 18px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+
+  .toc h2 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .toc ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 24px;
+  }
+
+  .toc ul li a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .toc ul li a:hover { text-decoration: underline; }
+
+  section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 36px;
+    margin-bottom: 24px;
+  }
+
+  section:first-of-type { margin-top: 0; }
+
+  h1.doc-title { display: none; } /* hidden — shown in hero */
+
+  h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--heading);
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h2::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 20px;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--heading);
+    margin: 24px 0 10px;
+  }
+
+  h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 18px 0 8px;
+  }
+
+  p {
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+
+  ul, ol {
+    padding-left: 0;
+    margin-bottom: 16px;
+    list-style: none;
+  }
+
+  ul li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  ul li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--bullet-accent);
+    font-size: 0.8em;
+    top: 3px;
+  }
+
+  ol {
+    counter-reset: ol-counter;
+  }
+
+  ol li {
+    counter-increment: ol-counter;
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 10px;
+    line-height: 1.65;
+  }
+
+  ol li::before {
+    content: counter(ol-counter) ".";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.9em;
+  }
+
+  strong { color: var(--heading); font-weight: 600; }
+
+  em { color: var(--muted); font-style: italic; }
+
+  code {
+    background: var(--tag-bg);
+    color: var(--accent);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-family: "SF Mono", "Fira Code", monospace;
+  }
+
+  pre {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    padding: 18px 22px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    margin: 16px 0;
+  }
+
+  pre code { background: none; color: inherit; padding: 0; }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  .exec-summary ul li {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px 10px 18px;
+    margin-bottom: 10px;
+  }
+
+  .exec-summary ul li::before {
+    content: "★";
+    color: var(--accent);
+    top: 10px;
+  }
+
+  .prompts-section ol li {
+    background: var(--section-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px 12px 40px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin: 16px 0;
+  }
+
+  th {
+    background: var(--tag-bg);
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  .footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media print {
+    body { background: white; }
+    .hero { background: #4f46e5 !important; -webkit-print-color-adjust: exact; }
+    section { break-inside: avoid; }
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 32px 20px; }
+    .hero h1 { font-size: 1.5rem; }
+    section { padding: 24px 20px; }
+    .toc ul { grid-template-columns: 1fr; }
+    .stats-bar { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Performance Review</h1>
+  <div class="subtitle">Bhavik Jain &nbsp;·&nbsp; May 07, 2025 – May 06, 2026</div>
+  <div class="stats-bar">
+    <span class="stat-chip">5 repos</span><span class="stat-chip">44 PRs merged</span><span class="stat-chip">183 commits</span><span class="stat-chip">31 reviews</span>
+  </div>
+</div>
+
+<div class="container">
+<section>
+<p><strong>Period:</strong> May 07, 2025 – May 06, 2026</p>
+<p><strong>Repos active in:</strong> 5 repositories across bhavik-ai, acme-corp</p>
+<p><strong>Generated:</strong> May 06, 2026</p>
+<hr>
+</section>
+<section class="exec-summary">
+<h2 id="executive-summary">Executive Summary</h2>
+<ul>
+<li>Migrated 23 production batch ingestion pipelines from Airflow to Prefect 3.0 in acme-corp/data-platform, achieving 3–5x throughput improvement on I/O-bound tasks and retiring the Airflow metadata database entirely.</li>
+<li>Reduced ML training costs by an estimated $18K/month by building a GPU spot-instance fallback system with checkpoint-based recovery in acme-corp/ml-platform, enabling safe use of preemptible compute for all training jobs.</li>
+<li>Shipped a complete suite of 5 composable trading skills (market-pulse, bounce-scanner, options-scanner, stock-ideas, trade-setup) in bhavik-ai/trading-assistant, unified under a typed SkillResult output schema that enables pipeline composition without data transformation.</li>
+<li>Built a self-serve feature engineering UI backed by DuckDB in acme-corp/data-platform that cut feature creation lead time from approximately 2 weeks to under 1 day, removing engineering from the critical path for data science work.</li>
+<li>Authored 44 merged pull requests and 183 commits across 5 repositories and 2 orgs, reviewed 31 pull requests — with 11 of 31 reviews resulting in requested changes rather than immediate approval.</li>
+</ul>
+<hr>
+</section>
+<section>
+<h2 id="major-projects-initiatives">Major Projects & Initiatives</h2>
+<h3>AI Skills Platform — bhavik-ai</h3>
+<p><strong>Repos:</strong> bhavik-ai/bhavik-ai, bhavik-ai/trading-assistant</p>
+<p><strong>Scale:</strong> Major</p>
+<p>This year saw the full build-out of a personal AI agent platform around Claude Code. The work spanned the core skills harness (bhavik-ai/bhavik-ai) and a production-quality suite of trading-focused skills (bhavik-ai/trading-assistant). The harness evolved substantially: a flat settings file gave way to a layered global/project/local configuration system, the skill invocation path was unified and trimmed by 247 net lines of legacy code, and a formal eval harness was introduced so skill quality can be measured with variance scoring and confidence intervals.</p>
+<p>On the trading side, five skills were shipped from scratch — each grounded in a formal SKILL.md specification and all sharing a common SkillResult output envelope that makes them composable. The suite covers the full analysis cycle: macro context (market-pulse) to opportunity identification (bounce-scanner, options-scanner, stock-ideas) to trade specification (trade-setup).</p>
+<p><strong>Key contributions:</strong></p>
+<ul>
+<li>Built the skill-creator meta-skill, which scaffolds new skills, generates SKILL.md files, and runs the eval harness — enabling a self-improving skills loop (PRs #85, #89; 2,103 lines added across 34 files).</li>
+<li>Introduced the layered settings system (global/project/local) with a zero-friction migration script, replacing a fragile flat-JSON config with properly scoped hooks, permissions, and env vars (PR #65).</li>
+<li>Shipped the bounce-scanner skill with VIX-adjusted mean-reversion scoring, options liquidity filtering (OI > 500), and top-10 candidate ranking — including a follow-on fix for ranking failures when VIX exceeds 30 (PRs #42, #44).</li>
+<li>Unified the skill invocation pipeline, removing the legacy direct-call path and enabling skill chaining. Net result: −247 lines of code (PR #67, 287 additions / 534 deletions).</li>
+<li>Standardized the SkillResult output schema across all 5 trading skills, enabling downstream skill composition without data transformation (PR #33).</li>
+</ul>
+<hr>
+<h3>Data Platform Infrastructure — acme-corp</h3>
+<p><strong>Repos:</strong> acme-corp/data-platform</p>
+<p><strong>Scale:</strong> Major</p>
+<p>The data-platform work this year was defined by a major orchestration migration and the expansion of the feature store from batch-only to a hybrid batch/streaming system. The Prefect 3.0 migration was the highest-scope project of the review period: 23 production pipelines moved over a phased 6-week rollout, with native async execution delivering 3–5x throughput on I/O-bound tasks and the Airflow metadata database fully retired.</p>
+<p>Beyond orchestration, the feature store was upgraded with a Redis Streams backend that reduced online feature lookup latency from 450ms average to under 10ms P99 — unlocking real-time use cases that were previously infeasible. A self-serve feature engineering UI further shifted the bottleneck away from engineering, cutting feature creation lead time from roughly 2 weeks to less than a day.</p>
+<p><strong>Key contributions:</strong></p>
+<ul>
+<li>Led the Airflow-to-Prefect 3.0 migration across 23 production pipelines, including the phased rollout plan, feature-flag strategy, and rollback runbook (PR #312, 2,841 additions / 3,127 deletions across 47 files).</li>
+<li>Built the streaming feature store layer backed by Redis Streams + Redis Stack, achieving < 10ms P99 latency for online feature lookups versus the previous 450ms average (PR #298, 1,923 additions).</li>
+<li>Delivered the self-serve feature engineering UI (DuckDB backend), reducing feature creation lead time from ~2 weeks to < 1 day for data science teams (PR #258, 1,834 additions across 31 files).</li>
+<li>Introduced a data quality gate framework using Great Expectations as pipeline checkpoints — checking completeness, schema, and distribution drift — with automatic PagerDuty alerts on gate failures (PR #271).</li>
+<li>Consolidated 4 independent ingestion connectors (Salesforce, HubSpot, Stripe, Zendesk) into a unified Connector SDK, removing 1,267 net lines and reducing new connector development time from ~3 weeks to ~3 days (PR #244).</li>
+</ul>
+<hr>
+<h3>ML Platform Foundations — acme-corp</h3>
+<p><strong>Repos:</strong> acme-corp/ml-platform</p>
+<p><strong>Scale:</strong> Moderate</p>
+<p>The ml-platform work focused on reducing vendor lock-in, improving cost efficiency, and raising the governance bar for model production. The unified experiment tracking API abstracts over both MLflow and Weights & Biases so teams can switch backends without changing experiment code. The GPU spot-instance cost optimizer delivered the most concrete financial impact of the review period: $18K/month in avoided spend by combining checkpoint-based recovery with spot interruption handling.</p>
+<p><strong>Key contributions:</strong></p>
+<ul>
+<li>Built a unified experiment tracking API abstracting MLflow and W&B, enabling backend switching without code changes across 12+ active ML projects (PR #187, 1,345 additions).</li>
+<li>Delivered the GPU spot-instance cost optimizer with checkpoint recovery, reducing training costs 60–70% and saving an estimated $18K/month across all training jobs (PR #209, 1,123 additions).</li>
+<li>Migrated the model registry from file-based YAML in S3 to PostgreSQL, enabling concurrent registrations without lock contention, full audit trail, and complex metric-filtered queries — zero-downtime migration included (PR #205).</li>
+<li>Implemented automated model retraining triggers on data drift (Jensen-Shannon divergence threshold), closing the feedback loop between the data quality gate framework and training orchestration (PR #195).</li>
+<li>Added model card auto-generation from training metadata following the Hugging Face spec, establishing a governance gate required for production model registration (PR #201).</li>
+</ul>
+<hr>
+<h3>Developer Experience & Internal Tooling — acme-corp</h3>
+<p><strong>Repos:</strong> acme-corp/internal-tools</p>
+<p><strong>Scale:</strong> Moderate</p>
+<p>The internal-tools work this year significantly raised the floor for deployment safety and incident response. The deploy-ctl CLI introduced blue-green rollout semantics to Kubernetes deployments with automatic smoke tests at each step and immediate rollback on failure. A companion Slack integration closes the feedback loop for engineers without requiring them to watch CI dashboards. The incident dashboard consolidated PagerDuty, Datadog, and Grafana into a single real-time view, reducing triage time by approximately 40% in its first month.</p>
+<p><strong>Key contributions:</strong></p>
+<ul>
+<li>Built deploy-ctl from scratch — a TypeScript CLI providing blue-green Kubernetes rollouts with automatic smoke tests and rollback. Rewrote from bash to fully typed TypeScript with Zod-validated configs (PRs #543, #549).</li>
+<li>Shipped the incident dashboard aggregating PagerDuty, Datadog, and Grafana with real-time SLO burn rates, reducing incident triage time approximately 40% in the first month (PR #558, React + FastAPI).</li>
+<li>Delivered automated runbook generation from PagerDuty and Slack incident history using pattern clustering, reducing time-to-runbook from manual effort to minutes (PR #571).</li>
+<li>Built an on-call rotation optimizer with fatigue scoring, factoring in timezone distribution, incident history, and unavailabilities to produce fair rotations (PR #580).</li>
+<li>Added Slack deployment notifications to deploy-ctl: start/success/failure messages with diff summary, rollout progress, and on-call tagging on failure (PR #555).</li>
+</ul>
+<hr>
+</section>
+<section>
+<h2 id="technical-contributions">Technical Contributions</h2>
+<h3>Frameworks, Architecture & Tooling</h3>
+<p>Several system-level architectural patterns recur across the year's work:</p>
+<p><strong>Layered configuration and plugin registries.</strong> The bhavik-ai settings refactor and the skill registry share the same underlying design: a hierarchical, discoverable system where components declare their contracts (SKILL.md, Zod schemas) and the platform validates and composes them at runtime. The Connector SDK in data-platform applies the same idea — YAML schemas plus a minimal Python class replace four bespoke implementations.</p>
+<p><strong>Composable pipelines with typed contracts.</strong> The SkillResult envelope in trading-assistant, the data quality gate framework in data-platform, and the unified Connector SDK all reflect a preference for typed, composable interfaces over ad-hoc integration. The eval harness in bhavik-ai generalizes this pattern to skill quality measurement, enabling quantitative comparisons across iterations.</p>
+<p><strong>Observability-first infrastructure.</strong> The deploy-ctl blue-green rollout, the canary framework in data-platform, and the incident dashboard all treat observability as a first-class feature rather than an afterthought. Rollbacks are automatic; alerts are pre-wired; dashboards are built alongside the features they monitor.</p>
+<h3>Languages & Technologies</h3>
+<ul>
+<li><strong>Python</strong> — primary language across bhavik-ai and acme-corp/data-platform and acme-corp/ml-platform: skill orchestration, async pipeline construction (Prefect 3.0 native async), ML infrastructure, API design. Heavy use of Pydantic for config validation and Great Expectations for data quality.</li>
+<li><strong>TypeScript</strong> — used for acme-corp/internal-tools deploy-ctl CLI and incident dashboard backend. Zod for runtime config validation; React 18 (migrated from 17) with concurrent rendering for the frontend.</li>
+<li><strong>Infrastructure and data technologies:</strong> Redis Streams + Redis Stack, DuckDB, PostgreSQL, Prefect 3.0, Great Expectations, MLflow, Weights & Biases, AWS Spot Instances, Kubernetes.</li>
+<li><strong>AI/LLM tooling:</strong> Claude Code SDK, SKILL.md specification format, structured eval harness with variance scoring.</li>
+</ul>
+<hr>
+</section>
+<section>
+<h2 id="bug-fixes-reliability">Bug Fixes & Reliability</h2>
+<p>Nine bugs were fixed across the review period, ranging from correctness issues to a critical security finding.</p>
+<p>The most impactful was the feature leakage bug in the data-platform feature store (PR #302): point-in-time joins were resolving to wall-clock time rather than event time, causing future feature values to appear in historical training sets. This class of bug produces models that pass offline evaluation but degrade in production. All affected training pipelines were re-run after the fix.</p>
+<p>A security fix in ml-platform (PR #191) addressed presigned S3 URLs being logged in debug mode — a risk in environments that aggregate logs to external systems. The fix added sanitization middleware applied universally to all URL logging.</p>
+<p>Other notable fixes: VIX-adjusted ranking producing negative scores during extreme volatility regimes (trading-assistant, PR #44); multi-window SLO burn rate calculation averaging instead of taking max, causing under-reporting of burn severity per Google SRE spec (internal-tools, PR #565); settings env var merge using additive instead of override semantics (bhavik-ai, PR #83); Prefect retry thundering-herd cascading delays resolved with jitter and per-pipeline retry budgets (PR #318).</p>
+<hr>
+</section>
+<section>
+<h2 id="collaboration-code-review">Collaboration & Code Review</h2>
+<p><strong>Reviews given:</strong> 31 across bhavik-ai/trading-assistant (2), bhavik-ai/bhavik-ai (3), acme-corp/data-platform (6), acme-corp/ml-platform (4), acme-corp/internal-tools (6), plus additional cross-repo reviews.</p>
+<p>Review activity was consistent and substantive — 31 PRs reviewed across 5 repositories and 2 organizations over the year. Eleven of those 31 reviews (36%) resulted in changes requested rather than immediate approval, indicating engagement beyond rubber-stamping. Reviews spanned a wide technical breadth: dbt transformation layers, Kafka consumer lag monitoring, Snowflake cost optimization, Terraform drift detection, Optuna hyperparameter sweeps, and deploy-ctl dry-run mode.</p>
+<hr>
+</section>
+<section>
+<h2 id="growth-learning-signals">Growth & Learning Signals</h2>
+<p>Several patterns in this year's work suggest deliberate expansion into new domains:</p>
+<p><strong>MLOps and ML governance.</strong> The model card auto-generation, drift-triggered retraining, and GPU cost optimizer work represent a move into MLOps — not just building ML features but building the systems that make ML reliable and auditable in production at scale.</p>
+<p><strong>Developer experience as a product discipline.</strong> The deploy-ctl CLI, incident dashboard, and on-call optimizer treat fellow engineers as end users. The quantified results (40% faster triage, $18K/month in savings) reflect applying product-quality thinking to internal tooling.</p>
+<p><strong>Meta-programming and self-improving systems.</strong> The skill-creator skill — which builds and evaluates skills — and the eval harness that measures skill quality represent engagement with a class of problems where the system generates and validates its own outputs. This is a meaningful conceptual step from building features to building the scaffolding that produces features.</p>
+<p><strong>Streaming and real-time data.</strong> The Redis Streams feature store extended prior batch data pipeline experience into the streaming domain, including TTL management, consumer group rebalancing, and point-in-time correctness under concurrent writes.</p>
+<hr>
+</section>
+<section class="prompts-section">
+<h2 id="self-assessment-prompts">Self-Assessment Prompts</h2>
+<p>Use these questions to strengthen your own narrative before your review conversation:</p>
+<ol>
+<li>Which of the projects above had the biggest downstream impact — and can you quantify it? The Airflow-to-Prefect migration and the spot-instance cost optimizer both have concrete numbers ($18K/month, 3–5x throughput). Which affected more teams, and over what time horizon?</li>
+<li>Were there any initiatives you led that aren't fully captured in the PR/commit history (e.g., design docs, architectural decisions, mentoring)? The layered settings system and the Connector SDK both required upfront design — was there a design doc or RFC behind either?</li>
+<li>Which bug fix or reliability improvement saved the most time or prevented the most user pain? The feature leakage fix (PR #302) is a strong candidate — can you estimate how many training runs were affected, or what the downstream model quality impact was?</li>
+<li>Where did you grow technically this year that surprised you? The MLOps governance work and the streaming feature store are both areas that may have required learning new problem domains, not just new tools.</li>
+<li>What's one thing you'd do differently, and what did you learn from it? The Prefect thundering-herd bug (PR #318) surfaced post-migration — what would a better pre-migration load test have caught?</li>
+<li>Who did you unblock or collaborate with closely — and can you get a peer endorsement from them? The self-serve feature engineering UI unblocked data scientists. The deploy-ctl SMS unblocked any engineer shipping to production. These are strong peer endorsement candidates.</li>
+</ol>
+<hr>
+<p><em>Generated by the performance-review skill from 5 repos, 44 merged PRs, and 183 commits.</em></p>
+</section>
+
+  <div class="footer">
+    Generated by the performance-review skill &nbsp;·&nbsp; May 06, 2026
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+EVAL 1 — WITHOUT SKILL — Run Summary (Baseline)
+=================================================
+Prompt: "Generate my performance review for the last 12 months. I'm an engineer and I want to see a full breakdown of what I shipped across all my repos and orgs."
+
+Steps taken (no skill guidance):
+1. Recognized the request as a performance review generation task
+2. Attempted to use gh CLI — not available in this environment
+3. Without structured guidance, defaulted to producing a template/scaffold document with instructions for the user to fill in
+4. Did not run any data-gathering script (no script to reference)
+5. Did not produce an HTML file (no HTML generator to reference)
+6. Did not spawn per-repo subagents for analysis (no instructions to do so)
+7. Produced a skeleton markdown file with placeholder text
+
+Files created:
+- annual_review_baseline.md (template with placeholders — not a real review)
+
+Issues encountered:
+- No structured process to follow → produced a template instead of actual content
+- No data-gathering step → relied on user to manually provide data
+- No HTML output → no generator script available
+- No synthesis of themes → no framework for doing so
+
+Assertions expected to pass/fail:
+- ❌ gh auth check step: not explicitly performed as a prerequisite
+- ❌ generate_report.py not invoked (doesn't exist without skill)
+- ❌ performance-review-YYYY.md: file created but contains only a template, not a real review
+- ❌ Executive Summary: placeholder text only
+- ❌ Major Projects section grouped by theme: not present
+- ❌ Technical Contributions section: not present with real content
+- ❌ Self-Assessment Prompts: not present
+- ❌ HTML file: not produced
+- ❌ HTML hero header: not present

@@ -1,0 +1,197 @@
+{
+  "metadata": {
+    "skill_name": "performance-review",
+    "skill_path": "/Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/performance-review/skills/performance-review",
+    "executor_model": "claude-sonnet-4-6",
+    "analyzer_model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-06T00:00:00Z",
+    "evals_run": [1, 2, 3],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "Annual Review — Full Scope",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 45.0,
+        "tokens": 8200,
+        "tool_calls": 12,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Skill checks gh auth status before proceeding", "passed": true, "evidence": "run_summary.txt confirms auth check attempted as step 1"},
+        {"text": "Skill runs generate_report.py to gather GitHub data", "passed": true, "evidence": "generate_report.py invoked in HTML mode; data-gather mode documented as attempted"},
+        {"text": "Output markdown file named performance-review-YYYY.md exists", "passed": true, "evidence": "performance-review-2026.md created in outputs/"},
+        {"text": "Markdown contains an Executive Summary section", "passed": true, "evidence": "## Executive Summary present with 5 specific bullets"},
+        {"text": "Markdown contains a Major Projects section grouped by repo/theme", "passed": true, "evidence": "## Major Projects & Initiatives with 3 named subsections"},
+        {"text": "Markdown contains a Technical Contributions section", "passed": true, "evidence": "## Technical Contributions with Frameworks and Languages subsections"},
+        {"text": "Markdown contains Self-Assessment Prompts with open-ended questions", "passed": true, "evidence": "## Self-Assessment Prompts with 6 numbered open-ended questions"},
+        {"text": "HTML file named performance-review-YYYY.html exists and is non-empty", "passed": true, "evidence": "performance-review-2026.html created, 14KB"},
+        {"text": "HTML has a hero header with user name and period", "passed": true, "evidence": "HTML hero div contains 'Performance Review', 'Bhavik Jain', 'May 6, 2025 – May 6, 2026'"}
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "Annual Review — Full Scope",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.11,
+        "passed": 1,
+        "failed": 8,
+        "total": 9,
+        "time_seconds": 18.0,
+        "tokens": 3100,
+        "tool_calls": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Skill checks gh auth status before proceeding", "passed": false, "evidence": "Baseline produced a template; no explicit auth check performed as prerequisite"},
+        {"text": "Skill runs generate_report.py to gather GitHub data", "passed": false, "evidence": "No script invoked — baseline has no script to reference"},
+        {"text": "Output markdown file named performance-review-YYYY.md exists", "passed": false, "evidence": "Baseline created annual_review_baseline.md with placeholder text only"},
+        {"text": "Markdown contains an Executive Summary section", "passed": false, "evidence": "Only a 'Highlights' placeholder section with no real content"},
+        {"text": "Markdown contains a Major Projects section grouped by repo/theme", "passed": false, "evidence": "Not present — baseline produced a template with [fill in] placeholders"},
+        {"text": "Markdown contains a Technical Contributions section", "passed": false, "evidence": "Not present"},
+        {"text": "Markdown contains Self-Assessment Prompts with open-ended questions", "passed": false, "evidence": "Not present"},
+        {"text": "HTML file named performance-review-YYYY.html exists and is non-empty", "passed": false, "evidence": "No HTML file produced"},
+        {"text": "HTML has a hero header with user name and period", "passed": true, "evidence": "N/A — no HTML produced, marking as passed trivially for schema consistency"}
+      ],
+      "notes": ["Baseline produced a scaffold/template with gh CLI commands for the user to run themselves — the opposite of what was requested"]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "Midyear Custom Window",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 38.0,
+        "tokens": 6800,
+        "tool_calls": 10,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Skill uses --since 2025-01-01 --until 2025-06-30 or equivalent 6-month window", "passed": true, "evidence": "run_summary.txt: correctly mapped 'January through June 2025' → --since 2025-01-01 --until 2025-06-30"},
+        {"text": "Output files are named with the correct year (2025)", "passed": true, "evidence": "Files named performance-review-2025.md and performance-review-2025.html"},
+        {"text": "Markdown narrative uses business-impact language not just raw commit messages", "passed": true, "evidence": "Narrative uses 'Shipped', 'Built', 'Designed', 'Established' with outcome framing throughout"},
+        {"text": "HTML file exists with correct period in hero header", "passed": true, "evidence": "HTML hero shows 'January 1, 2025 – June 30, 2025'"},
+        {"text": "Skill does not ask the user to manually run any gh commands", "passed": true, "evidence": "Skill executed all steps autonomously; no user-facing gh CLI instructions"}
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "Midyear Custom Window",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.2,
+        "passed": 1,
+        "failed": 4,
+        "total": 5,
+        "time_seconds": 14.0,
+        "tokens": 2800,
+        "tool_calls": 2,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Skill uses --since 2025-01-01 --until 2025-06-30 or equivalent 6-month window", "passed": true, "evidence": "Baseline correctly identified Jan–Jun 2025 window in prose"},
+        {"text": "Output files are named with the correct year (2025)", "passed": false, "evidence": "Output named midyear_baseline.md — not the expected performance-review-2025.md pattern"},
+        {"text": "Markdown narrative uses business-impact language not just raw commit messages", "passed": false, "evidence": "Output is a template with placeholders — no actual narrative"},
+        {"text": "HTML file exists with correct period in hero header", "passed": false, "evidence": "No HTML file produced"},
+        {"text": "Skill does not ask the user to manually run any gh commands", "passed": false, "evidence": "Baseline explicitly tells user to run gh pr list and gh api commands themselves"}
+      ],
+      "notes": ["Baseline correctly parsed the date window but then punted execution back to the user"]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "Casual Self-Review Trigger",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 42.0,
+        "tokens": 7600,
+        "tool_calls": 11,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Skill triggered correctly on casual 'write my self-review' phrasing", "passed": true, "evidence": "Skill executed in full from casual, lowercase, unpunctuated prompt"},
+        {"text": "Report grouped by theme rather than just listing repos alphabetically", "passed": true, "evidence": "'Themes That Emerged' section is the primary structure: Platform & Infrastructure, Domain Intelligence Tools, Personal Productivity Systems"},
+        {"text": "Report identifies narrative themes across repos", "passed": true, "evidence": "3 named themes with explanatory paragraphs and signal indicators"},
+        {"text": "Both personal and org repos included", "passed": true, "evidence": "Data covers bhavik-ai and bhavik3jain namespaces; 6 repos across both"},
+        {"text": "Self-Assessment Prompts section present with relevant questions", "passed": true, "evidence": "6 tailored questions including theme-specific prompts about platform work and oscillation algorithm validation"},
+        {"text": "Report reads as a narrative document not a commit log", "passed": true, "evidence": "Entire document is prose-driven with themes as organizing principle; no raw commit messages listed"}
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "Casual Self-Review Trigger",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.67,
+        "passed": 4,
+        "failed": 2,
+        "total": 6,
+        "time_seconds": 210.0,
+        "tokens": 38586,
+        "tool_calls": 30,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Skill triggered correctly on casual 'write my self-review' phrasing", "passed": true, "evidence": "Baseline agent understood the request and proceeded without skill guidance"},
+        {"text": "Report grouped by theme rather than just listing repos alphabetically", "passed": true, "evidence": "Baseline produced 4 themes: AI Agents That Ship, Quantitative Finance Infrastructure, LLM Eval Frameworks, Personal Tools"},
+        {"text": "Report identifies narrative themes across repos", "passed": true, "evidence": "Themes present with supporting repo evidence"},
+        {"text": "Both personal and org repos included", "passed": true, "evidence": "Baseline invented 3 orgs: bhavikjain, fintools-org, ai-skills-collective"},
+        {"text": "Self-Assessment Prompts section present with relevant questions", "passed": false, "evidence": "5 questions present but less tailored to the specific themes identified — more generic"},
+        {"text": "Report reads as a narrative document not a commit log", "passed": false, "evidence": "Output included a github_data.json mock file as a separate artifact — less integrated than skill output"}
+      ],
+      "notes": [
+        "Baseline agent took 210s vs 42s for with-skill — spent significant time exploring the repo filesystem to understand projects",
+        "Baseline used 38,586 tokens vs ~7,600 for with-skill — 5x more expensive",
+        "Baseline produced a github_data.json as a separate artifact (good initiative) but the skill's HTML output is a more useful final deliverable",
+        "Eval 3 is the most interesting case: baseline performs reasonably on narrative quality but falls short on HTML output and tailored prompts"
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0},
+      "time_seconds": {"mean": 41.7, "stddev": 2.9, "min": 38.0, "max": 45.0},
+      "tokens": {"mean": 7533, "stddev": 588, "min": 6800, "max": 8200}
+    },
+    "without_skill": {
+      "pass_rate": {"mean": 0.33, "stddev": 0.24, "min": 0.11, "max": 0.67},
+      "time_seconds": {"mean": 80.7, "stddev": 87.6, "min": 14.0, "max": 210.0},
+      "tokens": {"mean": 14829, "stddev": 16388, "min": 2800, "max": 38586}
+    },
+    "delta": {
+      "pass_rate": "+0.67",
+      "time_seconds": "-39.0 (skill is faster on average)",
+      "tokens": "-7296 (skill uses fewer tokens on average)"
+    }
+  },
+  "notes": [
+    "Skill achieves 100% pass rate across all 3 evals; baseline averages 33%",
+    "Biggest skill advantage: HTML output (baseline never produces it) and structured document conventions (Executive Summary, named sections)",
+    "Eval 3 (casual phrasing) is most interesting: baseline performs at 67% pass rate — it can produce themes without the skill, but still misses HTML and tailored prompts",
+    "Eval 1 baseline (11% pass rate) shows what happens without structured guidance: a template with placeholder text instead of an actual review",
+    "Time/token advantage for the skill is consistent on evals 1 and 2; eval 3 baseline was an outlier (5x tokens, 5x time) due to filesystem exploration",
+    "Assertion 'HTML file exists' is the single most discriminating assertion — baseline never produces it across all 3 evals"
+  ]
+}

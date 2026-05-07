@@ -1,0 +1,12 @@
+{
+  "eval_id": 3,
+  "eval_name": "casual-self-review-trigger",
+  "prompt": "write my self-review. i mostly work in python and my main repos are on github under my personal account and two orgs. want to understand what themes emerge from my code this year",
+  "assertions": [
+    "Skill triggers correctly on casual phrasing 'write my self-review'",
+    "Report groups contributions by theme rather than just listing repos alphabetically",
+    "Report identifies narrative themes across repos",
+    "Self-Assessment Prompts section is present with relevant questions",
+    "Report reads as a narrative document not a commit log"
+  ]
+}

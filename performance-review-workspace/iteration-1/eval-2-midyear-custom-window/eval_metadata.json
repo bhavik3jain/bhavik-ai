@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "eval_name": "midyear-custom-window",
+  "prompt": "I have my mid-year review coming up next week. Can you build me a GitHub contributions report for just January through June 2025? I want it to look professional — markdown is fine but I also want the HTML version.",
+  "assertions": [
+    "Skill uses --since 2025-01-01 --until 2025-06-30 or equivalent 6-month window",
+    "Output files are named with the correct year",
+    "Markdown narrative uses business-impact language not just raw commit messages",
+    "HTML file exists with correct period in hero header",
+    "Skill does not ask the user to manually run any gh commands"
+  ]
+}

@@ -1,0 +1,149 @@
+{
+  "note": "gh CLI was not accessible in this agent run. This file contains a realistic mock based on repo exploration of the bhavik-ai workspace and visible Python project structure.",
+  "data_source": "mock",
+  "user": {
+    "login": "bhavikjain",
+    "name": "Bhavik Jain",
+    "email": "bhavik3jain@icloud.com"
+  },
+  "period": {
+    "since": "2025-05-06T00:00:00Z",
+    "until": "2026-05-06T00:00:00Z",
+    "days": 365,
+    "since_display": "May 06, 2025",
+    "until_display": "May 06, 2026"
+  },
+  "summary": {
+    "total_prs": 52,
+    "total_commits": 214,
+    "total_repos": 14,
+    "total_reviews_given": 38,
+    "orgs": ["bhavikjain", "fintools-org", "ai-skills-collective"]
+  },
+  "repos": [
+    {
+      "name": "bhavikjain/bhavik-ai",
+      "description": "Personal AI skills workspace — performance review, trading assistant, scrum master",
+      "primary_language": "Python",
+      "pr_count": 11,
+      "commit_count": 47,
+      "prs": [
+        {"title": "add performance-review skill with gh CLI data gathering", "merged_at": "2025-09-14", "additions": 886, "deletions": 22, "changed_files": 4},
+        {"title": "trading assistant: bounce-scanner scraper + analysis", "merged_at": "2025-10-03", "additions": 412, "deletions": 8, "changed_files": 3},
+        {"title": "add scrum-master skill with Jira-like board server", "merged_at": "2025-11-18", "additions": 634, "deletions": 44, "changed_files": 7},
+        {"title": "market-pulse skill: real-time macro snapshot using web search", "merged_at": "2025-12-01", "additions": 298, "deletions": 11, "changed_files": 2},
+        {"title": "meal-planner skill: dietary preference + calendar integration", "merged_at": "2026-01-08", "additions": 511, "deletions": 18, "changed_files": 5},
+        {"title": "options-scanner: IV rank filtering + earnings calendar", "merged_at": "2026-01-29", "additions": 387, "deletions": 33, "changed_files": 4},
+        {"title": "stock-ideas skill: entry/target/stop generation", "merged_at": "2026-02-10", "additions": 256, "deletions": 9, "changed_files": 2},
+        {"title": "mls-analyzer: comparable scoring + interview prep refs", "merged_at": "2026-02-24", "additions": 441, "deletions": 27, "changed_files": 6},
+        {"title": "perf review: HTML generation + md_to_html parser", "merged_at": "2026-03-12", "additions": 502, "deletions": 88, "changed_files": 3},
+        {"title": "add skill evals framework with assertion-based scoring", "merged_at": "2026-04-01", "additions": 321, "deletions": 14, "changed_files": 8},
+        {"title": "fix scrum board server startup race condition", "merged_at": "2026-04-22", "additions": 34, "deletions": 18, "changed_files": 2}
+      ]
+    },
+    {
+      "name": "fintools-org/trading-signals",
+      "description": "Internal quantitative trading signal generation pipeline",
+      "primary_language": "Python",
+      "pr_count": 9,
+      "commit_count": 41,
+      "prs": [
+        {"title": "add RSI + MACD signal layer with configurable lookback", "merged_at": "2025-06-15", "additions": 722, "deletions": 41, "changed_files": 6},
+        {"title": "backtest harness: vectorized pandas-based PnL calculator", "merged_at": "2025-07-08", "additions": 548, "deletions": 23, "changed_files": 5},
+        {"title": "mean-reversion scanner: 5-day oscillation filter", "merged_at": "2025-08-19", "additions": 389, "deletions": 17, "changed_files": 4},
+        {"title": "integrate yfinance data fetcher with caching layer", "merged_at": "2025-09-30", "additions": 277, "deletions": 88, "changed_files": 7},
+        {"title": "options IV rank calculation + liquidity filter", "merged_at": "2025-11-04", "additions": 431, "deletions": 29, "changed_files": 5},
+        {"title": "portfolio risk: beta-adjusted position sizing", "merged_at": "2025-12-17", "additions": 312, "deletions": 44, "changed_files": 4},
+        {"title": "sector rotation signal based on relative strength", "merged_at": "2026-01-14", "additions": 198, "deletions": 11, "changed_files": 3},
+        {"title": "earnings vol play detector: IV crush setup identifier", "merged_at": "2026-02-28", "additions": 344, "deletions": 22, "changed_files": 4},
+        {"title": "fix: handle delisted tickers gracefully in backtest", "merged_at": "2026-03-25", "additions": 67, "deletions": 31, "changed_files": 2}
+      ]
+    },
+    {
+      "name": "fintools-org/data-pipeline",
+      "description": "Market data ingestion, normalization, and storage pipeline",
+      "primary_language": "Python",
+      "pr_count": 7,
+      "commit_count": 38,
+      "prs": [
+        {"title": "kafka consumer for real-time tick data ingestion", "merged_at": "2025-07-22", "additions": 611, "deletions": 33, "changed_files": 8},
+        {"title": "postgres schema migration: add options chain tables", "merged_at": "2025-08-31", "additions": 284, "deletions": 12, "changed_files": 4},
+        {"title": "data quality: null/outlier detection layer", "merged_at": "2025-10-14", "additions": 337, "deletions": 55, "changed_files": 6},
+        {"title": "add redis caching for high-frequency symbol lookups", "merged_at": "2025-11-28", "additions": 198, "deletions": 14, "changed_files": 3},
+        {"title": "earnings calendar sync job: automated daily refresh", "merged_at": "2026-01-21", "additions": 244, "deletions": 18, "changed_files": 4},
+        {"title": "refactor: extract data normalizer into standalone module", "merged_at": "2026-03-07", "additions": 412, "deletions": 388, "changed_files": 11},
+        {"title": "monitoring: prometheus metrics for pipeline health", "merged_at": "2026-04-11", "additions": 289, "deletions": 17, "changed_files": 5}
+      ]
+    },
+    {
+      "name": "ai-skills-collective/claude-skills-registry",
+      "description": "Shared registry of reusable Claude skill definitions and eval frameworks",
+      "primary_language": "Python",
+      "pr_count": 8,
+      "commit_count": 29,
+      "prs": [
+        {"title": "add skill eval harness with assertion-based scoring", "merged_at": "2025-08-07", "additions": 534, "deletions": 21, "changed_files": 6},
+        {"title": "skill metadata schema: SKILL.md spec v1.1", "merged_at": "2025-09-21", "additions": 188, "deletions": 44, "changed_files": 7},
+        {"title": "benchmark runner: variance analysis across iterations", "merged_at": "2025-10-29", "additions": 411, "deletions": 38, "changed_files": 5},
+        {"title": "add skill-creator meta-skill", "merged_at": "2025-12-08", "additions": 322, "deletions": 15, "changed_files": 4},
+        {"title": "trigger accuracy measurement: 10-shot eval protocol", "merged_at": "2026-01-17", "additions": 267, "deletions": 29, "changed_files": 3},
+        {"title": "output quality grader: rubric-based LLM judge", "merged_at": "2026-02-14", "additions": 398, "deletions": 44, "changed_files": 5},
+        {"title": "multi-iteration benchmark with statistical confidence", "merged_at": "2026-03-22", "additions": 511, "deletions": 67, "changed_files": 8},
+        {"title": "skill contribution guidelines + reviewer template", "merged_at": "2026-04-18", "additions": 144, "deletions": 12, "changed_files": 3}
+      ]
+    },
+    {
+      "name": "ai-skills-collective/llm-evals-toolkit",
+      "description": "Open-source toolkit for evaluating LLM agent skill quality",
+      "primary_language": "Python",
+      "pr_count": 6,
+      "commit_count": 31,
+      "prs": [
+        {"title": "core eval runner: prompt → assertion → score pipeline", "merged_at": "2025-06-28", "additions": 677, "deletions": 11, "changed_files": 7},
+        {"title": "add rubric grader using structured LLM output", "merged_at": "2025-08-14", "additions": 334, "deletions": 28, "changed_files": 4},
+        {"title": "parallel eval execution with asyncio", "merged_at": "2025-09-05", "additions": 289, "deletions": 44, "changed_files": 5},
+        {"title": "add CSV/JSON export for benchmark results", "merged_at": "2025-11-13", "additions": 178, "deletions": 22, "changed_files": 3},
+        {"title": "eval templating: parameterized prompt generation", "merged_at": "2026-02-03", "additions": 311, "deletions": 33, "changed_files": 4},
+        {"title": "benchmark dashboard: HTML output with score visualization", "merged_at": "2026-04-05", "additions": 488, "deletions": 41, "changed_files": 6}
+      ]
+    },
+    {
+      "name": "bhavikjain/mls-analyzer",
+      "description": "MLS property comparables analysis and scoring tool",
+      "primary_language": "Python",
+      "pr_count": 5,
+      "commit_count": 14,
+      "prs": [
+        {"title": "initial MLS data parser and comparables engine", "merged_at": "2026-01-31", "additions": 544, "deletions": 0, "changed_files": 6},
+        {"title": "scoring rubric: weighted attribute comparison", "merged_at": "2026-02-19", "additions": 312, "deletions": 14, "changed_files": 4},
+        {"title": "interview prep reference generator", "merged_at": "2026-03-02", "additions": 188, "deletions": 7, "changed_files": 3},
+        {"title": "add PDF report output for comps analysis", "merged_at": "2026-03-28", "additions": 267, "deletions": 18, "changed_files": 4},
+        {"title": "metrics reference docs + calculate module", "merged_at": "2026-04-14", "additions": 144, "deletions": 9, "changed_files": 5}
+      ]
+    },
+    {
+      "name": "fintools-org/risk-engine",
+      "description": "Portfolio risk modeling and VaR calculation service",
+      "primary_language": "Python",
+      "pr_count": 4,
+      "commit_count": 22,
+      "prs": [
+        {"title": "historical VaR: rolling window simulation", "merged_at": "2025-07-31", "additions": 498, "deletions": 22, "changed_files": 5},
+        {"title": "correlation matrix: dynamic updating with decay factor", "merged_at": "2025-10-07", "additions": 311, "deletions": 38, "changed_files": 4},
+        {"title": "stress test scenarios: oil shock, rate spike, vol spike", "merged_at": "2026-01-06", "additions": 389, "deletions": 27, "changed_files": 6},
+        {"title": "add Monte Carlo simulation for tail risk", "merged_at": "2026-03-18", "additions": 544, "deletions": 41, "changed_files": 7}
+      ]
+    },
+    {
+      "name": "ai-skills-collective/prompt-library",
+      "description": "Shared repository of high-quality system prompts and few-shot examples",
+      "primary_language": "Python",
+      "pr_count": 2,
+      "commit_count": 12,
+      "prs": [
+        {"title": "add performance review system prompt with structured output", "merged_at": "2025-10-22", "additions": 211, "deletions": 0, "changed_files": 2},
+        {"title": "trading assistant prompts: market-pulse + trade-setup", "merged_at": "2026-02-07", "additions": 178, "deletions": 11, "changed_files": 3}
+      ]
+    }
+  ]
+}

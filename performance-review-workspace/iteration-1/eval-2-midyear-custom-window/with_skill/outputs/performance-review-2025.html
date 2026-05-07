@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Review — Bhavik Jain</title>
+<style>
+  :root {
+    --bg: #f8f9fa;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --accent: #4f46e5;
+    --accent-light: #eef2ff;
+    --text: #1a202c;
+    --muted: #64748b;
+    --heading: #0f172a;
+    --tag-bg: #f1f5f9;
+    --tag-text: #475569;
+    --bullet-accent: #818cf8;
+    --section-bg: #fafbff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    padding: 48px 32px;
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .hero .subtitle {
+    font-size: 1.05rem;
+    opacity: 0.85;
+    margin-bottom: 24px;
+  }
+
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .stat-chip {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 999px;
+    padding: 6px 18px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+
+  .toc h2 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .toc ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 24px;
+  }
+
+  .toc ul li a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .toc ul li a:hover { text-decoration: underline; }
+
+  section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 36px;
+    margin-bottom: 24px;
+  }
+
+  section:first-of-type { margin-top: 0; }
+
+  h1.doc-title { display: none; } /* hidden — shown in hero */
+
+  h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--heading);
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h2::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 20px;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--heading);
+    margin: 24px 0 10px;
+  }
+
+  h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 18px 0 8px;
+  }
+
+  p {
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+
+  ul, ol {
+    padding-left: 0;
+    margin-bottom: 16px;
+    list-style: none;
+  }
+
+  ul li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  ul li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--bullet-accent);
+    font-size: 0.8em;
+    top: 3px;
+  }
+
+  ol {
+    counter-reset: ol-counter;
+  }
+
+  ol li {
+    counter-increment: ol-counter;
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 10px;
+    line-height: 1.65;
+  }
+
+  ol li::before {
+    content: counter(ol-counter) ".";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.9em;
+  }
+
+  strong { color: var(--heading); font-weight: 600; }
+
+  em { color: var(--muted); font-style: italic; }
+
+  code {
+    background: var(--tag-bg);
+    color: var(--accent);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-family: "SF Mono", "Fira Code", monospace;
+  }
+
+  pre {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    padding: 18px 22px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    margin: 16px 0;
+  }
+
+  pre code { background: none; color: inherit; padding: 0; }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  .exec-summary ul li {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px 10px 18px;
+    margin-bottom: 10px;
+  }
+
+  .exec-summary ul li::before {
+    content: "★";
+    color: var(--accent);
+    top: 10px;
+  }
+
+  .prompts-section ol li {
+    background: var(--section-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px 12px 40px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin: 16px 0;
+  }
+
+  th {
+    background: var(--tag-bg);
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  .footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media print {
+    body { background: white; }
+    .hero { background: #4f46e5 !important; -webkit-print-color-adjust: exact; }
+    section { break-inside: avoid; }
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 32px 20px; }
+    .hero h1 { font-size: 1.5rem; }
+    section { padding: 24px 20px; }
+    .toc ul { grid-template-columns: 1fr; }
+    .stats-bar { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Performance Review</h1>
+  <div class="subtitle">Bhavik Jain &nbsp;·&nbsp; January 1, 2025 – June 30, 2025</div>
+  <div class="stats-bar">
+    <span class="stat-chip">4 repos</span><span class="stat-chip">21 PRs merged</span><span class="stat-chip">74 commits</span>
+  </div>
+</div>
+
+<div class="container">
+<section>
+<p><strong>Period:</strong> January 1, 2025 – June 30, 2025</p>
+<p><strong>Repos active in:</strong> 4 repositories across bhavik-ai, bhavik3jain</p>
+<p><strong>Generated:</strong> May 6, 2026</p>
+<hr>
+</section>
+<section class="exec-summary">
+<h2 id="executive-summary">Executive Summary</h2>
+<ul>
+<li>Designed and shipped the bhavik-ai marketplace infrastructure from scratch, establishing the plugin registry pattern (marketplace.json + plugin.json + SKILL.md) now used across all skills</li>
+<li>Launched the trading-assistant plugin with three production skills — market-pulse, options-scanner, and stock-ideas — delivering a zero-API-key daily trading workflow</li>
+<li>Built the bounce-scanner as a novel mean-reversion tool with a custom oscillation scoring algorithm, integrating VIX sentiment overlay and options liquidity gating</li>
+<li>Delivered the scrum-master web app skill, eliminating manual task tracking via a rolling-day Flask UI with auto-rollover logic</li>
+<li>Established eval testing standards for all skills (evals.json format, expectations-based grading), creating a repeatable quality bar for future skill development</li>
+</ul>
+<hr>
+</section>
+<section>
+<h2 id="major-projects-initiatives">Major Projects & Initiatives</h2>
+<h3>Bhavik AI Marketplace — Foundation Build</h3>
+<p><strong>Repos:</strong> bhavik-ai</p>
+<p><strong>Scale:</strong> Major</p>
+<p>H1 2025 was largely focused on laying the foundation: designing a plugin system that Claude Code could consume, writing the first skills, and proving out the SKILL.md + marketplace.json contract. The marketplace grew from 0 to 3 registered plugins by June.</p>
+<p><strong>Key contributions:</strong></p>
+<ul>
+<li>Designed the marketplace schema: root-level <code>marketplace.json</code> as plugin registry, per-plugin <code>plugin.json</code> for metadata, per-skill <code>SKILL.md</code> with YAML frontmatter for description-driven trigger routing</li>
+<li>Wrote the foundational <code>evals/evals.json</code> standard, enabling each skill to ship with quantitative test cases</li>
+<li>Built the first meal-planner skill as a proof-of-concept, then used lessons learned to define the template for all subsequent skills</li>
+<li>Registered trading-assistant and scrum-master as the first two production plugins</li>
+</ul>
+<h3>Trading Assistant — Initial Launch</h3>
+<p><strong>Repos:</strong> bhavik-ai/trading-assistant</p>
+<p><strong>Scale:</strong> Major</p>
+<p>The trading-assistant went from concept to three shipping skills in H1. The key design constraint: no paid API keys, relying entirely on yfinance, Yahoo Finance endpoints, and web search.</p>
+<p><strong>Key contributions:</strong></p>
+<ul>
+<li>Built <code>market-pulse</code>: real-time macro snapshot covering VIX regime, sector rotation, Fed calendar, pre-market context — runs before any trade idea generation to ensure market-aware recommendations</li>
+<li>Shipped <code>options-scanner</code>: full chain analysis with strike selection by IV regime (low IV → long call, moderate → bull spread, high → flag as expensive), earnings risk gating, and spread cost framing</li>
+<li>Delivered <code>stock-ideas</code>: entry/target/stop generation for both momentum and value setups — always price-level specific, never vague direction</li>
+</ul>
+<h3>Bounce Scanner — Novel Algorithm</h3>
+<p><strong>Repos:</strong> bhavik-ai/trading-assistant/skills/bounce-scanner</p>
+<p><strong>Scale:</strong> Moderate</p>
+<p>The bounce-scanner stands out as the most technically original contribution of H1. The oscillation scoring formula — weighting amplitude and reversal frequency — was designed from scratch and tuned empirically.</p>
+<p><strong>Key contributions:</strong></p>
+<ul>
+<li>Designed two-phase architecture: Python scraper (yfinance batch OHLC + options chain) outputs JSON; Claude analysis layer applies VIX overlay and scores candidates</li>
+<li>Implemented the oscillation score: <code>(amplitude_pct/15 <em> 60) + (reversals/window </em> 40)</code>, max 100 points, favoring stocks with wide swings and frequent direction changes</li>
+<li>Built VIX regime filter: five tiers (low_vol → extreme_fear) with score multipliers, including a hard gate that suppresses bounce plays in extreme_fear regimes</li>
+<li>Added options liquidity gating: OI ≥ 500 and spread < 20% as hard requirements before any trade recommendation</li>
+</ul>
+<hr>
+</section>
+<section>
+<h2 id="technical-contributions">Technical Contributions</h2>
+<h3>Frameworks, Architecture & Tooling</h3>
+<p>Established the two-phase data/analysis pattern (Python fetcher → Claude synthesizer) as the standard architecture for data-intensive skills. This separation means each skill's data source is independently upgradeable — e.g., swapping yfinance for Polygon.io touches only <code>scraper.py</code>, not the SKILL.md logic.</p>
+<h3>Languages & Technologies</h3>
+<ul>
+<li><strong>Python</strong> — batch OHLC fetching with yfinance, options chain parsing, Flask web server for scrum-master, oscillation scoring algorithm</li>
+<li><strong>Markdown + YAML</strong> — SKILL.md as a skill definition language, with frontmatter driving Claude's trigger routing</li>
+<li><strong>JSON</strong> — inter-phase data contracts, plugin registry schema, eval test case definitions</li>
+<li><strong>HTML/CSS/JS</strong> — scrum-master rolling-day UI (single-file, zero build step)</li>
+</ul>
+<hr>
+</section>
+<section>
+<h2 id="bug-fixes-reliability">Bug Fixes & Reliability</h2>
+<ul>
+<li>Fixed ticker deduplication in S&P 500 list to prevent double-processing and score inflation in the bounce-scanner</li>
+<li>Resolved ATM-strike edge case where yfinance returns <code>lastPrice=0</code>, causing division-by-zero in spread percentage calculation</li>
+<li>Added <code>--top N</code> flag to the bounce-scanner scraper for faster test runs on a subset of tickers</li>
+<li>Fixed options chain ATM finder to use <code>copy()</code> before assigning the <code>dist</code> column, preventing <code>SettingWithCopyWarning</code> that caused intermittent incorrect ATM selection</li>
+</ul>
+<hr>
+</section>
+<section>
+<h2 id="collaboration-code-review">Collaboration & Code Review</h2>
+<p><strong>Reviews given:</strong> 5 PRs</p>
+<p>Self-review discipline was consistent in H1 — each PR shipped with a description explaining the "why", not just the "what". This is particularly visible in the bounce-scanner PRs, where the oscillation scoring rationale is documented in both the PR body and the <code>scraper.py</code> docstring.</p>
+<hr>
+</section>
+<section>
+<h2 id="growth-learning-signals">Growth & Learning Signals</h2>
+<p>H1 2025 marked a pivot into <strong>AI-native software engineering</strong> — designing systems where the primary artifact is instructions to an AI agent rather than executable code. The SKILL.md format required developing a new writing discipline: precise enough to direct Claude correctly, but general enough to handle diverse user phrasings.</p>
+<p>Also developed practical options market knowledge (IV regimes, spread mechanics, earnings binary risk) as a prerequisite for building tools that had to reason about it correctly.</p>
+<hr>
+</section>
+<section class="prompts-section">
+<h2 id="self-assessment-prompts">Self-Assessment Prompts</h2>
+<ol>
+<li>Which of the H1 projects had the most lasting downstream impact — and can you quantify it?</li>
+<li>Were there any architectural decisions you made in H1 that you'd reconsider now, with the benefit of H2 context?</li>
+<li>Which of the skills you shipped in H1 saw the most real-world use — and what did that usage reveal?</li>
+<li>Where did you grow technically in ways that surprised you?</li>
+<li>What's the one thing you'd do differently in the marketplace design if starting fresh?</li>
+<li>Who did you collaborate with or learn from most during this period?</li>
+</ol>
+<hr>
+<p><em>Generated by the performance-review skill from 4 repos, 21 merged PRs, and 74 commits.</em></p>
+<p><em>Time window: --since 2025-01-01 --until 2025-06-30</em></p>
+</section>
+
+  <div class="footer">
+    Generated by the performance-review skill &nbsp;·&nbsp; May 06, 2026
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "skill_name": "performance-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Generate my performance review for the last 12 months. I'm an engineer and I want to see a full breakdown of what I shipped across all my repos and orgs.",
+      "expected_output": "A complete performance review document saved as performance-review-YYYY.md containing: Executive Summary with 3-5 bullet highlights, Major Projects section with repo-specific contributions, Technical Contributions section, Bug Fixes section, Collaboration section, and Self-Assessment Prompts. Should also produce a performance-review-YYYY.html file with professional styling. The script should check gh auth, run generate_report.py to gather data, spawn subagents per repo for analysis, and synthesize findings.",
+      "files": [],
+      "expectations": [
+        "Skill checks gh auth status before proceeding",
+        "Skill runs generate_report.py to gather GitHub data",
+        "Output markdown file named performance-review-YYYY.md exists in working directory",
+        "Markdown contains an Executive Summary section",
+        "Markdown contains a Major Projects or similar section grouped by repo/theme",
+        "Markdown contains a Technical Contributions section",
+        "Markdown contains a Self-Assessment Prompts section with open-ended questions",
+        "HTML file named performance-review-YYYY.html exists and is non-empty",
+        "HTML has a hero header with user name and period"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I have my mid-year review coming up next week. Can you build me a GitHub contributions report for just January through June 2025? I want it to look professional — markdown is fine but I also want the HTML version.",
+      "expected_output": "The skill identifies the custom time window (Jan 1 – Jun 30, 2025) and passes --since 2025-01-01 --until 2025-06-30 to the script. Produces both markdown and HTML files. The report narrative is framed in business-impact language, not raw commit messages. The HTML report header shows the correct period.",
+      "files": [],
+      "expectations": [
+        "Skill uses --since 2025-01-01 --until 2025-06-30 (or equivalent 6-month window)",
+        "Output files are named with the correct year",
+        "Markdown narrative uses business-impact language (not just raw commit messages)",
+        "HTML file exists with correct period in hero header",
+        "Skill does not ask the user to manually run any gh commands"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "write my self-review. i mostly work in python and my main repos are on github under my personal account and two orgs. want to understand what themes emerge from my code this year",
+      "expected_output": "The skill triggers correctly on 'write my self-review', gathers data from personal account + org repos, and produces a thematic synthesis (not just a flat list of repos). The Major Projects section groups contributions by theme. The Technical Contributions section identifies Python-specific patterns. The output reads like a real performance review a human would write, not a log dump.",
+      "files": [],
+      "expectations": [
+        "Skill triggers correctly on casual phrasing 'write my self-review'",
+        "Report groups contributions by theme rather than just listing repos alphabetically",
+        "Report identifies narrative themes across repos (e.g., 'Platform Work', 'Feature Delivery')",
+        "Contributions from both personal account and org repos are included",
+        "Self-Assessment Prompts section is present and contains relevant questions",
+        "Report reads as a narrative document, not a commit log"
+      ]
+    }
+  ]
+}
