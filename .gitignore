@@ -1,6 +1,9 @@
 # Ignore per-run eval artifacts — these are regenerated each time skill-creator runs.
 # Only benchmark.json and benchmark.md are committed (regression baseline).
+.DS_Store
 
 scrum-master-workspace/iteration-*/eval-*/
 scrum-master-workspace/iteration-*/skill-snapshot/
 scrum-master-workspace/iteration-*/feedback.json
+
+meal-planner/notes.txt

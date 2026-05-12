@@ -18,6 +18,11 @@
       "name": "performance-review",
       "source": "./performance-review",
       "description": "Generate a comprehensive, narrative-driven performance review from your GitHub contributions — PRs, commits, and code reviews analyzed across all repos and orgs, synthesized into a polished markdown + HTML report."
+    },
+    {
+      "name": "meal-planner",
+      "source": "./meal-planner",
+      "description": "Weekly family meal planner — generates a personalized weekly meal plan with separate lunch options for Saloni and the family, drawing from a curated list of Indian, Mexican, Italian, Mediterranean, Asian, and fusion meals."
     }
   ]
 }
