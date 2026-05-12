@@ -1,0 +1,8 @@
+{
+  "name": "meal-planner",
+  "version": "1.0.0",
+  "description": "Weekly family meal planner — generates personalized weekly meal plans with separate lunch options for Saloni and the family, drawing from a curated list of Indian, Mexican, Italian, Mediterranean, Asian, and fusion meals",
+  "author": {
+    "name": "bhavik-ai"
+  }
+}
