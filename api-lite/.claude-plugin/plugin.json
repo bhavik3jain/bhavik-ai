@@ -1,0 +1,8 @@
+{
+  "name": "api-lite",
+  "version": "1.0.0",
+  "description": "Lightweight local API client — a Postman replacement that imports your existing Postman collections, sends HTTP requests, and persists history. No cloud sync, no account required.",
+  "author": {
+    "name": "bhavik-ai"
+  }
+}

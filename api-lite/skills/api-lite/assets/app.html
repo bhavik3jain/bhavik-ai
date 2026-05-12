@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>API Lite</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #161b27;
+    --bg3: #1e2535;
+    --bg4: #252d3d;
+    --border: #2a3347;
+    --border2: #374258;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --accent: #6366f1;
+    --accent-hover: #818cf8;
+    --accent-dim: #1e2040;
+    --green: #10b981;
+    --green-dim: #0d2e22;
+    --red: #f43f5e;
+    --red-dim: #2e0d18;
+    --yellow: #f59e0b;
+    --yellow-dim: #2d2000;
+    --blue: #3b82f6;
+    --blue-dim: #0d1f3a;
+    --purple: #a855f7;
+    --orange: #f97316;
+    --mono: "Geist Mono", "Fira Code", "Cascadia Code", monospace;
+    --sans: "Inter", system-ui, sans-serif;
+    --radius: 6px;
+    --radius-lg: 10px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    overflow: hidden;
+  }
+
+  /* ── Layout ── */
+  #app { display: flex; flex-direction: column; height: 100vh; }
+
+  #topbar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 14px;
+    height: 44px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    user-select: none;
+  }
+
+  #topbar .logo {
+    font-weight: 700; font-size: 14px; letter-spacing: -0.3px;
+    color: var(--text);
+    display: flex; align-items: center; gap: 6px;
+  }
+  #topbar .logo span { color: var(--accent); }
+
+  #topbar-actions { margin-left: auto; display: flex; gap: 8px; }
+
+  #main { display: flex; flex: 1; overflow: hidden; }
+
+  /* ── Sidebar ── */
+  #sidebar {
+    width: 260px; flex-shrink: 0;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  #sidebar-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .stab {
+    flex: 1; padding: 8px 4px; text-align: center;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.3px;
+    text-transform: uppercase; color: var(--text3);
+    cursor: pointer; border-bottom: 2px solid transparent;
+    transition: color .15s, border-color .15s;
+  }
+  .stab.active { color: var(--accent); border-color: var(--accent); }
+
+  .sidebar-panel { flex: 1; overflow-y: auto; display: none; flex-direction: column; }
+  .sidebar-panel.active { display: flex; }
+
+  .sidebar-section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px 6px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
+    text-transform: uppercase; color: var(--text3);
+    flex-shrink: 0;
+  }
+
+  /* ── Collections tree ── */
+  .collection-item {
+    margin: 0 6px 2px;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .collection-header {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 8px; cursor: pointer;
+    border-radius: var(--radius);
+    transition: background .12s;
+  }
+  .collection-header:hover { background: var(--bg3); }
+  .collection-header .caret {
+    font-size: 9px; color: var(--text3);
+    transition: transform .2s; flex-shrink: 0;
+  }
+  .collection-header.open .caret { transform: rotate(90deg); }
+  .collection-header .col-name {
+    flex: 1; font-weight: 600; font-size: 12px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .collection-body { display: none; padding-left: 16px; }
+  .collection-body.open { display: block; }
+
+  .request-row {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 8px; border-radius: var(--radius);
+    cursor: pointer; transition: background .12s;
+  }
+  .request-row:hover { background: var(--bg3); }
+  .request-row.active { background: var(--accent-dim); }
+  .request-row .method-badge {
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+    padding: 1px 5px; border-radius: 3px; flex-shrink: 0;
+  }
+  .request-row .req-name {
+    flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 12px;
+  }
+  .folder-row {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 8px; border-radius: var(--radius);
+    cursor: pointer; transition: background .12s; color: var(--text2);
+  }
+  .folder-row:hover { background: var(--bg3); }
+  .folder-row .caret { font-size: 9px; transition: transform .2s; }
+  .folder-row.open .caret { transform: rotate(90deg); }
+  .folder-body { display: none; padding-left: 12px; }
+  .folder-body.open { display: block; }
+
+  /* ── History list ── */
+  .history-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 12px; cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background .12s;
+  }
+  .history-item:hover { background: var(--bg3); }
+  .history-item .hist-url {
+    flex: 1; font-family: var(--mono); font-size: 11px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    color: var(--text2);
+  }
+  .history-item .hist-status {
+    font-size: 11px; font-weight: 600; font-family: var(--mono);
+  }
+  .history-item .hist-time { font-size: 10px; color: var(--text3); }
+
+  /* ── Center pane: request builder ── */
+  #center {
+    flex: 1; display: flex; flex-direction: column;
+    overflow: hidden; min-width: 0;
+  }
+
+  #url-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  #method-select {
+    background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text); padding: 6px 10px;
+    border-radius: var(--radius); font-family: var(--mono);
+    font-size: 12px; font-weight: 700; cursor: pointer;
+    outline: none; min-width: 90px;
+  }
+  #method-select:focus { border-color: var(--accent); }
+
+  #url-input {
+    flex: 1; background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text); padding: 6px 10px;
+    border-radius: var(--radius); font-family: var(--mono); font-size: 13px;
+    outline: none;
+  }
+  #url-input:focus { border-color: var(--accent); }
+  #url-input::placeholder { color: var(--text3); }
+
+  #send-btn {
+    background: var(--accent); color: #fff;
+    border: none; padding: 7px 18px;
+    border-radius: var(--radius); font-weight: 700; font-size: 13px;
+    cursor: pointer; transition: background .15s; white-space: nowrap;
+  }
+  #send-btn:hover { background: var(--accent-hover); }
+  #send-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  #save-btn {
+    background: transparent; color: var(--text2);
+    border: 1px solid var(--border2); padding: 7px 12px;
+    border-radius: var(--radius); font-size: 12px; cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  #save-btn:hover { background: var(--bg3); color: var(--text); }
+
+  /* ── Request tabs ── */
+  #req-tabs {
+    display: flex; gap: 2px;
+    padding: 8px 14px 0;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .rtab {
+    padding: 5px 12px; font-size: 12px; cursor: pointer;
+    border-radius: var(--radius) var(--radius) 0 0;
+    color: var(--text3); border: 1px solid transparent;
+    border-bottom: none; transition: color .12s, background .12s;
+    position: relative;
+  }
+  .rtab:hover { color: var(--text2); }
+  .rtab.active {
+    color: var(--text); background: var(--bg);
+    border-color: var(--border);
+    border-bottom: 1px solid var(--bg);
+    margin-bottom: -1px;
+  }
+  .rtab .badge {
+    background: var(--accent); color: #fff;
+    font-size: 9px; padding: 1px 4px; border-radius: 3px;
+    margin-left: 4px; font-weight: 700;
+  }
+
+  #req-body { flex: 1; overflow: hidden; background: var(--bg); }
+  .req-panel { display: none; height: 100%; flex-direction: column; overflow: hidden; }
+  .req-panel.active { display: flex; }
+
+  /* Key-value table (headers / params) */
+  .kv-table { width: 100%; border-collapse: collapse; }
+  .kv-table th {
+    text-align: left; padding: 6px 10px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+    text-transform: uppercase; color: var(--text3);
+    border-bottom: 1px solid var(--border);
+  }
+  .kv-row { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+  .kv-row input[type=checkbox] { margin: 0 8px; align-self: center; flex-shrink: 0; }
+  .kv-input {
+    flex: 1; background: transparent; border: none;
+    padding: 6px 8px; color: var(--text); font-family: var(--mono);
+    font-size: 12px; outline: none;
+    border-right: 1px solid var(--border);
+  }
+  .kv-input::placeholder { color: var(--text3); }
+  .kv-input:focus { background: var(--bg3); }
+  .kv-delete {
+    background: none; border: none; color: var(--text3);
+    padding: 0 10px; cursor: pointer; font-size: 14px;
+    transition: color .12s;
+  }
+  .kv-delete:hover { color: var(--red); }
+  .kv-add-btn {
+    margin: 6px 10px;
+    background: none; border: 1px dashed var(--border2);
+    color: var(--text3); padding: 5px 10px;
+    border-radius: var(--radius); cursor: pointer; font-size: 12px;
+    transition: border-color .12s, color .12s;
+    align-self: flex-start;
+  }
+  .kv-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Body editor */
+  #body-type-bar {
+    display: flex; gap: 8px; align-items: center;
+    padding: 8px 12px; border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .body-type-btn {
+    background: none; border: 1px solid var(--border2);
+    color: var(--text3); padding: 3px 10px;
+    border-radius: var(--radius); cursor: pointer; font-size: 11px;
+    transition: all .12s;
+  }
+  .body-type-btn.active {
+    background: var(--accent-dim); border-color: var(--accent);
+    color: var(--accent);
+  }
+  #body-editor {
+    flex: 1; font-family: var(--mono); font-size: 12px;
+    background: var(--bg); color: var(--text);
+    border: none; outline: none; resize: none;
+    padding: 10px 14px; line-height: 1.6;
+  }
+  #body-editor::placeholder { color: var(--text3); }
+
+  /* Auth panel */
+  #auth-panel { padding: 14px; overflow-y: auto; }
+  .auth-type-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+  }
+  .auth-type-row label { color: var(--text2); font-size: 12px; }
+  #auth-type {
+    background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text); padding: 5px 10px;
+    border-radius: var(--radius); font-size: 12px; outline: none; cursor: pointer;
+  }
+  .auth-fields { display: flex; flex-direction: column; gap: 10px; }
+  .auth-field { display: flex; flex-direction: column; gap: 4px; }
+  .auth-field label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.4px; }
+  .auth-field input {
+    background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text); padding: 7px 10px;
+    border-radius: var(--radius); font-family: var(--mono); font-size: 12px; outline: none;
+  }
+  .auth-field input:focus { border-color: var(--accent); }
+
+  /* ── Right pane: response ── */
+  #right {
+    width: 480px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    border-left: 1px solid var(--border);
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  #resp-meta {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0; min-height: 40px;
+  }
+  #resp-status {
+    font-family: var(--mono); font-weight: 700; font-size: 13px;
+  }
+  #resp-time, #resp-size {
+    font-size: 11px; color: var(--text3); font-family: var(--mono);
+  }
+  #resp-copy {
+    margin-left: auto;
+    background: none; border: 1px solid var(--border2);
+    color: var(--text3); padding: 3px 10px;
+    border-radius: var(--radius); cursor: pointer; font-size: 11px;
+    transition: all .12s;
+  }
+  #resp-copy:hover { border-color: var(--accent); color: var(--accent); }
+
+  #resp-tabs {
+    display: flex; gap: 2px; padding: 8px 14px 0;
+    background: var(--bg2); border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .resp-tab {
+    padding: 4px 10px; font-size: 11px; cursor: pointer;
+    border-radius: var(--radius) var(--radius) 0 0;
+    color: var(--text3); border: 1px solid transparent;
+    border-bottom: none; transition: color .12s;
+  }
+  .resp-tab.active {
+    color: var(--text); background: var(--bg);
+    border-color: var(--border); border-bottom: 1px solid var(--bg);
+    margin-bottom: -1px;
+  }
+
+  #resp-body { flex: 1; overflow: hidden; }
+  .resp-panel { display: none; height: 100%; overflow-y: auto; }
+  .resp-panel.active { display: block; }
+
+  #resp-pretty {
+    padding: 10px 14px;
+    font-family: var(--mono); font-size: 12px; line-height: 1.7;
+    white-space: pre-wrap; word-break: break-all;
+  }
+  #resp-raw {
+    padding: 10px 14px;
+    font-family: var(--mono); font-size: 12px; line-height: 1.7;
+    white-space: pre-wrap; word-break: break-all; color: var(--text2);
+  }
+  #resp-headers-view {
+    padding: 10px 14px;
+  }
+  .resp-hdr-row {
+    display: flex; gap: 8px; padding: 5px 0;
+    border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 12px;
+  }
+  .resp-hdr-key { color: var(--accent-hover); flex-shrink: 0; min-width: 160px; }
+  .resp-hdr-val { color: var(--text2); word-break: break-all; }
+
+  /* Empty/loading states */
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100%; color: var(--text3); gap: 8px; text-align: center; padding: 20px;
+  }
+  .empty-state .icon { font-size: 32px; opacity: .4; }
+  .empty-state p { font-size: 12px; line-height: 1.6; }
+
+  #spinner {
+    display: none; width: 18px; height: 18px;
+    border: 2px solid var(--border2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Environments panel ── */
+  #env-panel { padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  #env-select-row { display: flex; align-items: center; gap: 8px; }
+  #env-select {
+    flex: 1; background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text); padding: 6px 10px;
+    border-radius: var(--radius); font-size: 12px; outline: none; cursor: pointer;
+  }
+  .btn-sm {
+    background: none; border: 1px solid var(--border2);
+    color: var(--text2); padding: 5px 10px;
+    border-radius: var(--radius); cursor: pointer; font-size: 11px;
+    transition: all .12s; white-space: nowrap;
+  }
+  .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-sm.danger:hover { border-color: var(--red); color: var(--red); }
+  #env-vars-list { display: flex; flex-direction: column; gap: 2px; }
+
+  /* ── Import modal ── */
+  #import-modal {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.7); z-index: 100;
+    align-items: center; justify-content: center;
+  }
+  #import-modal.open { display: flex; }
+  #import-box {
+    background: var(--bg2); border: 1px solid var(--border2);
+    border-radius: var(--radius-lg); width: 560px; max-height: 80vh;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  #import-box-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; border-bottom: 1px solid var(--border);
+  }
+  #import-box-header h2 { font-size: 14px; font-weight: 700; }
+  #import-close {
+    background: none; border: none; color: var(--text3);
+    font-size: 18px; cursor: pointer; transition: color .12s;
+  }
+  #import-close:hover { color: var(--text); }
+  #import-body { padding: 16px 18px; overflow-y: auto; flex: 1; }
+
+  #drop-zone {
+    border: 2px dashed var(--border2); border-radius: var(--radius-lg);
+    padding: 30px; text-align: center; color: var(--text3);
+    cursor: pointer; transition: border-color .15s, background .15s;
+    margin-bottom: 14px;
+  }
+  #drop-zone.drag-over { border-color: var(--accent); background: var(--accent-dim); }
+  #drop-zone .dz-icon { font-size: 28px; margin-bottom: 8px; }
+  #drop-zone p { font-size: 12px; }
+
+  .postman-found-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 6px;
+    cursor: pointer; transition: background .12s, border-color .12s;
+  }
+  .postman-found-item:hover { background: var(--bg3); border-color: var(--border2); }
+  .postman-found-item .pf-name { flex: 1; font-weight: 600; font-size: 12px; }
+  .postman-found-item .pf-path { font-size: 10px; color: var(--text3); font-family: var(--mono); }
+  .postman-found-btn {
+    background: var(--accent); color: #fff; border: none;
+    padding: 4px 10px; border-radius: var(--radius); font-size: 11px;
+    cursor: pointer; font-weight: 600; white-space: nowrap;
+  }
+
+  #import-scanning { color: var(--text2); font-size: 12px; text-align: center; padding: 20px; }
+
+  /* ── Save request modal ── */
+  #save-modal {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.7); z-index: 100;
+    align-items: center; justify-content: center;
+  }
+  #save-modal.open { display: flex; }
+  #save-box {
+    background: var(--bg2); border: 1px solid var(--border2);
+    border-radius: var(--radius-lg); width: 400px;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  #save-box-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; border-bottom: 1px solid var(--border);
+  }
+  #save-box-header h2 { font-size: 14px; font-weight: 700; }
+  #save-close {
+    background: none; border: none; color: var(--text3);
+    font-size: 18px; cursor: pointer;
+  }
+  #save-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+  .form-field { display: flex; flex-direction: column; gap: 4px; }
+  .form-field label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.4px; }
+  .form-field input, .form-field select {
+    background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text); padding: 7px 10px;
+    border-radius: var(--radius); font-size: 12px; outline: none;
+  }
+  .form-field input:focus, .form-field select:focus { border-color: var(--accent); }
+  #save-actions {
+    display: flex; gap: 8px; justify-content: flex-end;
+    padding: 12px 18px; border-top: 1px solid var(--border);
+  }
+  #save-confirm {
+    background: var(--accent); color: #fff;
+    border: none; padding: 7px 16px;
+    border-radius: var(--radius); font-weight: 700; cursor: pointer;
+  }
+
+  /* Syntax highlighting */
+  .tok-key { color: #93c5fd; }
+  .tok-str { color: #86efac; }
+  .tok-num { color: #fcd34d; }
+  .tok-bool { color: #f9a8d4; }
+  .tok-null { color: #94a3b8; }
+  .tok-punc { color: #64748b; }
+
+  /* Scrollbars */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+  /* Method colors */
+  .m-GET    { background: var(--blue-dim); color: var(--blue); }
+  .m-POST   { background: var(--green-dim); color: var(--green); }
+  .m-PUT    { background: var(--yellow-dim); color: var(--yellow); }
+  .m-PATCH  { background: var(--yellow-dim); color: var(--orange); }
+  .m-DELETE { background: var(--red-dim); color: var(--red); }
+  .m-HEAD   { background: var(--accent-dim); color: var(--purple); }
+  .m-OPTIONS{ background: var(--bg4); color: var(--text3); }
+
+  .status-2xx { color: var(--green); }
+  .status-3xx { color: var(--yellow); }
+  .status-4xx { color: var(--orange); }
+  .status-5xx { color: var(--red); }
+
+  /* Resize handle */
+  #resize-handle {
+    width: 4px; cursor: col-resize; flex-shrink: 0;
+    background: var(--border);
+    transition: background .15s;
+  }
+  #resize-handle:hover, #resize-handle.dragging { background: var(--accent); }
+
+  .toast {
+    position: fixed; bottom: 20px; right: 20px;
+    background: var(--bg3); border: 1px solid var(--border2);
+    color: var(--text); padding: 10px 16px;
+    border-radius: var(--radius); font-size: 12px;
+    z-index: 200; opacity: 0;
+    transition: opacity .2s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  #clear-hist-btn { font-size: 10px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Top bar -->
+  <div id="topbar">
+    <div class="logo">⚡ API <span>Lite</span></div>
+    <div id="topbar-actions">
+      <button class="btn-sm" id="import-btn">⬆ Import Collection</button>
+      <button class="btn-sm" id="new-collection-btn">+ New Collection</button>
+    </div>
+  </div>
+
+  <div id="main">
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <div id="sidebar-tabs">
+        <div class="stab active" data-panel="collections">Collections</div>
+        <div class="stab" data-panel="history">History</div>
+        <div class="stab" data-panel="env">Env</div>
+      </div>
+
+      <!-- Collections panel -->
+      <div class="sidebar-panel active" id="panel-collections">
+        <div class="sidebar-section-header">
+          <span>Collections</span>
+        </div>
+        <div id="collections-list">
+          <div class="empty-state" style="padding:40px 20px">
+            <div class="icon">📁</div>
+            <p>No collections yet.<br>Import from Postman or create a new one.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- History panel -->
+      <div class="sidebar-panel" id="panel-history">
+        <div class="sidebar-section-header">
+          <span>Request History</span>
+          <button class="btn-sm" id="clear-hist-btn" style="font-size:10px">Clear</button>
+        </div>
+        <div id="history-list">
+          <div class="empty-state" style="padding:40px 20px">
+            <div class="icon">🕐</div>
+            <p>No requests sent yet.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Environments panel -->
+      <div class="sidebar-panel" id="panel-env">
+        <div id="env-panel">
+          <div id="env-select-row">
+            <select id="env-select"><option value="">— No Environment —</option></select>
+            <button class="btn-sm" id="new-env-btn">+ New</button>
+            <button class="btn-sm danger" id="del-env-btn">Del</button>
+          </div>
+          <div id="env-name-row" style="display:flex;gap:6px;align-items:center">
+            <input id="env-name-input" placeholder="Environment name"
+              style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:5px 8px;border-radius:var(--radius);font-size:12px;outline:none" />
+            <button class="btn-sm" id="save-env-btn">Save</button>
+          </div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:4px">Variables</div>
+          <div id="env-vars-list"></div>
+          <button class="kv-add-btn" id="add-env-var-btn">+ Add Variable</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center: request builder -->
+    <div id="center">
+      <div id="url-bar">
+        <select id="method-select">
+          <option>GET</option><option>POST</option><option>PUT</option>
+          <option>PATCH</option><option>DELETE</option><option>HEAD</option>
+          <option>OPTIONS</option>
+        </select>
+        <input id="url-input" type="text" placeholder="https://api.example.com/endpoint  (use {{variable}} for env vars)" />
+        <button id="save-btn">Save</button>
+        <button id="send-btn">Send</button>
+        <div id="spinner"></div>
+      </div>
+
+      <div id="req-tabs">
+        <div class="rtab active" data-req-tab="params">Params</div>
+        <div class="rtab" data-req-tab="headers">Headers <span class="badge" id="headers-badge" style="display:none"></span></div>
+        <div class="rtab" data-req-tab="body">Body</div>
+        <div class="rtab" data-req-tab="auth">Auth</div>
+      </div>
+
+      <div id="req-body">
+        <!-- Params -->
+        <div class="req-panel active" id="req-params-panel">
+          <div style="padding:8px 10px 0">
+            <div style="display:flex;gap:0;border-bottom:1px solid var(--border)">
+              <div style="flex:.8;padding:5px 10px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3)">Key</div>
+              <div style="flex:1;padding:5px 10px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3)">Value</div>
+              <div style="width:50px"></div>
+            </div>
+          </div>
+          <div id="params-rows" style="overflow-y:auto;flex:1"></div>
+          <button class="kv-add-btn" id="add-param-btn">+ Add Param</button>
+        </div>
+
+        <!-- Headers -->
+        <div class="req-panel" id="req-headers-panel">
+          <div style="padding:8px 10px 0">
+            <div style="display:flex;gap:0;border-bottom:1px solid var(--border)">
+              <div style="flex:.8;padding:5px 10px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3)">Key</div>
+              <div style="flex:1;padding:5px 10px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3)">Value</div>
+              <div style="width:50px"></div>
+            </div>
+          </div>
+          <div id="headers-rows" style="overflow-y:auto;flex:1"></div>
+          <button class="kv-add-btn" id="add-header-btn">+ Add Header</button>
+        </div>
+
+        <!-- Body -->
+        <div class="req-panel" id="req-body-panel" style="flex-direction:column">
+          <div id="body-type-bar">
+            <span style="font-size:11px;color:var(--text3)">Body type:</span>
+            <button class="body-type-btn active" data-btype="json">JSON</button>
+            <button class="body-type-btn" data-btype="raw">Raw</button>
+            <button class="body-type-btn" data-btype="form">Form</button>
+            <button class="body-type-btn" data-btype="none">None</button>
+            <button class="btn-sm" id="format-json-btn" style="margin-left:auto;font-size:11px">Format JSON</button>
+          </div>
+          <textarea id="body-editor" placeholder='{"key": "value"}'></textarea>
+        </div>
+
+        <!-- Auth -->
+        <div class="req-panel" id="req-auth-panel">
+          <div id="auth-panel">
+            <div class="auth-type-row">
+              <label>Auth type:</label>
+              <select id="auth-type">
+                <option value="none">No Auth</option>
+                <option value="bearer">Bearer Token</option>
+                <option value="apikey">API Key</option>
+                <option value="basic">Basic Auth</option>
+              </select>
+            </div>
+            <div class="auth-fields" id="auth-fields"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resize handle -->
+    <div id="resize-handle"></div>
+
+    <!-- Right: response -->
+    <div id="right">
+      <div id="resp-meta">
+        <div id="resp-status" class="status-2xx">—</div>
+        <div id="resp-time"></div>
+        <div id="resp-size"></div>
+        <button id="resp-copy" style="display:none">Copy</button>
+      </div>
+      <div id="resp-tabs">
+        <div class="resp-tab active" data-resp-tab="pretty">Pretty</div>
+        <div class="resp-tab" data-resp-tab="raw">Raw</div>
+        <div class="resp-tab" data-resp-tab="headers">Headers</div>
+      </div>
+      <div id="resp-body">
+        <div class="resp-panel active" id="resp-pretty-panel">
+          <div class="empty-state" id="resp-empty">
+            <div class="icon">🚀</div>
+            <p>Send a request to see the response here.</p>
+          </div>
+          <pre id="resp-pretty" style="display:none"></pre>
+        </div>
+        <div class="resp-panel" id="resp-raw-panel">
+          <pre id="resp-raw"></pre>
+        </div>
+        <div class="resp-panel" id="resp-headers-panel">
+          <div id="resp-headers-view"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Import modal -->
+<div id="import-modal">
+  <div id="import-box">
+    <div id="import-box-header">
+      <h2>Import Postman Collection</h2>
+      <button id="import-close">×</button>
+    </div>
+    <div id="import-body">
+      <div id="drop-zone">
+        <div class="dz-icon">📂</div>
+        <p>Drop a Postman collection JSON here<br><span style="color:var(--accent);cursor:pointer" id="browse-link">or click to browse</span></p>
+        <input type="file" id="file-input" accept=".json" style="display:none" />
+      </div>
+
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">
+        Found in Postman app data
+      </div>
+      <div id="postman-found-list">
+        <div id="import-scanning">Scanning for Postman collections…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Save request modal -->
+<div id="save-modal">
+  <div id="save-box">
+    <div id="save-box-header">
+      <h2>Save Request</h2>
+      <button id="save-close">×</button>
+    </div>
+    <div id="save-body">
+      <div class="form-field">
+        <label>Request name</label>
+        <input id="save-req-name" placeholder="My Request" />
+      </div>
+      <div class="form-field">
+        <label>Collection</label>
+        <select id="save-collection-select"></select>
+      </div>
+      <div class="form-field">
+        <label>Folder (optional)</label>
+        <input id="save-folder-name" placeholder="Leave blank for root" />
+      </div>
+    </div>
+    <div id="save-actions">
+      <button class="btn-sm" id="save-cancel">Cancel</button>
+      <button id="save-confirm">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PORT = {{PORT}};
+const API = `http://localhost:${PORT}`;
+
+// ── State ──────────────────────────────────────────────────────────
+let state = {
+  collections: [],   // [{id, name, requests:[{id,name,method,url,headers,params,body,bodyType,auth}], folders:[]}]
+  history: [],       // [{id, method, url, status, elapsed_ms, ts, request, response}]
+  environments: [],  // [{id, name, vars:{key:val}}]
+  activeEnv: null,   // id
+};
+
+let currentReqId = null;  // selected request in collection
+
+// ── Persistence ────────────────────────────────────────────────────
+async function loadState() {
+  try {
+    const r = await fetch(`${API}/data`);
+    const d = await r.json();
+    state.collections = d.collections || [];
+    state.history = d.history || [];
+    state.environments = d.environments || [];
+    state.activeEnv = d.activeEnv || null;
+  } catch(e) { console.warn("Could not load state:", e); }
+  renderAll();
+}
+
+async function saveState() {
+  try {
+    await fetch(`${API}/data`, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(state),
+    });
+  } catch(e) { console.warn("Could not save state:", e); }
+}
+
+// ── Env var substitution ───────────────────────────────────────────
+function resolveEnv(str) {
+  if (!str) return str;
+  const env = state.environments.find(e => e.id === state.activeEnv);
+  if (!env) return str;
+  return str.replace(/\{\{([^}]+)\}\}/g, (_, k) => {
+    return env.vars[k.trim()] !== undefined ? env.vars[k.trim()] : `{{${k}}}`;
+  });
+}
+
+// ── Sidebar tabs ───────────────────────────────────────────────────
+document.querySelectorAll(".stab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".stab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".sidebar-panel").forEach(p => p.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById(`panel-${tab.dataset.panel}`).classList.add("active");
+  });
+});
+
+// ── Request tabs ───────────────────────────────────────────────────
+document.querySelectorAll(".rtab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".rtab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".req-panel").forEach(p => p.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById(`req-${tab.dataset.reqTab}-panel`).classList.add("active");
+  });
+});
+
+// ── Response tabs ──────────────────────────────────────────────────
+document.querySelectorAll(".resp-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".resp-tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".resp-panel").forEach(p => p.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById(`resp-${tab.dataset.respTab}-panel`).classList.add("active");
+  });
+});
+
+// ── KV row helpers ─────────────────────────────────────────────────
+function makeKvRow(key="", val="", enabled=true) {
+  const row = document.createElement("div");
+  row.className = "kv-row";
+  row.innerHTML = `
+    <input type="checkbox" ${enabled ? "checked" : ""} />
+    <input class="kv-input key-input" placeholder="Key" value="${escHtml(key)}" />
+    <input class="kv-input val-input" placeholder="Value" value="${escHtml(val)}" style="border-right:none" />
+    <button class="kv-delete">×</button>
+  `;
+  row.querySelector(".kv-delete").addEventListener("click", () => row.remove());
+  return row;
+}
+
+function getKvRows(container) {
+  return [...container.querySelectorAll(".kv-row")].map(row => ({
+    enabled: row.querySelector('input[type=checkbox]').checked,
+    key: row.querySelector(".key-input").value.trim(),
+    value: row.querySelector(".val-input").value,
+  })).filter(r => r.key);
+}
+
+document.getElementById("add-param-btn").addEventListener("click", () => {
+  document.getElementById("params-rows").appendChild(makeKvRow());
+  updateHeadersBadge();
+});
+document.getElementById("add-header-btn").addEventListener("click", () => {
+  document.getElementById("headers-rows").appendChild(makeKvRow());
+  updateHeadersBadge();
+});
+
+function updateHeadersBadge() {
+  const rows = getKvRows(document.getElementById("headers-rows"));
+  const badge = document.getElementById("headers-badge");
+  if (rows.length) { badge.textContent = rows.length; badge.style.display = "inline"; }
+  else badge.style.display = "none";
+}
+
+// ── Auth panel ─────────────────────────────────────────────────────
+const authType = document.getElementById("auth-type");
+const authFields = document.getElementById("auth-fields");
+
+authType.addEventListener("change", renderAuthFields);
+
+function renderAuthFields() {
+  authFields.innerHTML = "";
+  const t = authType.value;
+  if (t === "bearer") {
+    authFields.innerHTML = `<div class="auth-field"><label>Token</label><input id="auth-token" placeholder="eyJ..." /></div>`;
+  } else if (t === "apikey") {
+    authFields.innerHTML = `
+      <div class="auth-field"><label>Header name</label><input id="auth-key-name" placeholder="X-API-Key" /></div>
+      <div class="auth-field"><label>Value</label><input id="auth-key-val" placeholder="your-api-key" /></div>
+      <div class="auth-field"><label>Add to</label>
+        <select id="auth-key-in" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:6px 8px;border-radius:var(--radius);font-size:12px;outline:none">
+          <option value="header">Header</option><option value="query">Query param</option>
+        </select>
+      </div>`;
+  } else if (t === "basic") {
+    authFields.innerHTML = `
+      <div class="auth-field"><label>Username</label><input id="auth-user" placeholder="username" /></div>
+      <div class="auth-field"><label>Password</label><input id="auth-pass" type="password" placeholder="password" /></div>`;
+  }
+}
+
+function getAuthConfig() {
+  const t = authType.value;
+  if (t === "bearer") return {type:"bearer", token: document.getElementById("auth-token")?.value || ""};
+  if (t === "apikey") return {
+    type:"apikey",
+    name: document.getElementById("auth-key-name")?.value || "",
+    value: document.getElementById("auth-key-val")?.value || "",
+    in: document.getElementById("auth-key-in")?.value || "header",
+  };
+  if (t === "basic") return {
+    type:"basic",
+    user: document.getElementById("auth-user")?.value || "",
+    pass: document.getElementById("auth-pass")?.value || "",
+  };
+  return {type:"none"};
+}
+
+function applyAuthConfig(auth) {
+  if (!auth) return;
+  authType.value = auth.type || "none";
+  renderAuthFields();
+  if (auth.type === "bearer" && document.getElementById("auth-token")) {
+    document.getElementById("auth-token").value = auth.token || "";
+  } else if (auth.type === "apikey") {
+    if (document.getElementById("auth-key-name")) document.getElementById("auth-key-name").value = auth.name || "";
+    if (document.getElementById("auth-key-val")) document.getElementById("auth-key-val").value = auth.value || "";
+    if (document.getElementById("auth-key-in")) document.getElementById("auth-key-in").value = auth.in || "header";
+  } else if (auth.type === "basic") {
+    if (document.getElementById("auth-user")) document.getElementById("auth-user").value = auth.user || "";
+    if (document.getElementById("auth-pass")) document.getElementById("auth-pass").value = auth.pass || "";
+  }
+}
+
+// ── Format JSON ────────────────────────────────────────────────────
+document.getElementById("format-json-btn").addEventListener("click", () => {
+  const ta = document.getElementById("body-editor");
+  try { ta.value = JSON.stringify(JSON.parse(ta.value), null, 2); }
+  catch(e) { showToast("Invalid JSON"); }
+});
+
+// Body type buttons
+document.querySelectorAll(".body-type-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".body-type-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  });
+});
+
+// ── Send request ───────────────────────────────────────────────────
+document.getElementById("send-btn").addEventListener("click", sendRequest);
+document.getElementById("url-input").addEventListener("keydown", e => {
+  if (e.key === "Enter") sendRequest();
+});
+
+async function sendRequest() {
+  const rawUrl = document.getElementById("url-input").value.trim();
+  if (!rawUrl) { showToast("Enter a URL"); return; }
+
+  const url = resolveEnv(rawUrl);
+  const method = document.getElementById("method-select").value;
+
+  // Build headers
+  const headerRows = getKvRows(document.getElementById("headers-rows"));
+  const headers = {};
+  headerRows.filter(r => r.enabled).forEach(r => headers[resolveEnv(r.key)] = resolveEnv(r.value));
+
+  // Params → append to URL
+  const paramRows = getKvRows(document.getElementById("params-rows"));
+  let finalUrl = url;
+  if (paramRows.length) {
+    const qp = new URLSearchParams();
+    paramRows.filter(r => r.enabled).forEach(r => qp.append(resolveEnv(r.key), resolveEnv(r.value)));
+    finalUrl += (url.includes("?") ? "&" : "?") + qp.toString();
+  }
+
+  // Auth
+  const auth = getAuthConfig();
+  if (auth.type === "bearer") {
+    headers["Authorization"] = `Bearer ${resolveEnv(auth.token)}`;
+  } else if (auth.type === "apikey" && auth.in === "header") {
+    headers[resolveEnv(auth.name)] = resolveEnv(auth.value);
+  } else if (auth.type === "apikey" && auth.in === "query") {
+    finalUrl += (finalUrl.includes("?") ? "&" : "?") + encodeURIComponent(auth.name) + "=" + encodeURIComponent(resolveEnv(auth.value));
+  } else if (auth.type === "basic") {
+    headers["Authorization"] = "Basic " + btoa(`${resolveEnv(auth.user)}:${resolveEnv(auth.pass)}`);
+  }
+
+  // Body
+  const bodyTypeActive = document.querySelector(".body-type-btn.active")?.dataset?.btype || "none";
+  let bodyStr = null;
+  if (bodyTypeActive !== "none" && ["GET","HEAD"].indexOf(method) === -1) {
+    const raw = document.getElementById("body-editor").value;
+    if (raw.trim()) {
+      bodyStr = raw;
+      if (bodyTypeActive === "json" && !headers["Content-Type"]) {
+        headers["Content-Type"] = "application/json";
+      }
+    }
+  }
+
+  const payload = { method, url: finalUrl, headers, body: bodyStr };
+
+  // Show spinner
+  document.getElementById("send-btn").disabled = true;
+  document.getElementById("spinner").style.display = "block";
+  document.getElementById("resp-empty").style.display = "flex";
+  document.getElementById("resp-pretty").style.display = "none";
+  document.getElementById("resp-copy").style.display = "none";
+
+  let result;
+  try {
+    const r = await fetch(`${API}/proxy`, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(payload),
+    });
+    result = await r.json();
+  } catch(e) {
+    result = {error: String(e)};
+  }
+
+  document.getElementById("send-btn").disabled = false;
+  document.getElementById("spinner").style.display = "none";
+
+  renderResponse(result);
+  addHistory({ method, url: rawUrl, payload, result });
+}
+
+// ── Render response ────────────────────────────────────────────────
+function renderResponse(result) {
+  const statusEl = document.getElementById("resp-status");
+  const timeEl = document.getElementById("resp-time");
+  const sizeEl = document.getElementById("resp-size");
+  const prettyEl = document.getElementById("resp-pretty");
+  const rawEl = document.getElementById("resp-raw");
+  const hdrsEl = document.getElementById("resp-headers-view");
+  const emptyEl = document.getElementById("resp-empty");
+  const copyBtn = document.getElementById("resp-copy");
+
+  if (result.error) {
+    statusEl.textContent = "Error";
+    statusEl.className = "status-5xx";
+    timeEl.textContent = "";
+    sizeEl.textContent = "";
+    prettyEl.textContent = result.error;
+    prettyEl.style.display = "block";
+    emptyEl.style.display = "none";
+    rawEl.textContent = result.error;
+    hdrsEl.innerHTML = "";
+    copyBtn.style.display = "none";
+    return;
+  }
+
+  const s = result.status;
+  statusEl.textContent = `${s} ${result.statusText || ""}`.trim();
+  statusEl.className = s < 300 ? "status-2xx" : s < 400 ? "status-3xx" : s < 500 ? "status-4xx" : "status-5xx";
+  timeEl.textContent = result.elapsed_ms != null ? `${result.elapsed_ms} ms` : "";
+  sizeEl.textContent = result.size_bytes != null ? formatSize(result.size_bytes) : "";
+
+  const body = result.body || "";
+  rawEl.textContent = body;
+
+  // Pretty print
+  prettyEl.innerHTML = syntaxHighlight(body);
+  prettyEl.style.display = "block";
+  emptyEl.style.display = "none";
+  copyBtn.style.display = "block";
+
+  // Headers
+  hdrsEl.innerHTML = Object.entries(result.headers || {}).map(([k,v]) =>
+    `<div class="resp-hdr-row"><span class="resp-hdr-key">${escHtml(k)}</span><span class="resp-hdr-val">${escHtml(v)}</span></div>`
+  ).join("");
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024*1024) return `${(bytes/1024).toFixed(1)} KB`;
+  return `${(bytes/1024/1024).toFixed(1)} MB`;
+}
+
+function syntaxHighlight(str) {
+  try {
+    const obj = JSON.parse(str);
+    return colorizeJson(JSON.stringify(obj, null, 2));
+  } catch(e) {
+    return escHtml(str);
+  }
+}
+
+function colorizeJson(str) {
+  return str.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?|[{}\[\],:])/g, match => {
+    let cls = "tok-num";
+    if (/^"/.test(match)) cls = /:$/.test(match) ? "tok-key" : "tok-str";
+    else if (/true|false/.test(match)) cls = "tok-bool";
+    else if (/null/.test(match)) cls = "tok-null";
+    else if (/[{}\[\],:]/.test(match)) cls = "tok-punc";
+    return `<span class="${cls}">${escHtml(match)}</span>`;
+  });
+}
+
+document.getElementById("resp-copy").addEventListener("click", () => {
+  const raw = document.getElementById("resp-raw").textContent;
+  navigator.clipboard.writeText(raw).then(() => showToast("Copied!"));
+});
+
+// ── History ────────────────────────────────────────────────────────
+function addHistory(entry) {
+  const item = {
+    id: uid(),
+    method: entry.method,
+    url: entry.url,
+    status: entry.result.status,
+    elapsed_ms: entry.result.elapsed_ms,
+    ts: new Date().toISOString(),
+    request: entry.payload,
+    response: entry.result,
+  };
+  state.history.unshift(item);
+  if (state.history.length > 200) state.history = state.history.slice(0, 200);
+  renderHistory();
+  saveState();
+}
+
+function renderHistory() {
+  const el = document.getElementById("history-list");
+  if (!state.history.length) {
+    el.innerHTML = `<div class="empty-state" style="padding:40px 20px"><div class="icon">🕐</div><p>No requests sent yet.</p></div>`;
+    return;
+  }
+  el.innerHTML = state.history.map(h => {
+    const sc = statusClass(h.status);
+    const ts = h.ts ? new Date(h.ts).toLocaleTimeString() : "";
+    return `<div class="history-item" data-id="${h.id}">
+      <span class="method-badge m-${h.method}" style="font-family:var(--mono);font-size:10px;font-weight:700;padding:1px 5px;border-radius:3px">${h.method}</span>
+      <span class="hist-url">${escHtml(h.url)}</span>
+      <span class="hist-status ${sc}">${h.status || "ERR"}</span>
+      <span class="hist-time">${ts}</span>
+    </div>`;
+  }).join("");
+  el.querySelectorAll(".history-item").forEach(item => {
+    item.addEventListener("click", () => {
+      const h = state.history.find(x => x.id === item.dataset.id);
+      if (h) loadFromHistory(h);
+    });
+  });
+}
+
+function loadFromHistory(h) {
+  document.getElementById("method-select").value = h.method;
+  document.getElementById("url-input").value = h.url;
+  // Load headers
+  const hr = document.getElementById("headers-rows");
+  hr.innerHTML = "";
+  const hdrs = h.request?.headers || {};
+  Object.entries(hdrs).forEach(([k,v]) => hr.appendChild(makeKvRow(k,v)));
+  updateHeadersBadge();
+  // Load body
+  document.getElementById("body-editor").value = h.request?.body || "";
+  if (h.response) renderResponse(h.response);
+}
+
+document.getElementById("clear-hist-btn").addEventListener("click", () => {
+  state.history = [];
+  renderHistory();
+  saveState();
+});
+
+function statusClass(s) {
+  if (!s) return "";
+  if (s < 300) return "status-2xx";
+  if (s < 400) return "status-3xx";
+  if (s < 500) return "status-4xx";
+  return "status-5xx";
+}
+
+// ── Collections rendering ──────────────────────────────────────────
+function renderCollections() {
+  const el = document.getElementById("collections-list");
+  if (!state.collections.length) {
+    el.innerHTML = `<div class="empty-state" style="padding:40px 20px"><div class="icon">📁</div><p>No collections yet.<br>Import from Postman or create a new one.</p></div>`;
+    return;
+  }
+  el.innerHTML = "";
+  state.collections.forEach(col => {
+    const div = document.createElement("div");
+    div.className = "collection-item";
+    div.innerHTML = `
+      <div class="collection-header" data-col="${col.id}">
+        <span class="caret">▶</span>
+        <span class="col-name">${escHtml(col.name)}</span>
+        <button class="kv-delete" title="Delete collection" style="font-size:12px;padding:0 6px">×</button>
+      </div>
+      <div class="collection-body" data-col-body="${col.id}">
+        ${renderFolderContents(col, col.requests || [], col.folders || [])}
+        <div style="padding:4px 6px">
+          <button class="kv-add-btn" data-add-req="${col.id}" style="font-size:11px;margin:4px 0">+ Add Request</button>
+        </div>
+      </div>`;
+    const header = div.querySelector(".collection-header");
+    const body = div.querySelector(".collection-body");
+    header.querySelector(".kv-delete").addEventListener("click", e => {
+      e.stopPropagation();
+      if (confirm(`Delete collection "${col.name}"?`)) {
+        state.collections = state.collections.filter(c => c.id !== col.id);
+        renderCollections();
+        saveState();
+      }
+    });
+    header.addEventListener("click", e => {
+      if (e.target.tagName === "BUTTON") return;
+      header.classList.toggle("open");
+      body.classList.toggle("open");
+    });
+    div.querySelectorAll("[data-req-id]").forEach(reqEl => {
+      reqEl.addEventListener("click", () => loadRequest(col.id, reqEl.dataset.reqId));
+    });
+    div.querySelector(`[data-add-req]`)?.addEventListener("click", () => addNewRequest(col.id));
+    el.appendChild(div);
+  });
+}
+
+function renderFolderContents(col, requests, folders) {
+  let html = "";
+  // Ungrouped requests
+  (requests || []).forEach(req => {
+    html += `<div class="request-row ${currentReqId === req.id ? 'active' : ''}" data-req-id="${req.id}">
+      <span class="method-badge m-${req.method}">${req.method}</span>
+      <span class="req-name">${escHtml(req.name)}</span>
+    </div>`;
+  });
+  // Folders
+  (folders || []).forEach(folder => {
+    html += `<div class="folder-row" data-folder-id="${folder.id}">
+      <span class="caret">▶</span>
+      <span>📁 ${escHtml(folder.name)}</span>
+    </div>
+    <div class="folder-body" data-folder-body="${folder.id}">`;
+    (folder.requests || []).forEach(req => {
+      html += `<div class="request-row ${currentReqId === req.id ? 'active' : ''}" data-req-id="${req.id}">
+        <span class="method-badge m-${req.method}">${req.method}</span>
+        <span class="req-name">${escHtml(req.name)}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  return html;
+}
+
+function loadRequest(colId, reqId) {
+  const col = state.collections.find(c => c.id === colId);
+  if (!col) return;
+  let req = (col.requests || []).find(r => r.id === reqId);
+  if (!req) {
+    for (const f of (col.folders || [])) {
+      req = (f.requests || []).find(r => r.id === reqId);
+      if (req) break;
+    }
+  }
+  if (!req) return;
+  currentReqId = reqId;
+  document.getElementById("method-select").value = req.method || "GET";
+  document.getElementById("url-input").value = req.url || "";
+
+  const hr = document.getElementById("headers-rows");
+  hr.innerHTML = "";
+  (req.headers || []).forEach(h => hr.appendChild(makeKvRow(h.key, h.value, h.enabled !== false)));
+  updateHeadersBadge();
+
+  const pr = document.getElementById("params-rows");
+  pr.innerHTML = "";
+  (req.params || []).forEach(p => pr.appendChild(makeKvRow(p.key, p.value, p.enabled !== false)));
+
+  document.getElementById("body-editor").value = req.body || "";
+  const btype = req.bodyType || "json";
+  document.querySelectorAll(".body-type-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.btype === btype);
+  });
+  applyAuthConfig(req.auth);
+  renderCollections();
+}
+
+function addNewRequest(colId) {
+  const col = state.collections.find(c => c.id === colId);
+  if (!col) return;
+  const req = {id: uid(), name: "New Request", method: "GET", url: "", headers: [], params: [], body: "", bodyType: "json", auth: {type:"none"}};
+  if (!col.requests) col.requests = [];
+  col.requests.push(req);
+  renderCollections();
+  loadRequest(colId, req.id);
+  saveState();
+}
+
+document.getElementById("new-collection-btn").addEventListener("click", () => {
+  const name = prompt("Collection name:");
+  if (!name?.trim()) return;
+  state.collections.push({id: uid(), name: name.trim(), requests: [], folders: []});
+  renderCollections();
+  saveState();
+});
+
+// ── Save request ───────────────────────────────────────────────────
+document.getElementById("save-btn").addEventListener("click", openSaveModal);
+
+function openSaveModal() {
+  const sel = document.getElementById("save-collection-select");
+  sel.innerHTML = state.collections.map(c => `<option value="${c.id}">${escHtml(c.name)}</option>`).join("");
+  if (!state.collections.length) {
+    sel.innerHTML = `<option value="">— Create a collection first —</option>`;
+  }
+  const nameInput = document.getElementById("save-req-name");
+  nameInput.value = document.getElementById("url-input").value.split("/").pop() || "My Request";
+  document.getElementById("save-modal").classList.add("open");
+}
+
+document.getElementById("save-close").addEventListener("click", () => document.getElementById("save-modal").classList.remove("open"));
+document.getElementById("save-cancel").addEventListener("click", () => document.getElementById("save-modal").classList.remove("open"));
+
+document.getElementById("save-confirm").addEventListener("click", () => {
+  const colId = document.getElementById("save-collection-select").value;
+  const col = state.collections.find(c => c.id === colId);
+  if (!col) { showToast("Pick a collection first"); return; }
+
+  const name = document.getElementById("save-req-name").value.trim() || "Request";
+  const folderName = document.getElementById("save-folder-name").value.trim();
+
+  const req = {
+    id: uid(), name,
+    method: document.getElementById("method-select").value,
+    url: document.getElementById("url-input").value,
+    headers: getKvRows(document.getElementById("headers-rows")),
+    params: getKvRows(document.getElementById("params-rows")),
+    body: document.getElementById("body-editor").value,
+    bodyType: document.querySelector(".body-type-btn.active")?.dataset?.btype || "json",
+    auth: getAuthConfig(),
+  };
+
+  if (folderName) {
+    let folder = (col.folders || []).find(f => f.name === folderName);
+    if (!folder) {
+      if (!col.folders) col.folders = [];
+      folder = {id: uid(), name: folderName, requests: []};
+      col.folders.push(folder);
+    }
+    folder.requests.push(req);
+  } else {
+    if (!col.requests) col.requests = [];
+    col.requests.push(req);
+  }
+
+  currentReqId = req.id;
+  renderCollections();
+  saveState();
+  document.getElementById("save-modal").classList.remove("open");
+  showToast(`Saved to "${col.name}"`);
+});
+
+// ── Environments ───────────────────────────────────────────────────
+function renderEnvironments() {
+  const sel = document.getElementById("env-select");
+  const cur = sel.value;
+  sel.innerHTML = `<option value="">— No Environment —</option>` +
+    state.environments.map(e => `<option value="${e.id}">${escHtml(e.name)}</option>`).join("");
+  if (cur) sel.value = cur;
+  else if (state.activeEnv) sel.value = state.activeEnv;
+
+  renderEnvVars();
+}
+
+function renderEnvVars() {
+  const envId = document.getElementById("env-select").value;
+  const env = state.environments.find(e => e.id === envId);
+  const list = document.getElementById("env-vars-list");
+  const nameInput = document.getElementById("env-name-input");
+  if (!env) { list.innerHTML = ""; nameInput.value = ""; return; }
+  nameInput.value = env.name;
+  list.innerHTML = "";
+  Object.entries(env.vars || {}).forEach(([k,v]) => {
+    const row = document.createElement("div");
+    row.className = "kv-row";
+    row.innerHTML = `
+      <input class="kv-input key-input" placeholder="KEY" value="${escHtml(k)}" style="flex:.8" />
+      <input class="kv-input val-input" placeholder="value" value="${escHtml(v)}" style="border-right:none" />
+      <button class="kv-delete">×</button>`;
+    row.querySelector(".kv-delete").addEventListener("click", () => {
+      delete env.vars[k];
+      renderEnvVars();
+      saveState();
+    });
+    list.appendChild(row);
+  });
+}
+
+document.getElementById("env-select").addEventListener("change", () => {
+  state.activeEnv = document.getElementById("env-select").value || null;
+  renderEnvVars();
+  saveState();
+});
+
+document.getElementById("new-env-btn").addEventListener("click", () => {
+  const name = prompt("Environment name:");
+  if (!name?.trim()) return;
+  const env = {id: uid(), name: name.trim(), vars: {}};
+  state.environments.push(env);
+  state.activeEnv = env.id;
+  renderEnvironments();
+  saveState();
+});
+
+document.getElementById("del-env-btn").addEventListener("click", () => {
+  const id = document.getElementById("env-select").value;
+  if (!id) return;
+  state.environments = state.environments.filter(e => e.id !== id);
+  if (state.activeEnv === id) state.activeEnv = null;
+  renderEnvironments();
+  saveState();
+});
+
+document.getElementById("save-env-btn").addEventListener("click", () => {
+  const id = document.getElementById("env-select").value;
+  const env = state.environments.find(e => e.id === id);
+  if (!env) return;
+  // Collect var rows
+  const rows = [...document.getElementById("env-vars-list").querySelectorAll(".kv-row")];
+  const vars = {};
+  rows.forEach(row => {
+    const k = row.querySelector(".key-input").value.trim();
+    const v = row.querySelector(".val-input").value;
+    if (k) vars[k] = v;
+  });
+  env.vars = vars;
+  env.name = document.getElementById("env-name-input").value.trim() || env.name;
+  renderEnvironments();
+  saveState();
+  showToast("Environment saved");
+});
+
+document.getElementById("add-env-var-btn").addEventListener("click", () => {
+  const id = document.getElementById("env-select").value;
+  if (!id) { showToast("Select an environment first"); return; }
+  const list = document.getElementById("env-vars-list");
+  const row = document.createElement("div");
+  row.className = "kv-row";
+  row.innerHTML = `
+    <input class="kv-input key-input" placeholder="KEY" style="flex:.8" />
+    <input class="kv-input val-input" placeholder="value" style="border-right:none" />
+    <button class="kv-delete">×</button>`;
+  row.querySelector(".kv-delete").addEventListener("click", () => row.remove());
+  list.appendChild(row);
+});
+
+// ── Import modal ───────────────────────────────────────────────────
+document.getElementById("import-btn").addEventListener("click", openImportModal);
+
+async function openImportModal() {
+  document.getElementById("import-modal").classList.add("open");
+  const foundList = document.getElementById("postman-found-list");
+  foundList.innerHTML = `<div id="import-scanning">Scanning for Postman collections…</div>`;
+  try {
+    const r = await fetch(`${API}/postman-collections`);
+    const d = await r.json();
+    if (!d.collections || !d.collections.length) {
+      foundList.innerHTML = `<p style="color:var(--text3);font-size:12px;padding:10px 0">No Postman collections found automatically.<br>Use drag-and-drop above to import a JSON file.</p>`;
+    } else {
+      foundList.innerHTML = d.collections.map(c => `
+        <div class="postman-found-item" data-path="${escHtml(c.path)}">
+          <div style="flex:1">
+            <div class="pf-name">${escHtml(c.name)}</div>
+            <div class="pf-path">${escHtml(c.path)}</div>
+          </div>
+          <button class="postman-found-btn" data-path="${escHtml(c.path)}">Import</button>
+        </div>`).join("");
+      foundList.querySelectorAll(".postman-found-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const col = d.collections.find(c => c.path === btn.dataset.path);
+          if (col) importPostmanCollection(col.data, btn.dataset.path);
+        });
+      });
+    }
+  } catch(e) {
+    foundList.innerHTML = `<p style="color:var(--red);font-size:12px;padding:10px 0">Could not scan: ${escHtml(String(e))}</p>`;
+  }
+}
+
+document.getElementById("import-close").addEventListener("click", () => document.getElementById("import-modal").classList.remove("open"));
+
+// Drag and drop
+const dropZone = document.getElementById("drop-zone");
+dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("drag-over"); });
+dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
+dropZone.addEventListener("drop", e => {
+  e.preventDefault();
+  dropZone.classList.remove("drag-over");
+  const file = e.dataTransfer.files[0];
+  if (file) readImportFile(file);
+});
+dropZone.addEventListener("click", () => document.getElementById("file-input").click());
+document.getElementById("browse-link").addEventListener("click", e => { e.stopPropagation(); document.getElementById("file-input").click(); });
+document.getElementById("file-input").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (file) readImportFile(file);
+});
+
+function readImportFile(file) {
+  const reader = new FileReader();
+  reader.onload = evt => {
+    try {
+      const data = JSON.parse(evt.target.result);
+      importPostmanCollection(data, file.name);
+    } catch(e) {
+      showToast("Invalid JSON file");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function importPostmanCollection(data, sourcePath) {
+  try {
+    const col = parsePostmanCollection(data);
+    // Avoid duplicate by name
+    const existing = state.collections.find(c => c.name === col.name);
+    if (existing) {
+      if (!confirm(`A collection named "${col.name}" already exists. Replace it?`)) return;
+      state.collections = state.collections.filter(c => c.name !== col.name);
+    }
+    state.collections.unshift(col);
+    renderCollections();
+    saveState();
+    document.getElementById("import-modal").classList.remove("open");
+    showToast(`Imported "${col.name}" (${countRequests(col)} requests)`);
+  } catch(e) {
+    showToast("Could not parse collection: " + e.message);
+    console.error(e);
+  }
+}
+
+function countRequests(col) {
+  let n = (col.requests || []).length;
+  (col.folders || []).forEach(f => n += (f.requests || []).length);
+  return n;
+}
+
+function parsePostmanCollection(data) {
+  // Detect v2.x (has info.schema) vs v1
+  const info = data.info || data.Info;
+  if (info && info.schema && info.schema.includes("v2")) {
+    return parsePostmanV2(data);
+  }
+  if (data.requests) {
+    return parsePostmanV1(data);
+  }
+  throw new Error("Unrecognized Postman format");
+}
+
+function parsePostmanV2(data) {
+  const name = (data.info || {}).name || "Imported";
+  const col = {id: uid(), name, requests: [], folders: []};
+  (data.item || []).forEach(item => {
+    if (item.item) {
+      // folder
+      const folder = {id: uid(), name: item.name || "Folder", requests: []};
+      (item.item || []).forEach(req => {
+        const r = parsePostmanV2Request(req);
+        if (r) folder.requests.push(r);
+      });
+      col.folders.push(folder);
+    } else {
+      const r = parsePostmanV2Request(item);
+      if (r) col.requests.push(r);
+    }
+  });
+  return col;
+}
+
+function parsePostmanV2Request(item) {
+  if (!item.request) return null;
+  const req = item.request;
+  const method = (req.method || "GET").toUpperCase();
+  let url = "";
+  if (typeof req.url === "string") url = req.url;
+  else if (req.url && req.url.raw) url = req.url.raw;
+
+  const headers = [];
+  (req.header || []).forEach(h => {
+    if (h.key && !h.disabled) headers.push({key: h.key, value: h.value || "", enabled: true});
+  });
+
+  let body = "";
+  let bodyType = "none";
+  if (req.body) {
+    const bm = req.body.mode;
+    if (bm === "raw") { body = req.body.raw || ""; bodyType = "json"; }
+    else if (bm === "urlencoded") {
+      body = (req.body.urlencoded || []).map(p => `${encodeURIComponent(p.key)}=${encodeURIComponent(p.value)}`).join("&");
+      bodyType = "raw";
+    } else if (bm === "formdata") {
+      bodyType = "form";
+    }
+  }
+
+  let auth = {type: "none"};
+  if (req.auth) {
+    const at = req.auth.type;
+    if (at === "bearer") {
+      const tok = (req.auth.bearer || []).find(x => x.key === "token");
+      auth = {type: "bearer", token: tok ? tok.value : ""};
+    } else if (at === "basic") {
+      const u = (req.auth.basic || []).find(x => x.key === "username");
+      const p = (req.auth.basic || []).find(x => x.key === "password");
+      auth = {type: "basic", user: u ? u.value : "", pass: p ? p.value : ""};
+    } else if (at === "apikey") {
+      const k = (req.auth.apikey || []).find(x => x.key === "key");
+      const v = (req.auth.apikey || []).find(x => x.key === "value");
+      auth = {type: "apikey", name: k ? k.value : "", value: v ? v.value : "", in: "header"};
+    }
+  }
+
+  // Query params from URL
+  const params = [];
+  if (typeof item.request.url === "object" && item.request.url.query) {
+    (item.request.url.query || []).forEach(q => {
+      if (q.key) params.push({key: q.key, value: q.value || "", enabled: !q.disabled});
+    });
+  }
+
+  return {
+    id: uid(),
+    name: item.name || url || "Request",
+    method, url, headers, params, body, bodyType, auth,
+  };
+}
+
+function parsePostmanV1(data) {
+  const col = {id: uid(), name: data.name || "Imported", requests: [], folders: []};
+  const folderMap = {};
+  (data.folders || []).forEach(f => {
+    folderMap[f.id] = {id: uid(), name: f.name, requests: []};
+    col.folders.push(folderMap[f.id]);
+  });
+  (data.requests || []).forEach(req => {
+    const headers = [];
+    (req.headerData || []).forEach(h => { if (h.key) headers.push({key: h.key, value: h.value || "", enabled: true}); });
+    const r = {
+      id: uid(),
+      name: req.name || req.url || "Request",
+      method: (req.method || "GET").toUpperCase(),
+      url: req.url || "",
+      headers,
+      params: [],
+      body: req.rawModeData || req.data || "",
+      bodyType: req.dataMode === "raw" ? "json" : "none",
+      auth: {type: "none"},
+    };
+    if (req.folder && folderMap[req.folder]) {
+      folderMap[req.folder].requests.push(r);
+    } else {
+      col.requests.push(r);
+    }
+  });
+  return col;
+}
+
+// ── Resize handle ──────────────────────────────────────────────────
+(function() {
+  const handle = document.getElementById("resize-handle");
+  const right = document.getElementById("right");
+  let dragging = false, startX, startW;
+  handle.addEventListener("mousedown", e => {
+    dragging = true; startX = e.clientX; startW = right.offsetWidth;
+    handle.classList.add("dragging");
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+  });
+  document.addEventListener("mousemove", e => {
+    if (!dragging) return;
+    const delta = startX - e.clientX;
+    const newW = Math.max(280, Math.min(800, startW + delta));
+    right.style.width = newW + "px";
+  });
+  document.addEventListener("mouseup", () => {
+    if (!dragging) return;
+    dragging = false;
+    handle.classList.remove("dragging");
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+  });
+})();
+
+// ── Utilities ──────────────────────────────────────────────────────
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function escHtml(s) {
+  if (s == null) return "";
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2500);
+}
+
+function renderAll() {
+  renderCollections();
+  renderHistory();
+  renderEnvironments();
+  renderAuthFields();
+}
+
+// ── Boot ───────────────────────────────────────────────────────────
+loadState();
+</script>
+</body>
+</html>

@@ -49,7 +49,10 @@
       "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/performance-review/.claude-plugin)",
       "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/performance-review/skills/performance-review)",
       "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/performance-review/evals)",
-      "Bash(gh auth *)"
+      "Bash(gh auth *)",
+      "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/api-lite/.claude-plugin)",
+      "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/api-lite/skills/api-lite/scripts)",
+      "Bash(mkdir -p /Users/bhavikjain/Documents/Bhavik/Personal/Projects/GitWorkSpace/bhavik-ai/api-lite/skills/api-lite/assets)"
     ]
   }
 }

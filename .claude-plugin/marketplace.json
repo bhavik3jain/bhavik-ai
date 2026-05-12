@@ -23,6 +23,11 @@
       "name": "meal-planner",
       "source": "./meal-planner",
       "description": "Weekly family meal planner — generates a personalized weekly meal plan with separate lunch options for Saloni and the family, drawing from a curated list of Indian, Mexican, Italian, Mediterranean, Asian, and fusion meals."
+    },
+    {
+      "name": "api-lite",
+      "source": "./api-lite",
+      "description": "Local Postman replacement — a lightweight HTTP client that runs entirely on your machine. Import Postman collections, send requests with auth and env variables, and view syntax-highlighted responses. No cloud sync, no account required."
     }
   ]
 }
