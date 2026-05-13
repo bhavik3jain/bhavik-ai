@@ -1,0 +1,8 @@
+{
+  "name": "mls-analyzer",
+  "version": "1.0.0",
+  "description": "Personal real estate investment analysis suite — fetches MLS listing data, runs investment math (cap rate, cash-on-cash return, GRM, DSCR), scores properties against a saved investor profile, and delivers buy/pass recommendations. Supports interview, analyze, compare, and BRRRR scenario modes.",
+  "author": {
+    "name": "bhavik-ai"
+  }
+}
