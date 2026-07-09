@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PR Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0e15;
+    --panel: #10141f;
+    --panel-2: #0d111a;
+    --line: #222a3c;
+    --line-soft: #1a2131;
+    --text: #e9e4d6;
+    --muted: #8a93a8;
+    --faint: #5c6478;
+    --accent: #e3a84e;
+    --open: #4cc38a;
+    --merged: #a78bfa;
+    --closed: #ef6f5e;
+    --open-dim: rgba(76,195,138,.14);
+    --merged-dim: rgba(167,139,250,.14);
+    --closed-dim: rgba(239,111,94,.14);
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --serif: "Fraunces", Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scrollbar-color: var(--line) var(--bg); }
+  body {
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px),
+      radial-gradient(1200px 500px at 20% -10%, rgba(227,168,78,.07), transparent 60%),
+      radial-gradient(900px 500px at 95% 0%, rgba(167,139,250,.05), transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1220px; margin: 0 auto; padding: 48px 28px 90px; }
+
+  /* ---------- masthead ---------- */
+  .masthead {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 24px; flex-wrap: wrap;
+    padding-bottom: 26px;
+    border-bottom: 1px solid var(--accent);
+    animation: rise .5s ease both;
+  }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: .32em; font-size: 10.5px;
+    color: var(--accent); margin-bottom: 14px;
+  }
+  .eyebrow::before { content: "◈ "; }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 380; font-style: italic;
+    font-size: clamp(34px, 5vw, 54px);
+    letter-spacing: -.01em; line-height: 1.05;
+  }
+  h1 .at { color: var(--faint); }
+  .masthead-meta { text-align: right; color: var(--muted); font-size: 11.5px; }
+  .masthead-meta strong { color: var(--text); font-size: 26px; font-family: var(--serif); font-weight: 500; display: block; }
+  .queried { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .queried .chip { animation: rise .5s ease both; }
+
+  .chip {
+    display: inline-block; padding: 2px 10px; border: 1px solid var(--line);
+    border-radius: 999px; font-size: 11px; color: var(--muted);
+    background: var(--panel-2);
+  }
+  .chip.accent { border-color: rgba(227,168,78,.45); color: var(--accent); }
+
+  /* ---------- stat band ---------- */
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--line); border-radius: 10px;
+    margin-top: 34px; background: var(--panel);
+    overflow: hidden;
+    animation: rise .5s .08s ease both;
+  }
+  .stat { padding: 22px 26px 18px; border-left: 1px solid var(--line-soft); position: relative; }
+  .stat:first-child { border-left: none; }
+  .stat .num {
+    font-family: var(--serif); font-weight: 480; font-size: 42px; line-height: 1;
+    letter-spacing: -.02em;
+  }
+  .stat .cap {
+    margin-top: 10px; text-transform: uppercase; letter-spacing: .18em;
+    font-size: 10px; color: var(--muted);
+    display: flex; align-items: center; gap: 7px;
+  }
+  .stat .pct { position: absolute; top: 14px; right: 18px; font-size: 10.5px; color: var(--faint); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; background: var(--faint); }
+  .dot.open { background: var(--open); box-shadow: 0 0 8px var(--open); }
+  .dot.merged { background: var(--merged); box-shadow: 0 0 8px var(--merged); }
+  .dot.closed { background: var(--closed); box-shadow: 0 0 8px var(--closed); }
+  .stat.open .num { color: var(--open); }
+  .stat.merged .num { color: var(--merged); }
+  .stat.closed .num { color: var(--closed); }
+
+  /* ---------- sections ---------- */
+  section { margin-top: 46px; animation: rise .5s .16s ease both; }
+  .sec-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  h2 {
+    font-family: var(--serif); font-weight: 430; font-size: 22px; letter-spacing: .01em;
+  }
+  h2::after { content: ""; display: block; width: 44px; height: 2px; background: var(--accent); margin-top: 8px; }
+  .legend { display: flex; gap: 16px; font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+
+  /* ---------- breakdown rows (labels + repos) ---------- */
+  .bk-row {
+    display: grid; grid-template-columns: 260px 64px 1fr 200px;
+    gap: 18px; align-items: center;
+    padding: 13px 18px;
+    border: 1px solid var(--line-soft); border-radius: 8px;
+    background: var(--panel-2); margin-bottom: 8px;
+    cursor: pointer; transition: border-color .15s, transform .15s, background .15s;
+  }
+  .bk-row:hover { border-color: var(--accent); transform: translateX(4px); }
+  .bk-row.active { border-color: var(--accent); background: rgba(227,168,78,.06); }
+  .bk-row .name { color: var(--accent); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bk-row .name::before { content: attr(data-kind) ":"; color: var(--faint); }
+  .bk-row .total { font-family: var(--serif); font-size: 19px; text-align: right; }
+  .bar { display: flex; height: 12px; border-radius: 3px; overflow: hidden; background: var(--line-soft); }
+  .bar .o { background: var(--open); }
+  .bar .m { background: var(--merged); }
+  .bar .c { background: var(--closed); }
+  .bk-row .mini { font-size: 11px; color: var(--muted); text-align: right; white-space: nowrap; }
+  .bk-row .mini b { font-weight: 500; }
+  .bk-row .mini .o { color: var(--open); }
+  .bk-row .mini .m { color: var(--merged); }
+  .bk-row .mini .c { color: var(--closed); }
+  .show-more {
+    font: inherit; font-size: 11px; color: var(--muted); letter-spacing: .1em;
+    background: none; border: 1px dashed var(--line); border-radius: 8px;
+    width: 100%; padding: 9px; cursor: pointer; transition: color .12s, border-color .12s;
+  }
+  .show-more:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ---------- toolbar ---------- */
+  .toolbar {
+    display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .tabs { display: flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+  .tabs button {
+    font: inherit; font-size: 11.5px; color: var(--muted);
+    background: var(--panel-2); border: none; border-left: 1px solid var(--line-soft);
+    padding: 8px 15px; cursor: pointer; transition: color .12s, background .12s;
+  }
+  .tabs button:first-child { border-left: none; }
+  .tabs button:hover { color: var(--text); }
+  .tabs button.on { background: var(--panel); color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
+  .tabs button .n { color: var(--faint); margin-left: 5px; }
+  #search {
+    flex: 1; min-width: 220px;
+    font: inherit; font-size: 12px; color: var(--text);
+    background: var(--panel-2); border: 1px solid var(--line); border-radius: 7px;
+    padding: 8px 14px; outline: none; transition: border-color .15s;
+  }
+  #search:focus { border-color: var(--accent); }
+  #search::placeholder { color: var(--faint); }
+  #active-filters { display: flex; gap: 8px; }
+  #active-filters .chip { cursor: pointer; }
+  #active-filters .chip::after { content: " ✕"; font-size: 10px; }
+
+  /* ---------- table ---------- */
+  .table-shell { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--panel); }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left; font-weight: 500; font-size: 10px;
+    text-transform: uppercase; letter-spacing: .2em; color: var(--faint);
+    padding: 12px 16px; border-bottom: 1px solid var(--line);
+    background: var(--panel-2);
+  }
+  tbody td { padding: 11px 16px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr { transition: background .1s; }
+  tbody tr:hover { background: rgba(227,168,78,.04); }
+  td.num { color: var(--faint); white-space: nowrap; }
+  td.repo-cell { color: var(--muted); font-size: 11.5px; white-space: nowrap; }
+  td.repo-cell .owner-part { color: var(--faint); }
+  td.title a { color: var(--text); text-decoration: none; }
+  td.title a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .draft-tag { color: var(--faint); border: 1px solid var(--line); border-radius: 4px; font-size: 9.5px; padding: 0 5px; margin-left: 7px; text-transform: uppercase; letter-spacing: .08em; }
+  .pill {
+    display: inline-block; padding: 1px 9px; border-radius: 999px;
+    font-size: 10.5px; letter-spacing: .06em;
+  }
+  .pill.OPEN   { color: var(--open);   background: var(--open-dim);   border: 1px solid rgba(76,195,138,.35); }
+  .pill.MERGED { color: var(--merged); background: var(--merged-dim); border: 1px solid rgba(167,139,250,.35); }
+  .pill.CLOSED { color: var(--closed); background: var(--closed-dim); border: 1px solid rgba(239,111,94,.35); }
+  td.labels-cell .chip { margin: 1px 3px 1px 0; font-size: 10px; padding: 1px 8px; }
+  td.dates { color: var(--muted); white-space: nowrap; font-size: 11.5px; }
+  .empty { padding: 60px; text-align: center; color: var(--faint); font-style: italic; font-family: var(--serif); font-size: 17px; }
+
+  /* ---------- pagination ---------- */
+  .pager {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; border-top: 1px solid var(--line); background: var(--panel-2);
+    font-size: 11.5px; color: var(--muted);
+  }
+  .pager .btns { display: flex; gap: 8px; }
+  .pager button {
+    font: inherit; font-size: 11px; color: var(--text);
+    background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+    padding: 5px 14px; cursor: pointer; transition: border-color .12s;
+  }
+  .pager button:hover:not(:disabled) { border-color: var(--accent); }
+  .pager button:disabled { opacity: .35; cursor: default; }
+
+  footer { margin-top: 40px; color: var(--faint); font-size: 10.5px; text-align: center; letter-spacing: .12em; text-transform: uppercase; }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+  @media (max-width: 860px) {
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stat { border-top: 1px solid var(--line-soft); }
+    .bk-row { grid-template-columns: 1fr 50px; }
+    .bk-row .bar, .bk-row .mini { grid-column: 1 / -1; }
+    .masthead-meta { text-align: left; }
+    thead th:nth-child(2), tbody td:nth-child(2),
+    thead th:nth-child(5), tbody td:nth-child(5) { display: none; }
+  }
+</style>
+</head>
+<body>
+<script id="pr-data" type="application/json">__PAYLOAD__</script>
+
+<div class="wrap">
+  <header class="masthead">
+    <div>
+      <p class="eyebrow">Pull-Request Ledger</p>
+      <h1 id="owner-name"></h1>
+      <div class="queried" id="queried-labels"></div>
+    </div>
+    <div class="masthead-meta">
+      <strong id="total-count"></strong>
+      matching pull requests across <span id="repo-count"></span> repos<br>
+      generated <span id="generated-at"></span>
+    </div>
+  </header>
+
+  <section class="stats" id="stat-band"></section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Breakdown by label</h2>
+      <div class="legend">
+        <span><i class="dot open"></i> open</span>
+        <span><i class="dot merged"></i> merged</span>
+        <span><i class="dot closed"></i> closed</span>
+      </div>
+    </div>
+    <div id="label-rows"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Breakdown by repository</h2>
+      <div class="legend"><span>click a row to filter the table</span></div>
+    </div>
+    <div id="repo-rows"></div>
+    <button class="show-more" id="repo-more" hidden></button>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Pull requests</h2></div>
+    <div class="toolbar">
+      <div class="tabs" id="status-tabs"></div>
+      <input id="search" type="search" placeholder="filter by title, number, repo, or author...">
+      <span id="active-filters"></span>
+    </div>
+    <div class="table-shell">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Repository</th><th>Title</th><th>Status</th>
+            <th>Matched labels</th><th>Author</th><th>Opened</th><th>Resolved</th>
+          </tr>
+        </thead>
+        <tbody id="pr-rows"></tbody>
+      </table>
+      <div class="pager">
+        <span id="page-info"></span>
+        <div class="btns">
+          <button id="prev">← prev</button>
+          <button id="next">next →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>fetched via github graphql api · rendered locally · no data leaves this file</footer>
+</div>
+
+<script>
+(function () {
+  var DATA = JSON.parse(document.getElementById("pr-data").textContent);
+  var PAGE = 100;
+  var REPO_PREVIEW = 12;
+  var state = { status: "ALL", label: null, repo: null, q: "", page: 0, allRepos: false };
+
+  var fmt = function (n) { return n.toLocaleString("en-US"); };
+  var fmtDate = function (iso) {
+    if (!iso) return "—";
+    return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  };
+  var esc = function (s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  };
+  var shortRepo = function (full) {
+    // drop the "owner/" prefix -- every repo in the report shares it
+    var i = full.indexOf("/");
+    return i === -1 ? full : full.slice(i + 1);
+  };
+
+  /* ---- masthead ---- */
+  document.title = DATA.owner + " · PR ledger";
+  document.getElementById("owner-name").innerHTML = '<span class="at">@</span>' + esc(DATA.owner);
+  document.getElementById("total-count").textContent = fmt(DATA.prs.length);
+  document.getElementById("generated-at").textContent =
+    new Date(DATA.generated_at).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
+  document.getElementById("queried-labels").innerHTML = DATA.labels
+    .map(function (l, i) {
+      return '<span class="chip accent" style="animation-delay:' + (0.1 + i * 0.05) + 's">' + esc(l) + "</span>";
+    }).join("");
+
+  /* ---- aggregates ---- */
+  var totals = { OPEN: 0, MERGED: 0, CLOSED: 0 };
+  var byLabel = {};
+  var byRepo = {};
+  DATA.labels.forEach(function (l) { byLabel[l] = { OPEN: 0, MERGED: 0, CLOSED: 0, total: 0 }; });
+  DATA.prs.forEach(function (pr) {
+    totals[pr.state]++;
+    pr.matched_labels.forEach(function (l) {
+      byLabel[l][pr.state]++;
+      byLabel[l].total++;
+    });
+    var r = byRepo[pr.repo] || (byRepo[pr.repo] = { OPEN: 0, MERGED: 0, CLOSED: 0, total: 0 });
+    r[pr.state]++;
+    r.total++;
+  });
+  var repoNames = Object.keys(byRepo).sort(function (a, b) { return byRepo[b].total - byRepo[a].total; });
+  var grand = DATA.prs.length || 1;
+  document.getElementById("repo-count").textContent = fmt(repoNames.length);
+
+  /* ---- stat band ---- */
+  var statDefs = [
+    ["Total", DATA.prs.length, "", ""],
+    ["Open", totals.OPEN, "open", "open"],
+    ["Merged", totals.MERGED, "merged", "merged"],
+    ["Closed (unmerged)", totals.CLOSED, "closed", "closed"]
+  ];
+  document.getElementById("stat-band").innerHTML = statDefs.map(function (d) {
+    var pct = d[0] === "Total" ? "" : '<span class="pct">' + (100 * d[1] / grand).toFixed(1) + "%</span>";
+    return '<div class="stat ' + d[3] + '">' + pct +
+      '<div class="num">' + fmt(d[1]) + "</div>" +
+      '<div class="cap">' + (d[2] ? '<i class="dot ' + d[2] + '"></i>' : "") + d[0] + "</div></div>";
+  }).join("");
+
+  /* ---- breakdown rows ---- */
+  function breakdownRow(kind, key, displayName, s) {
+    var t = s.total || 1;
+    return '<div class="bk-row" data-kind-attr="' + kind + '" data-key="' + esc(key) + '" title="click to filter the table">' +
+      '<span class="name" data-kind="' + kind + '">' + esc(displayName) + "</span>" +
+      '<span class="total">' + fmt(s.total) + "</span>" +
+      '<div class="bar">' +
+        '<i class="o" style="width:' + (100 * s.OPEN / t) + '%"></i>' +
+        '<i class="m" style="width:' + (100 * s.MERGED / t) + '%"></i>' +
+        '<i class="c" style="width:' + (100 * s.CLOSED / t) + '%"></i>' +
+      "</div>" +
+      '<span class="mini"><b class="o">' + fmt(s.OPEN) + " open</b> · <b class=\"m\">" +
+        fmt(s.MERGED) + " merged</b> · <b class=\"c\">" + fmt(s.CLOSED) + " closed</b></span>" +
+      "</div>";
+  }
+
+  var labelRowsEl = document.getElementById("label-rows");
+  labelRowsEl.innerHTML = DATA.labels.map(function (l) {
+    return breakdownRow("label", l, l, byLabel[l]);
+  }).join("");
+
+  var repoRowsEl = document.getElementById("repo-rows");
+  var repoMoreBtn = document.getElementById("repo-more");
+  function renderRepoRows() {
+    var shown = state.allRepos ? repoNames : repoNames.slice(0, REPO_PREVIEW);
+    repoRowsEl.innerHTML = shown.map(function (r) {
+      return breakdownRow("repo", r, shortRepo(r), byRepo[r]);
+    }).join("");
+    var hiddenCount = repoNames.length - REPO_PREVIEW;
+    repoMoreBtn.hidden = hiddenCount <= 0;
+    repoMoreBtn.textContent = state.allRepos
+      ? "collapse ▲"
+      : "show " + fmt(hiddenCount) + " more repositories ▼";
+    highlightRows();
+  }
+
+  /* ---- filtering ---- */
+  function filtered() {
+    var q = state.q.toLowerCase();
+    return DATA.prs.filter(function (pr) {
+      if (state.status !== "ALL" && pr.state !== state.status) return false;
+      if (state.label && pr.matched_labels.indexOf(state.label) === -1) return false;
+      if (state.repo && pr.repo !== state.repo) return false;
+      if (q && (pr.title + " #" + pr.number + " " + pr.author + " " + pr.repo).toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    });
+  }
+
+  var tabsEl = document.getElementById("status-tabs");
+  var tabDefs = [["ALL", "All", DATA.prs.length], ["OPEN", "Open", totals.OPEN],
+                 ["MERGED", "Merged", totals.MERGED], ["CLOSED", "Closed", totals.CLOSED]];
+  tabsEl.innerHTML = tabDefs.map(function (t) {
+    return '<button data-status="' + t[0] + '">' + t[1] + '<span class="n">' + fmt(t[2]) + "</span></button>";
+  }).join("");
+
+  function highlightRows() {
+    document.querySelectorAll(".bk-row").forEach(function (r) {
+      var kind = r.getAttribute("data-kind-attr");
+      var active = kind === "label" ? state.label : state.repo;
+      r.classList.toggle("active", r.getAttribute("data-key") === active);
+    });
+  }
+
+  function render() {
+    var rows = filtered();
+    var pages = Math.max(1, Math.ceil(rows.length / PAGE));
+    if (state.page >= pages) state.page = pages - 1;
+    var start = state.page * PAGE;
+    var slice = rows.slice(start, start + PAGE);
+
+    var body = document.getElementById("pr-rows");
+    if (!slice.length) {
+      body.innerHTML = '<tr><td colspan="8"><div class="empty">Nothing in the ledger matches these filters.</div></td></tr>';
+    } else {
+      body.innerHTML = slice.map(function (pr) {
+        var resolved = pr.state === "MERGED" ? pr.merged_at : pr.state === "CLOSED" ? pr.closed_at : null;
+        return "<tr>" +
+          '<td class="num">#' + pr.number + "</td>" +
+          '<td class="repo-cell">' + esc(shortRepo(pr.repo)) + "</td>" +
+          '<td class="title"><a href="' + esc(pr.url) + '" target="_blank" rel="noopener">' + esc(pr.title) + "</a>" +
+            (pr.is_draft ? '<span class="draft-tag">draft</span>' : "") + "</td>" +
+          '<td><span class="pill ' + pr.state + '">' + pr.state.toLowerCase() + "</span></td>" +
+          '<td class="labels-cell">' + pr.matched_labels.map(function (l) {
+            return '<span class="chip">' + esc(l) + "</span>";
+          }).join("") + "</td>" +
+          "<td>" + esc(pr.author) + "</td>" +
+          '<td class="dates">' + fmtDate(pr.created_at) + "</td>" +
+          '<td class="dates">' + fmtDate(resolved) + "</td>" +
+        "</tr>";
+      }).join("");
+    }
+
+    document.getElementById("page-info").textContent = rows.length
+      ? "showing " + fmt(start + 1) + "–" + fmt(Math.min(start + PAGE, rows.length)) + " of " + fmt(rows.length)
+      : "0 results";
+    document.getElementById("prev").disabled = state.page === 0;
+    document.getElementById("next").disabled = state.page >= pages - 1;
+
+    tabsEl.querySelectorAll("button").forEach(function (b) {
+      b.classList.toggle("on", b.dataset.status === state.status);
+    });
+    highlightRows();
+
+    var chips = [];
+    if (state.label) chips.push('<span class="chip accent" data-clear="label">label: ' + esc(state.label) + "</span>");
+    if (state.repo) chips.push('<span class="chip accent" data-clear="repo">repo: ' + esc(shortRepo(state.repo)) + "</span>");
+    document.getElementById("active-filters").innerHTML = chips.join("");
+  }
+
+  /* ---- events ---- */
+  tabsEl.addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (!b) return;
+    state.status = b.dataset.status;
+    state.page = 0;
+    render();
+  });
+  document.addEventListener("click", function (e) {
+    var row = e.target.closest(".bk-row");
+    if (row) {
+      var kind = row.getAttribute("data-kind-attr");
+      var key = row.getAttribute("data-key");
+      if (kind === "label") state.label = state.label === key ? null : key;
+      else state.repo = state.repo === key ? null : key;
+      state.page = 0;
+      render();
+      document.getElementById("search").scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    var chip = e.target.closest("[data-clear]");
+    if (chip) {
+      state[chip.getAttribute("data-clear")] = null;
+      state.page = 0;
+      render();
+    }
+  });
+  repoMoreBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    state.allRepos = !state.allRepos;
+    renderRepoRows();
+  });
+  var searchTimer;
+  document.getElementById("search").addEventListener("input", function (e) {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(function () {
+      state.q = e.target.value.trim(); state.page = 0; render();
+    }, 150);
+  });
+  document.getElementById("prev").addEventListener("click", function () { state.page--; render(); window.scrollTo({ top: document.getElementById("search").offsetTop - 80 }); });
+  document.getElementById("next").addEventListener("click", function () { state.page++; render(); window.scrollTo({ top: document.getElementById("search").offsetTop - 80 }); });
+
+  renderRepoRows();
+  render();
+})();
+</script>
+</body>
+</html>
