@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "test-migration",
+  "description": "Migrate test suites between frameworks without losing coverage. Currently ships a Selenium to Playwright migration skill with phased workflow, pattern mapping, parity auditing, and a flake-pattern linter.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Bhavik Jain"
+  },
+  "keywords": [
+    "testing",
+    "playwright",
+    "selenium",
+    "migration",
+    "test-automation",
+    "e2e"
+  ],
+  "license": "MIT"
+}
